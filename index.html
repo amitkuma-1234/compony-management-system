@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Amdox Technologies AI-Powered Cloud ERP Suite - Enterprise Resource Planning for modern businesses">
+    <meta name="keywords" content="ERP, Cloud ERP, AI-Powered, Business Management, HR, Finance, Inventory, CRM">
+    <title>Amdox ERP Suite — AI-Powered Cloud Enterprise Platform</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- App Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="preloader-inner">
+            <div class="preloader-logo">
+                <div class="logo-icon-large">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <h2>Amdox ERP Suite</h2>
+                <p>Initializing AI-Powered Platform...</p>
+                <div class="preloader-bar">
+                    <div class="preloader-bar-fill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <div id="app" class="app-container">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Amdox</h1>
+                        <span>ERP Suite</span>
+                    </div>
+                </div>
+                <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle sidebar">
+                    <i class="fas fa-angles-left"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-search">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="sidebar-search-input" placeholder="Search modules..." autocomplete="off">
+                    <kbd>⌘K</kbd>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav" id="sidebar-nav">
+                <div class="nav-section">
+                    <span class="nav-section-title">MAIN</span>
+                    <a href="#dashboard" class="nav-item active" data-page="dashboard" id="nav-dashboard">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                        <span class="nav-badge pulse">Live</span>
+                    </a>
+                    <a href="#analytics" class="nav-item" data-page="analytics" id="nav-analytics">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics & BI</span>
+                    </a>
+                    <a href="#ai-center" class="nav-item" data-page="ai-center" id="nav-ai-center">
+                        <i class="fas fa-brain"></i>
+                        <span>AI Command Center</span>
+                        <span class="nav-badge new">AI</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">CORE MODULES</span>
+                    <a href="#hr" class="nav-item" data-page="hr" id="nav-hr">
+                        <i class="fas fa-users"></i>
+                        <span>HR Management</span>
+                    </a>
+                    <a href="#finance" class="nav-item" data-page="finance" id="nav-finance">
+                        <i class="fas fa-coins"></i>
+                        <span>Finance & Accounting</span>
+                    </a>
+                    <a href="#inventory" class="nav-item" data-page="inventory" id="nav-inventory">
+                        <i class="fas fa-warehouse"></i>
+                        <span>Inventory & Supply</span>
+                    </a>
+                    <a href="#crm" class="nav-item" data-page="crm" id="nav-crm">
+                        <i class="fas fa-handshake"></i>
+                        <span>CRM</span>
+                    </a>
+                    <a href="#projects" class="nav-item" data-page="projects" id="nav-projects">
+                        <i class="fas fa-diagram-project"></i>
+                        <span>Project Management</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">OPERATIONS</span>
+                    <a href="#auth" class="nav-item" data-page="auth" id="nav-auth">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>Auth & Security</span>
+                    </a>
+                    <a href="#notifications" class="nav-item" data-page="notifications" id="nav-notifications">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="nav-count">5</span>
+                    </a>
+                    <a href="#assets" class="nav-item" data-page="assets" id="nav-assets">
+                        <i class="fas fa-laptop"></i>
+                        <span>Asset Management</span>
+                    </a>
+                    <a href="#legal" class="nav-item" data-page="legal" id="nav-legal">
+                        <i class="fas fa-gavel"></i>
+                        <span>Legal & Compliance</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">PLATFORM</span>
+                    <a href="#ecommerce" class="nav-item" data-page="ecommerce" id="nav-ecommerce">
+                        <i class="fas fa-cart-shopping"></i>
+                        <span>E-Commerce</span>
+                    </a>
+                    <a href="#communication" class="nav-item" data-page="communication" id="nav-communication">
+                        <i class="fas fa-comments"></i>
+                        <span>Communication</span>
+                    </a>
+                    <a href="#devops" class="nav-item" data-page="devops" id="nav-devops">
+                        <i class="fas fa-server"></i>
+                        <span>DevOps & Deploy</span>
+                    </a>
+                    <a href="#settings" class="nav-item" data-page="settings" id="nav-settings">
+                        <i class="fas fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-avatar">
+                        <span>AK</span>
+                        <span class="status-dot online"></span>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">Amit Kumar</span>
+                        <span class="user-role">Super Admin</span>
+                    </div>
+                    <button class="user-menu-btn" id="user-menu-btn" aria-label="User menu">
+                        <i class="fas fa-ellipsis-vertical"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="breadcrumb" id="breadcrumb">
+                        <span class="breadcrumb-item"><i class="fas fa-home"></i></span>
+                        <i class="fas fa-chevron-right"></i>
+                        <span class="breadcrumb-item active" id="breadcrumb-current">Dashboard</span>
+                    </div>
+                </div>
+                <div class="topbar-center">
+                    <div class="global-search" id="global-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search anything... (⌘K)" id="global-search-input">
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="topbar-actions">
+                        <button class="topbar-btn" id="theme-toggle" aria-label="Toggle theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button class="topbar-btn" id="fullscreen-btn" aria-label="Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <button class="topbar-btn notification-btn" id="notification-btn" aria-label="Notifications">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-dot"></span>
+                        </button>
+                        <button class="topbar-btn ai-btn" id="ai-assistant-btn" aria-label="AI Assistant">
+                            <i class="fas fa-robot"></i>
+                            <span class="ai-glow"></span>
+                        </button>
+                    </div>
+                    <div class="topbar-profile" id="topbar-profile">
+                        <div class="profile-avatar">
+                            <span>AK</span>
+                        </div>
+                        <span class="profile-name">Amit Kumar</span>
+                        <i class="fas fa-chevron-down"></i>
+                        <div class="profile-dropdown" id="profile-dropdown">
+                            <a href="#settings"><i class="fas fa-user-gear"></i> My Profile</a>
+                            <a href="#settings"><i class="fas fa-gear"></i> Platform Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="login.html"><i class="fas fa-right-from-bracket"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content Container -->
+            <div class="page-content" id="page-content">
+                <!-- Content will be dynamically loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- AI Assistant Chat Panel -->
+    <div id="ai-chat-panel" class="ai-chat-panel">
+        <div class="ai-chat-header">
+            <div class="ai-chat-title">
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <h3>Amdox AI Assistant</h3>
+                    <span class="ai-status">● Online — GPT-4 Powered</span>
+                </div>
+            </div>
+            <button class="ai-chat-close" id="ai-chat-close" aria-label="Close">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div class="ai-chat-messages" id="ai-chat-messages">
+            <div class="ai-message bot">
+                <div class="ai-message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="ai-message-content">
+                    <p>Hello! I'm your AI-powered ERP assistant. I can help you with:</p>
+                    <ul>
+                        <li>📊 Generate reports & analytics</li>
+                        <li>📋 Manage workflows & approvals</li>
+                        <li>🔍 Search across all modules</li>
+                        <li>💡 Get AI-powered recommendations</li>
+                        <li>📈 Predict trends & forecast</li>
+                    </ul>
+                    <p>How can I help you today?</p>
+                </div>
+            </div>
+        </div>
+        <div class="ai-chat-suggestions" id="ai-suggestions">
+            <button class="ai-suggestion-chip">Show revenue forecast</button>
+            <button class="ai-suggestion-chip">Pending approvals</button>
+            <button class="ai-suggestion-chip">Employee analytics</button>
+            <button class="ai-suggestion-chip">Inventory alerts</button>
+        </div>
+        <div class="ai-chat-input">
+            <div class="ai-input-box">
+                <input type="text" id="ai-input" placeholder="Ask Amdox AI anything..." autocomplete="off">
+                <button class="ai-send-btn" id="ai-send-btn" aria-label="Send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Palette / Search Modal -->
+    <div id="command-palette" class="command-palette">
+        <div class="command-palette-backdrop"></div>
+        <div class="command-palette-modal">
+            <div class="command-palette-header">
+                <i class="fas fa-search"></i>
+                <input type="text" id="command-input" placeholder="Type a command or search..." autocomplete="off">
+                <kbd>ESC</kbd>
+            </div>
+            <div class="command-palette-results" id="command-results">
+                <div class="command-group">
+                    <span class="command-group-title">Quick Actions</span>
+                    <div class="command-item" data-action="dashboard"><i class="fas fa-th-large"></i> Go to Dashboard</div>
+                    <div class="command-item" data-action="analytics"><i class="fas fa-chart-line"></i> Analytics & BI</div>
+                    <div class="command-item" data-action="ai-center"><i class="fas fa-brain"></i> AI Command Center</div>
+                    <div class="command-item" data-action="hr"><i class="fas fa-users"></i> HR Management</div>
+                    <div class="command-item" data-action="finance"><i class="fas fa-coins"></i> Finance & Accounting</div>
+                    <div class="command-item" data-action="inventory"><i class="fas fa-warehouse"></i> Inventory & Supply</div>
+                    <div class="command-item" data-action="crm"><i class="fas fa-handshake"></i> CRM</div>
+                    <div class="command-item" data-action="projects"><i class="fas fa-diagram-project"></i> Project Management</div>
+                    <div class="command-item" data-action="auth"><i class="fas fa-shield-halved"></i> Auth & Security</div>
+                    <div class="command-item" data-action="notifications"><i class="fas fa-bell"></i> Notifications & Events</div>
+                    <div class="command-item" data-action="assets"><i class="fas fa-laptop"></i> Asset Management</div>
+                    <div class="command-item" data-action="legal"><i class="fas fa-gavel"></i> Legal & Compliance</div>
+                    <div class="command-item" data-action="ecommerce"><i class="fas fa-cart-shopping"></i> E-Commerce</div>
+                    <div class="command-item" data-action="communication"><i class="fas fa-comments"></i> Communication & Wiki</div>
+                    <div class="command-item" data-action="devops"><i class="fas fa-server"></i> DevOps & Deployment</div>
+                    <div class="command-item" data-action="settings"><i class="fas fa-gear"></i> Platform Settings</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div id="notification-panel" class="notification-panel">
+        <div class="notification-panel-header">
+            <h3>Notifications</h3>
+            <button class="mark-all-read" id="mark-all-read">Mark all read</button>
+        </div>
+        <div class="notification-list" id="notification-list">
+            <div class="notification-item unread">
+                <div class="notification-icon info"><i class="fas fa-info-circle"></i></div>
+                <div class="notification-content">
+                    <p class="notification-text"><strong>System Update:</strong> ERP v3.2.1 deployed successfully</p>
+                    <span class="notification-time">2 minutes ago</span>
+                </div>
+            </div>
+            <div class="notification-item unread">
+                <div class="notification-icon success"><i class="fas fa-check-circle"></i></div>
+                <div class="notification-content">
+                    <p class="notification-text"><strong>Invoice #INV-2847</strong> has been approved</p>
+                    <span class="notification-time">15 minutes ago</span>
+                </div>
+            </div>
+            <div class="notification-item unread">
+                <div class="notification-icon warning"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="notification-content">
+                    <p class="notification-text"><strong>Low Stock Alert:</strong> 5 items below reorder level</p>
+                    <span class="notification-time">1 hour ago</span>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon info"><i class="fas fa-user-plus"></i></div>
+                <div class="notification-content">
+                    <p class="notification-text"><strong>New Employee:</strong> Priya Sharma onboarded to Engineering</p>
+                    <span class="notification-time">3 hours ago</span>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon success"><i class="fas fa-chart-line"></i></div>
+                <div class="notification-content">
+                    <p class="notification-text"><strong>AI Forecast:</strong> Q3 revenue predicted at ₹2.4Cr (+18%)</p>
+                    <span class="notification-time">5 hours ago</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- App Scripts -->
+    <script src="js/app.js"></script>
+    <script src="js/pages/dashboard.js"></script>
+    <script src="js/pages/modules1.js"></script>
+    <script src="js/pages/modules2.js"></script>
+    <script src="js/pages/modules3.js"></script>
+    <script src="js/pages/modules4.js"></script>
+</body>
+</html>
