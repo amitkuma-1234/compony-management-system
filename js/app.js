@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAIPanel();
     initCommandPalette();
     initNotifications();
+    initQuickActions();
     initGlobalActions();
   }, 2200);
 });
@@ -265,12 +266,96 @@ function initNotifications() {
   });
 }
 
+// ── Quick Actions Modal ──
+function initQuickActions() {
+  const modal = document.getElementById('quick-action-modal');
+  if (!modal) return;
+  const backdrop = modal.querySelector('.quick-action-backdrop');
+  const closeBtn = document.getElementById('quick-action-close');
+  const searchInput = document.getElementById('quick-action-search');
+  const items = modal.querySelectorAll('.quick-action-item');
+  const categories = modal.querySelectorAll('.quick-action-category');
+
+  // Open modal
+  window.openQuickActions = function() {
+    modal.classList.add('open');
+    searchInput.value = '';
+    items.forEach(i => i.classList.remove('hidden'));
+    categories.forEach(c => c.style.display = '');
+    setTimeout(() => searchInput.focus(), 100);
+  };
+
+  // Close modal
+  function closeModal() { modal.classList.remove('open'); }
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', closeModal);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+
+  // Search filter
+  searchInput.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    items.forEach(item => {
+      const label = item.querySelector('.qa-label').textContent.toLowerCase();
+      const desc = item.querySelector('.qa-desc').textContent.toLowerCase();
+      item.classList.toggle('hidden', !(label.includes(q) || desc.includes(q)));
+    });
+    // Hide empty categories
+    categories.forEach(cat => {
+      const visibleItems = cat.querySelectorAll('.quick-action-item:not(.hidden)');
+      cat.style.display = visibleItems.length === 0 ? 'none' : '';
+    });
+  });
+
+  // Action item click
+  const taskMessages = {
+    'add-employee': '👤 Opening Employee Onboarding form...',
+    'mark-attendance': '✅ Opening Attendance Tracker...',
+    'leave-request': '✈️ Opening Leave Management...',
+    'run-payroll': '💰 Initiating Payroll Processing...',
+    'new-invoice': '🧾 Opening Invoice Creator...',
+    'record-expense': '📝 Opening Expense Entry form...',
+    'tax-calc': '🧮 Opening Tax Calculator...',
+    'new-lead': '🎯 Opening Lead Registration form...',
+    'new-deal': '🤝 Opening Deal Pipeline...',
+    'support-ticket': '🎫 Opening Support Ticket form...',
+    'new-project': '📁 Opening Project Setup wizard...',
+    'new-task': '📋 Opening Task Creation form...',
+    'add-product': '📦 Opening Product Registration...',
+    'new-po': '🚚 Opening Purchase Order form...',
+    'add-asset': '💻 Opening Asset Registration...',
+    'announcement': '📢 Opening Announcement Editor...',
+    'new-report': '📊 Generating Analytics Report...',
+    'new-contract': '📄 Opening Contract Drafting tool...'
+  };
+
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      const action = item.dataset.action;
+      const task = item.dataset.task;
+      closeModal();
+      // Navigate to the module
+      if (action) location.hash = action;
+      // Show contextual toast
+      const msg = taskMessages[task] || `Opening ${item.querySelector('.qa-label').textContent}...`;
+      setTimeout(() => showToast(msg, 'success'), 300);
+    });
+  });
+}
+
 // ── Global Mock Actions ──
 function initGlobalActions() {
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.btn');
     if (btn) {
+      // Skip if this is the Quick Action button (handled by its own modal)
+      if (btn.id === 'quick-action-btn' || btn.closest('#quick-action-modal')) return;
       const text = btn.textContent.trim();
+      if (text.toLowerCase().includes('quick action')) {
+        openQuickActions();
+        return;
+      }
       if (text.toLowerCase().includes('export')) {
         showToast(`Exporting data... ${text}`, 'info');
       } else if (text.toLowerCase().includes('new') || text.toLowerCase().includes('add') || text.toLowerCase().includes('create')) {

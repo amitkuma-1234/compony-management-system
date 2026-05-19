@@ -353,6 +353,131 @@
         </div>
     </div>
 
+    <!-- Quick Action Modal -->
+    <div id="quick-action-modal" class="quick-action-modal">
+        <div class="quick-action-backdrop"></div>
+        <div class="quick-action-content">
+            <div class="quick-action-header">
+                <div class="quick-action-title">
+                    <div class="quick-action-icon"><i class="fas fa-bolt"></i></div>
+                    <div>
+                        <h3>Quick Actions</h3>
+                        <span>Jump to any action across all modules</span>
+                    </div>
+                </div>
+                <button class="quick-action-close" id="quick-action-close" aria-label="Close"><i class="fas fa-xmark"></i></button>
+            </div>
+            <div class="quick-action-search">
+                <i class="fas fa-search"></i>
+                <input type="text" id="quick-action-search" placeholder="Search actions..." autocomplete="off">
+            </div>
+            <div class="quick-action-grid" id="quick-action-grid">
+                <div class="quick-action-category">
+                    <span class="quick-action-category-title">HR & People</span>
+                    <div class="quick-action-items">
+                        <div class="quick-action-item" data-action="hr" data-task="add-employee">
+                            <div class="qa-icon" style="background:rgba(99,102,241,0.12);color:#818cf8"><i class="fas fa-user-plus"></i></div>
+                            <div class="qa-text"><span class="qa-label">Add Employee</span><span class="qa-desc">Onboard new team member</span></div>
+                        </div>
+                        <div class="quick-action-item" data-action="hr" data-task="mark-attendance">
+                            <div class="qa-icon" style="background:rgba(34,197,94,0.12);color:#22c55e"><i class="fas fa-user-check"></i></div>
+                            <div class="qa-text"><span class="qa-label">Mark Attendance</span><span class="qa-desc">Record today's attendance</span></div>
+                        </div>
+                        <div class="quick-action-item" data-action="hr" data-task="leave-request">
+                            <div class="qa-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b"><i class="fas fa-plane-departure"></i></div>
+                            <div class="qa-text"><span class="qa-label">Leave Request</span><span class="qa-desc">Apply or approve leave</span></div>
+                        </div>
+                        <div class="quick-action-item" data-action="hr" data-task="run-payroll">
+                            <div class="qa-icon" style="background:rgba(168,85,247,0.12);color:#a855f7"><i class="fas fa-money-check-dollar"></i></div>
+                            <div class="qa-text"><span class="qa-label">Run Payroll</span><span class="qa-desc">Process monthly salaries</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-action-category">
+                    <span class="quick-action-category-title">Finance</span>
+                    <div class="quick-action-items">
+                        <div class="quick-action-item" data-action="finance" data-task="new-invoice">
+                            <div class="qa-icon" style="background:rgba(34,197,94,0.12);color:#22c55e"><i class="fas fa-file-invoice-dollar"></i></div>
+                            <div class="qa-text"><span class="qa-label">Create Invoice</span><span class="qa-desc">Generate a new invoice</span></div>
+                        </div>
+                        <div class="quick-action-item" data-action="finance" data-task="record-expense">
+                            <div class="qa-icon" style="background:rgba(239,68,68,0.12);color:#ef4444"><i class="fas fa-receipt"></i></div>
+                            <div class="qa-text"><span class="qa-label">Record Expense</span><span class="qa-desc">Log a new expense</span></div>
+                        </div>
+                        <div class="quick-action-item" data-action="finance" data-task="tax-calc">
+                            <div class="qa-icon" style="background:rgba(6,182,212,0.12);color:#06b6d4"><i class="fas fa-calculator"></i></div>
+                            <div class="qa-text"><span class="qa-label">Tax Calculator</span><span class="qa-desc">Compute GST / income tax</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-action-category">
+                    <span class="quick-action-category-title">Sales & CRM</span>
+                    <div class="quick-action-items">
+                        <div class="quick-action-item" data-action="crm" data-task="new-lead">
+                            <div class="qa-icon" style="background:rgba(236,72,153,0.12);color:#ec4899"><i class="fas fa-user-plus"></i></div>
+                            <div class="qa-text"><span class="qa-label">New Lead</span><span class="qa-desc">Add a sales lead</span></div>
+                        </div>
+                        <div class="quick-action-item" data-action="crm" data-task="new-deal">
+                            <div class="qa-icon" style="background:rgba(99,102,241,0.12);color:#6366f1"><i class="fas fa-handshake"></i></div>
+                            <div class="qa-text"><span class="qa-label">Create Deal</span><span class="qa-desc">Start a new opportunity</span></div>
+                        </div>
+                        <div class="quick-action-item" data-action="crm" data-task="support-ticket">
+                            <div class="qa-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b"><i class="fas fa-headset"></i></div>
+                            <div class="qa-text"><span class="qa-label">Support Ticket</span><span class="qa-desc">Create a customer ticket</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-action-category">
+                    <span class="quick-action-category-title">Projects & Tasks</span>
+                    <div class="quick-action-items">
+                        <div class="quick-action-item" data-action="projects" data-task="new-project">
+                            <div class="qa-icon" style="background:rgba(99,102,241,0.12);color:#818cf8"><i class="fas fa-folder-plus"></i></div>
+                            <div class="qa-text"><span class="qa-label">New Project</span><span class="qa-desc">Create a project</span></div>
+                        </div>
+                        <div class="quick-action-item" data-action="projects" data-task="new-task">
+                            <div class="qa-icon" style="background:rgba(34,197,94,0.12);color:#22c55e"><i class="fas fa-list-check"></i></div>
+                            <div class="qa-text"><span class="qa-label">Add Task</span><span class="qa-desc">Add task to current sprint</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-action-category">
+                    <span class="quick-action-category-title">Inventory & Assets</span>
+                    <div class="quick-action-items">
+                        <div class="quick-action-item" data-action="inventory" data-task="add-product">
+                            <div class="qa-icon" style="background:rgba(6,182,212,0.12);color:#06b6d4"><i class="fas fa-boxes-stacked"></i></div>
+                            <div class="qa-text"><span class="qa-label">Add Product</span><span class="qa-desc">Register new inventory item</span></div>
+                        </div>
+                        <div class="quick-action-item" data-action="inventory" data-task="new-po">
+                            <div class="qa-icon" style="background:rgba(168,85,247,0.12);color:#a855f7"><i class="fas fa-truck"></i></div>
+                            <div class="qa-text"><span class="qa-label">New Purchase Order</span><span class="qa-desc">Create a vendor PO</span></div>
+                        </div>
+                        <div class="quick-action-item" data-action="assets" data-task="add-asset">
+                            <div class="qa-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b"><i class="fas fa-laptop-medical"></i></div>
+                            <div class="qa-text"><span class="qa-label">Register Asset</span><span class="qa-desc">Add a company asset</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-action-category">
+                    <span class="quick-action-category-title">Communication & Reports</span>
+                    <div class="quick-action-items">
+                        <div class="quick-action-item" data-action="communication" data-task="announcement">
+                            <div class="qa-icon" style="background:rgba(236,72,153,0.12);color:#ec4899"><i class="fas fa-bullhorn"></i></div>
+                            <div class="qa-text"><span class="qa-label">Post Announcement</span><span class="qa-desc">Company-wide notice</span></div>
+                        </div>
+                        <div class="quick-action-item" data-action="analytics" data-task="new-report">
+                            <div class="qa-icon" style="background:rgba(59,130,246,0.12);color:#3b82f6"><i class="fas fa-chart-bar"></i></div>
+                            <div class="qa-text"><span class="qa-label">Generate Report</span><span class="qa-desc">Create analytics report</span></div>
+                        </div>
+                        <div class="quick-action-item" data-action="legal" data-task="new-contract">
+                            <div class="qa-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b"><i class="fas fa-file-contract"></i></div>
+                            <div class="qa-text"><span class="qa-label">New Contract</span><span class="qa-desc">Draft a legal contract</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div id="toast-container" class="toast-container"></div>
 
