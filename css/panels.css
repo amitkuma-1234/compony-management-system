@@ -74,12 +74,12 @@
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 @keyframes slideIn { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:translateX(0); } }
-.animate-fade { animation:fadeIn 0.5s ease; }
-.animate-slide-up { animation:slideUp 0.5s ease; }
+.animate-fade { animation:fadeIn 0.15s ease; }
+.animate-slide-up { animation:slideUp 0.15s ease; }
 
 /* Profile Dropdown */
 .topbar-profile { position:relative; }
-.profile-dropdown { position:absolute; top:calc(100% + 8px); right:0; width:200px; background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-md); box-shadow:var(--shadow-lg); padding:6px; display:none; flex-direction:column; z-index:100; animation:fadeIn 0.2s ease; }
+.profile-dropdown { position:fixed; top:auto; right:16px; width:200px; background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-md); box-shadow:var(--shadow-lg); padding:6px; display:none; flex-direction:column; z-index:9000; animation:fadeIn 0.2s ease; }
 .profile-dropdown.open { display:flex; }
 .profile-dropdown a { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:var(--radius-sm); font-size:13px; color:var(--text-secondary); transition:var(--transition); text-decoration:none; }
 .profile-dropdown a:hover { background:var(--bg-surface); color:var(--text-primary); }

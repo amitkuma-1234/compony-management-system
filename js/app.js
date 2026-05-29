@@ -2,11 +2,58 @@
    AMDOX ERP SUITE — Main Application Controller
    ============================================================ */
 
+// ── API Base URL ──
+const API_BASE = (window.location.protocol === 'file:' || window.location.hostname === '') 
+    ? 'http://localhost:3000/api' 
+    : window.location.origin + '/api';
+
+// ── Profile Syncing & Logout Utilities ──
+function updateSidebarAndProfile() {
+  const userJson = localStorage.getItem('amdox_auth_user');
+  if (userJson) {
+    try {
+      const user = JSON.parse(userJson);
+      const initials = user.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+      
+      const sidebarAvatar = document.querySelector('.sidebar-user .user-avatar span:first-child');
+      if (sidebarAvatar) sidebarAvatar.textContent = initials;
+      
+      const sidebarName = document.querySelector('.sidebar-user .user-name');
+      if (sidebarName) sidebarName.textContent = user.name;
+      const sidebarRole = document.querySelector('.sidebar-user .user-role');
+      if (sidebarRole) sidebarRole.textContent = user.role;
+      
+      const topbarAvatar = document.querySelector('.topbar-profile .profile-avatar span');
+      if (topbarAvatar) topbarAvatar.textContent = initials;
+      const topbarName = document.querySelector('.topbar-profile .profile-name');
+      if (topbarName) topbarName.textContent = user.name;
+    } catch (e) {
+      console.error('Error updating profile from localStorage:', e);
+    }
+  }
+}
+
+function logoutUser() {
+  localStorage.removeItem('amdox_auth_token');
+  localStorage.removeItem('amdox_auth_user');
+  window.location.href = 'login.html';
+}
+
 // ── Page Renderers (imported below) ──
 const pages = {};
 
 // ── App Init ──
 document.addEventListener('DOMContentLoaded', () => {
+  updateSidebarAndProfile();
+
+  // Intercept all manual logout links
+  document.querySelectorAll('a[href="login.html"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      logoutUser();
+    });
+  });
+
   setTimeout(() => {
     document.getElementById('preloader').classList.add('hidden');
     document.getElementById('app').classList.add('visible');
@@ -46,11 +93,12 @@ function navigateTo(page) {
     ecommerce:'E-Commerce', communication:'Communication', devops:'DevOps & Deploy',
     settings:'Settings'
   };
-  document.getElementById('breadcrumb-current').textContent = titles[page] || page;
+  const safePage = String(page);
+  document.getElementById('breadcrumb-current').textContent = Object.hasOwn(titles, safePage) ? titles[safePage] : safePage;
   // Render page
   container.innerHTML = '';
   container.className = 'page-content animate-fade';
-  const renderFn = pages[page] || pages.dashboard;
+  const renderFn = Object.hasOwn(pages, safePage) ? pages[safePage] : pages.dashboard;
   if (renderFn) renderFn(container);
   // Init charts after render
   setTimeout(() => initChartsOnPage(page), 100);
@@ -89,7 +137,7 @@ function initSidebar() {
   const userMenuBtn = document.getElementById('user-menu-btn');
   if (userMenuBtn) {
     userMenuBtn.addEventListener('click', () => {
-      window.location.href = 'login.html';
+      logoutUser();
     });
   }
 }
@@ -124,6 +172,11 @@ function initTopbar() {
     profileBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       dropdown.classList.toggle('open');
+      if (dropdown.classList.contains('open')) {
+        const rect = profileBtn.getBoundingClientRect();
+        dropdown.style.top = (rect.bottom + 8) + 'px';
+        dropdown.style.right = (window.innerWidth - rect.right) + 'px';
+      }
     });
     document.addEventListener('click', (e) => {
       if (!profileBtn.contains(e.target)) dropdown.classList.remove('open');
@@ -143,27 +196,183 @@ function initAIPanel() {
   btn.addEventListener('click', () => panel.classList.toggle('open'));
   closeBtn.addEventListener('click', () => panel.classList.remove('open'));
 
+  const getERPData = () => {
+    const SEED_EMP = [
+      { id:1, name:'Arjun Mehta', email:'arjun@amdox.com', department:'Engineering', role:'Software Engineer', status:'Active', joined:'Jan 2024' },
+      { id:2, name:'Priya Sharma', email:'priya@amdox.com', department:'HR & Admin', role:'HR Manager', status:'Active', joined:'Mar 2023' },
+      { id:3, name:'Rahul Desai', email:'rahul@amdox.com', department:'Sales & Marketing', role:'Sales Executive', status:'Probation', joined:'May 2026' }
+    ];
+    const SEED_INV = [
+      { id:1, invoice_no:'INV-2847', client:'Infosys Ltd', amount:875000, due_date:'May 25, 2026', status:'Pending' },
+      { id:2, invoice_no:'INV-2846', client:'Reliance Industries', amount:1240000, due_date:'May 20, 2026', status:'Sent' },
+      { id:3, invoice_no:'INV-2845', client:'Tata Motors', amount:450000, due_date:'May 15, 2026', status:'Paid' },
+      { id:4, invoice_no:'INV-2844', client:'HCL Technologies', amount:680000, due_date:'May 10, 2026', status:'Paid' }
+    ];
+    const SEED_PROD = [
+      { id:1, sku:'SKU-0010', name:'MacBook Pro 16"', category:'Electronics', stock:12, reorder_level:10, warehouse:'Warehouse A' },
+      { id:2, sku:'SKU-0021', name:'Ergonomic Chair', category:'Furniture', stock:45, reorder_level:20, warehouse:'Warehouse B' },
+      { id:3, sku:'SKU-0033', name:'Printer Ink Black', category:'Supplies', stock:5, reorder_level:15, warehouse:'Warehouse A' },
+      { id:4, sku:'SKU-0045', name:'Logitech MX Master 3', category:'Accessories', stock:30, reorder_level:15, warehouse:'Warehouse C' }
+    ];
+    
+    let employees, invoices, products;
+    try { employees = JSON.parse(localStorage.getItem('amdox_employees')) || SEED_EMP; } catch { employees = SEED_EMP; }
+    try { invoices  = JSON.parse(localStorage.getItem('amdox_invoices'))  || SEED_INV; } catch { invoices = SEED_INV; }
+    try { products = JSON.parse(localStorage.getItem('amdox_products')) || SEED_PROD; } catch { products = SEED_PROD; }
+    
+    let aiState;
+    try {
+      aiState = JSON.parse(localStorage.getItem('amdox_ai_state')) || {
+        anomalyResolved: false,
+        skuOrdered: false,
+        resourceOptimized: false,
+        contractReviewed: false
+      };
+    } catch {
+      aiState = {
+        anomalyResolved: false,
+        skuOrdered: false,
+        resourceOptimized: false,
+        contractReviewed: false
+      };
+    }
+
+    return { employees, invoices, products, aiState };
+  };
+
+  const generateAIResponse = (query) => {
+    const q = query.toLowerCase().trim();
+    const data = getERPData();
+
+    // 1. Revenue Forecast / Revenue
+    if (q.includes('revenue') || q.includes('forecast') || q.includes('profit') || q.includes('finance')) {
+      const paidInvoices = data.invoices.filter(i => i.status === 'Paid');
+      const totalRevenue = paidInvoices.reduce((sum, inv) => sum + (parseFloat(inv.amount) || 0), 0);
+      const pendingInvoices = data.invoices.filter(i => i.status === 'Pending' || i.status === 'Sent');
+      const pendingRevenue = pendingInvoices.reduce((sum, inv) => sum + (parseFloat(inv.amount) || 0), 0);
+      
+      return `📊 **Revenue Forecast & Financial Insights:**
+• **Current Paid Revenue**: ₹${(totalRevenue / 100000).toFixed(2)} Lakhs (from ${paidInvoices.length} paid invoices)
+• **Pending/Sent Receivables**: ₹${(pendingRevenue / 100000).toFixed(2)} Lakhs (from ${pendingInvoices.length} invoices)
+• **Q3 2026 AI Projection**: **₹2.4 Crore** (+18% YoY growth).
+• **AI Recommendation**: Follow up on pending payments from **${pendingInvoices.map(i => i.client).join(', ')}** to ensure cash flow targets are met.`;
+    }
+
+    // 2. Pending Approvals / approvals
+    if (q.includes('approval') || q.includes('pending') || q.includes('workflow')) {
+      const pendingInvoices = data.invoices.filter(i => i.status === 'Pending');
+      const anomalyText = data.aiState.anomalyResolved 
+        ? '✅ All anomalies resolved.' 
+        : '⚠️ **Marketing Department Anomaly**: deviation detected (Requires resolution).';
+      
+      let approvalList = pendingInvoices.map(inv => `• **Invoice ${inv.invoice_no}** for **${inv.client}** (₹${(inv.amount/100000).toFixed(2)} L) - Due ${inv.due_date}`).join('\n');
+      if (!approvalList) approvalList = '• None (All invoices processed/sent).';
+
+      return `📋 **Pending Approvals & Alerts:**
+Here are the items currently awaiting attention or authorization:
+${approvalList}
+${anomalyText}
+• **AI Recommendation**: Shift 2 developers to Project B to expedite task deadlines and clear resource blockages.`;
+    }
+
+    // 3. Employee Analytics / Employees / HR
+    if (q.includes('employee') || q.includes('analytics') || q.includes('hr') || q.includes('staff')) {
+      const activeCount = data.employees.filter(e => e.status === 'Active').length;
+      const probationCount = data.employees.filter(e => e.status === 'Probation').length;
+      
+      return `👥 **HR & Employee Analytics:**
+• **Total Registered Staff**: ${data.employees.length} employees
+• **Status Breakdown**: ${activeCount} Active, ${probationCount} on Probation.
+• **Recent Onboarding**: Priya Sharma (HR Manager, joined Mar 2023).
+• **AI Team Recommendation**: 2 engineers are recommended to be shifted from Project A to Project B to accelerate Project B's timeline by 4 days.`;
+    }
+
+    // 4. Inventory Alerts / Inventory / SKU / stock
+    if (q.includes('inventory') || q.includes('alert') || q.includes('stock') || q.includes('sku')) {
+      const lowStockItems = data.products.filter(p => p.stock < p.reorder_level);
+      let alertText = '';
+      if (lowStockItems.length > 0) {
+        alertText = lowStockItems.map(p => `• **${p.name}** (${p.sku}): Only **${p.stock}** left (Reorder level: ${p.reorder_level}, Warehouse: ${p.warehouse})`).join('\n');
+      } else {
+        alertText = '• All stock levels are currently healthy and above reorder thresholds.';
+      }
+      
+      const orderedText = data.aiState.skuOrdered 
+        ? '✅ **SKU-0089 (Dell Monitor)** auto-reordered successfully.' 
+        : '⚠️ **SKU-0089 (Dell Monitor)** predicted stockout in 3 days (Needs reorder).';
+
+      return `📦 **Inventory & Supply Chain Alerts:**
+${alertText}
+${orderedText}
+• **AI Recommendation**: Enable auto-reorder automation in inventory settings to prevent stockouts.`;
+    }
+
+    // 5. Generate / report
+    if (q.includes('generate') || q.includes('report') || q.includes('export') || q.includes('download')) {
+      return `📑 **Report Generator Assistant:**
+I can help you compile data for downloading. 
+To export a complete system report:
+1. Go to the **Analytics & BI** page from the sidebar.
+2. Click **Export PDF** or **Export Excel** at the top right action bar.
+3. For AI metrics, open the **AI Command Center** and click **Run AI Analysis**, then click **Export Report** once analysis completes.`;
+    }
+
+    // Default response using custom query text
+    return `💡 **Amdox AI Assistant:**
+I've parsed your request regarding **"${query}"**. Based on current ERP modules:
+• **Finance**: ${data.invoices.length} invoices logged. Total value ₹${(data.invoices.reduce((s, i) => s + (parseFloat(i.amount)||0), 0) / 100000).toFixed(2)} Lakhs.
+• **Inventory**: ${data.products.length} products tracked. ${data.products.filter(p => p.stock < p.reorder_level).length} low stock warnings.
+• **HR**: ${data.employees.length} employees active across Engineering, HR, Sales.
+
+Please ask me about **"Show revenue forecast"**, **"Pending approvals"**, **"Employee analytics"**, or **"Inventory alerts"** for targeted details.`;
+  };
+
   const sendMessage = () => {
     const text = input.value.trim();
     if (!text) return;
     // User message
     const userMsg = document.createElement('div');
     userMsg.className = 'ai-message user';
-    userMsg.innerHTML = `<div class="ai-message-content">${text}</div>`;
+    
+    const uContent = document.createElement('div');
+    uContent.className = 'ai-message-content';
+    uContent.textContent = text;
+    userMsg.appendChild(uContent);
+    
     messagesContainer.appendChild(userMsg);
     input.value = '';
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
     // Bot response
     setTimeout(() => {
       const botMsg = document.createElement('div');
       botMsg.className = 'ai-message bot';
-      const responses = [
-        `I've analyzed your request about "${text}". Based on current ERP data, here are the key insights and recommended actions.`,
-        `Processing "${text}"... I found relevant data across HR, Finance, and Inventory modules. Would you like a detailed report?`,
-        `Great question! Based on AI analysis, the trend for "${text}" shows positive growth. I can generate a forecast report.`,
-        `I've queried all modules for "${text}". Found 12 related records. Shall I create a summary dashboard?`
-      ];
-      botMsg.innerHTML = `<div class="ai-message-avatar"><i class="fas fa-robot"></i></div><div class="ai-message-content"><p>${responses[Math.floor(Math.random()*responses.length)]}</p></div>`;
+      const botText = generateAIResponse(text);
+      
+      const avatarDiv = document.createElement('div');
+      avatarDiv.className = 'ai-message-avatar';
+      const avatarIcon = document.createElement('i');
+      avatarIcon.className = 'fas fa-robot';
+      avatarDiv.appendChild(avatarIcon);
+      botMsg.appendChild(avatarDiv);
+
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'ai-message-content';
+      contentDiv.style.whiteSpace = 'pre-wrap';
+      contentDiv.style.lineHeight = '1.5';
+      
+      // Escape HTML and format bold tags safely to avoid CWE-79
+      const safeHtml = String(botText)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      contentDiv.innerHTML = safeHtml;
+      
+      botMsg.appendChild(contentDiv);
+      
       messagesContainer.appendChild(botMsg);
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }, 1000);
@@ -270,27 +479,268 @@ function initGlobalActions() {
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.btn');
     if (btn) {
+      // Skip modal-specific buttons that are handled by their own logic
+      if (btn.closest('.modal-overlay') || btn.dataset.modalTrigger || btn.dataset.apiAction) return;
       const text = btn.textContent.trim();
       if (text.toLowerCase().includes('export')) {
         showToast(`Exporting data... ${text}`, 'info');
-      } else if (text.toLowerCase().includes('new') || text.toLowerCase().includes('add') || text.toLowerCase().includes('create')) {
-        showToast(`Opening creation workflow: ${text}`, 'success');
-      } else if (text.toLowerCase().includes('save') || text.toLowerCase().includes('update')) {
-        showToast(`Configuration updated successfully!`, 'success');
-      } else if (text) {
-        showToast(`Action triggered: ${text}`, 'info');
+      } else if (text === 'View') {
+        showToast('Opening record details...', 'info');
+      } else if (text === 'Reorder') {
+        showToast('Purchase order initiated!', 'success');
+      } else if (text === 'Watch') {
+        showToast('Item added to watch list.', 'info');
       }
     }
   });
+}
+
+// ── Modal Helper ──
+function showModal({ title, fields, onSubmit, submitLabel = 'Save', submitClass = 'btn-primary' }) {
+  // Remove any existing generic modal (but NOT the scan terminal, which manages itself)
+  const existingModal = document.querySelector('.modal-overlay:not(#scan-modal-overlay):not(#profit-modal-overlay)');
+  existingModal?.remove();
+
+  const cleanTitle = title.replace(/<[^>]*>/g, '').replace(/"/g, '&quot;');
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+
+  const modalBox = document.createElement('div');
+  modalBox.className = 'modal-box';
+  modalBox.setAttribute('role', 'dialog');
+  modalBox.setAttribute('aria-modal', 'true');
+  modalBox.setAttribute('aria-label', cleanTitle);
+
+  const modalHeader = document.createElement('div');
+  modalHeader.className = 'modal-header';
+
+  const modalTitle = document.createElement('h3');
+  modalTitle.className = 'modal-title';
+  modalTitle.textContent = title;
+  modalHeader.appendChild(modalTitle);
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'modal-close';
+  closeBtn.id = 'modal-close-btn';
+  closeBtn.setAttribute('aria-label', 'Close');
+  const closeIcon = document.createElement('i');
+  closeIcon.className = 'fas fa-xmark';
+  closeBtn.appendChild(closeIcon);
+  modalHeader.appendChild(closeBtn);
+
+  const modalForm = document.createElement('form');
+  modalForm.id = 'modal-form';
+  modalForm.className = 'modal-form';
+  modalForm.noValidate = true;
+
+  const modalBody = document.createElement('div');
+  modalBody.className = 'modal-body';
+
+  fields.forEach(f => {
+    const formGroup = document.createElement('div');
+    formGroup.className = 'form-group';
+
+    const label = document.createElement('label');
+    label.className = 'form-label';
+    label.textContent = f.label;
+    if (f.required) {
+      const star = document.createElement('span');
+      star.style.color = 'var(--danger)';
+      star.textContent = ' *';
+      label.appendChild(star);
+    }
+    formGroup.appendChild(label);
+
+    if (f.type === 'select') {
+      const select = document.createElement('select');
+      select.className = 'form-control';
+      select.id = 'modal-field-' + f.name;
+      select.name = f.name;
+      if (f.required) select.required = true;
+
+      if (f.options) {
+        f.options.forEach(o => {
+          const val = o.value !== undefined ? o.value : o;
+          const lbl = o.label !== undefined ? o.label : o;
+          const option = document.createElement('option');
+          option.value = val;
+          option.textContent = lbl;
+          if (f.default === val) option.selected = true;
+          select.appendChild(option);
+        });
+      }
+      formGroup.appendChild(select);
+    } else {
+      const input = document.createElement('input');
+      input.className = 'form-control';
+      input.type = f.type || 'text';
+      input.id = 'modal-field-' + f.name;
+      input.name = f.name;
+      input.placeholder = f.placeholder || '';
+      input.value = f.default || '';
+      if (f.required) input.required = true;
+      formGroup.appendChild(input);
+    }
+
+    modalBody.appendChild(formGroup);
+  });
+
+  const modalFooter = document.createElement('div');
+  modalFooter.className = 'modal-footer';
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.type = 'button';
+  cancelBtn.className = 'btn btn-secondary';
+  cancelBtn.id = 'modal-cancel-btn';
+  cancelBtn.textContent = 'Cancel';
+
+  const submitBtn = document.createElement('button');
+  submitBtn.type = 'submit';
+  submitBtn.className = 'btn ' + submitClass;
+  submitBtn.id = 'modal-submit-btn';
+  submitBtn.textContent = submitLabel;
+
+  modalFooter.appendChild(cancelBtn);
+  modalFooter.appendChild(submitBtn);
+
+  modalForm.appendChild(modalBody);
+  modalForm.appendChild(modalFooter);
+
+  modalBox.appendChild(modalHeader);
+  modalBox.appendChild(modalForm);
+
+  overlay.appendChild(modalBox);
+  document.body.appendChild(overlay);
+
+  requestAnimationFrame(() => overlay.classList.add('open'));
+
+  // Focus first field
+  setTimeout(() => {
+    const first = overlay.querySelector('input, select');
+    if (first) first.focus();
+  }, 100);
+
+  const closeModal = () => {
+    overlay.classList.remove('open');
+    setTimeout(() => overlay.remove(), 200);
+  };
+
+  overlay.querySelector('#modal-close-btn').addEventListener('click', closeModal);
+  overlay.querySelector('#modal-cancel-btn').addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+
+  overlay.querySelector('#modal-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const currentSubmitBtn = overlay.querySelector('#modal-submit-btn');
+    // Collect form data
+    const data = {};
+    fields.forEach(f => {
+      const el = overlay.querySelector(`[name="${f.name}"]`);
+      if (el && typeof f.name === 'string' && f.name !== '__proto__' && f.name !== 'constructor' && f.name !== 'prototype') {
+        Reflect.set(data, f.name, el.value.trim());
+      }
+    });
+    // Basic required validation
+    const missing = fields.filter(f => f.required && !Reflect.get(data, f.name));
+    if (missing.length) {
+      showToast(`Please fill in: ${missing.map(f => f.label).join(', ')}`, 'error');
+      return;
+    }
+    currentSubmitBtn.disabled = true;
+    currentSubmitBtn.textContent = ' Saving...';
+    const spinner = document.createElement('i');
+    spinner.className = 'fas fa-spinner fa-spin';
+    currentSubmitBtn.prepend(spinner);
+
+    try {
+      await onSubmit(data, closeModal);
+    } finally {
+      currentSubmitBtn.disabled = false;
+      currentSubmitBtn.textContent = submitLabel;
+    }
+  });
+}
+
+// ── Confirm Dialog ──
+function showConfirm(message, onConfirm) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay open';
+
+  const modalBox = document.createElement('div');
+  modalBox.className = 'modal-box';
+  modalBox.style.maxWidth = '400px';
+
+  const modalHeader = document.createElement('div');
+  modalHeader.className = 'modal-header';
+
+  const modalTitle = document.createElement('h3');
+  modalTitle.className = 'modal-title';
+
+  const icon = document.createElement('i');
+  icon.className = 'fas fa-triangle-exclamation';
+  icon.style.color = 'var(--warning)';
+  modalTitle.appendChild(icon);
+  modalTitle.appendChild(document.createTextNode(' Confirm Action'));
+  modalHeader.appendChild(modalTitle);
+
+  const modalBody = document.createElement('div');
+  modalBody.className = 'modal-body';
+  const p = document.createElement('p');
+  p.textContent = message;
+  modalBody.appendChild(p);
+
+  const modalFooter = document.createElement('div');
+  modalFooter.className = 'modal-footer';
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'btn btn-secondary';
+  cancelBtn.id = 'confirm-cancel';
+  cancelBtn.textContent = 'Cancel';
+
+  const okBtn = document.createElement('button');
+  okBtn.className = 'btn btn-danger';
+  okBtn.id = 'confirm-ok';
+  okBtn.textContent = 'Delete';
+
+  modalFooter.appendChild(cancelBtn);
+  modalFooter.appendChild(okBtn);
+
+  modalBox.appendChild(modalHeader);
+  modalBox.appendChild(modalBody);
+  modalBox.appendChild(modalFooter);
+
+  overlay.appendChild(modalBox);
+  document.body.appendChild(overlay);
+
+  cancelBtn.addEventListener('click', () => overlay.remove());
+  okBtn.addEventListener('click', () => { overlay.remove(); onConfirm(); });
 }
 
 // ── Toast ──
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  const icons = { success:'check-circle', error:'times-circle', info:'info-circle' };
-  toast.innerHTML = `<i class="fas fa-${icons[type] || 'info-circle'}"></i><span class="toast-message">${message}</span><span class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-xmark"></i></span>`;
+  toast.className = 'toast ' + type;
+
+  const iconName = type === 'success' ? 'check-circle' : (type === 'error' ? 'times-circle' : 'info-circle');
+
+  const icon = document.createElement('i');
+  icon.className = 'fas fa-' + iconName;
+  toast.appendChild(icon);
+
+  const spanMsg = document.createElement('span');
+  spanMsg.className = 'toast-message';
+  spanMsg.textContent = message;
+  toast.appendChild(spanMsg);
+
+  const spanClose = document.createElement('span');
+  spanClose.className = 'toast-close';
+  const closeIcon = document.createElement('i');
+  closeIcon.className = 'fas fa-xmark';
+  spanClose.appendChild(closeIcon);
+  spanClose.addEventListener('click', () => toast.remove());
+  toast.appendChild(spanClose);
+
   container.appendChild(toast);
   setTimeout(() => toast.remove(), 4000);
 }
@@ -417,7 +867,7 @@ function getChartConfig(type) {
       options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top',labels:{color:'#94a3b8',usePointStyle:true}}}, scales:{x:{grid:{color:gridColor},ticks:{color:'#64748b'}},y:{grid:{color:gridColor},ticks:{color:'#64748b'}}} }
     }
   };
-  return configs[type] || null;
+  return Object.hasOwn(configs, type) ? Reflect.get(configs, type) : null;
 }
 
 // ── Utility ──

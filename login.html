@@ -21,7 +21,7 @@
         .brand-content{position:relative;z-index:1;max-width:480px;text-align:center}
         .brand-logo{width:80px;height:80px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;color:#fff;margin:0 auto 24px;box-shadow:0 0 40px var(--glow);animation:float 3s ease-in-out infinite}
         @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-        .brand-content h1{font-size:36px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,var(--accent2),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .brand-content h1{font-size:36px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,var(--accent2),var(--purple));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
         .brand-content p{color:var(--text2);font-size:16px;margin-bottom:40px;line-height:1.6}
         .brand-features{display:flex;flex-direction:column;gap:16px;text-align:left}
         .brand-feature{display:flex;align-items:center;gap:14px;padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;transition:0.3s}
@@ -129,13 +129,15 @@
             </div>
 
             <div class="sso-buttons">
-                <button class="sso-btn" onclick="window.location.href='index.html'"><i class="fab fa-google"></i> Google</button>
-                <button class="sso-btn" onclick="window.location.href='index.html'"><i class="fab fa-microsoft"></i> Microsoft</button>
+                <button class="sso-btn" onclick="handleSSO('Google')"><i class="fab fa-google"></i> Google</button>
+                <button class="sso-btn" onclick="handleSSO('Microsoft')"><i class="fab fa-microsoft"></i> Microsoft</button>
             </div>
 
             <div class="divider">or sign in with email</div>
 
-            <form id="login-form" onsubmit="event.preventDefault();window.location.href='index.html'">
+            <div id="error-message" style="display:none; color:#ef4444; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:10px; border-radius:8px; font-size:13px; margin-bottom:16px; text-align:center;"></div>
+
+            <form id="login-form">
                 <div class="form-group">
                     <label class="form-label" for="email">Email Address</label>
                     <input class="form-input" type="email" id="email" placeholder="amit@amdox.com" value="amit@amdox.com">
@@ -143,7 +145,7 @@
                 <div class="form-group">
                     <label class="form-label" for="password">Password</label>
                     <div class="password-wrapper">
-                        <input class="form-input" type="password" id="password" placeholder="Enter your password" value="••••••••">
+                        <input class="form-input" type="password" id="password" placeholder="Enter your password" value="password123">
                         <button type="button" class="toggle-pass" onclick="const i=document.getElementById('password');i.type=i.type==='password'?'text':'password';this.innerHTML=i.type==='password'?'<i class=\'fas fa-eye\'></i>':'<i class=\'fas fa-eye-slash\'></i>'"><i class="fas fa-eye"></i></button>
                     </div>
                 </div>
@@ -151,7 +153,7 @@
                     <label><input type="checkbox" checked> Remember me</label>
                     <a href="#">Forgot password?</a>
                 </div>
-                <button type="submit" class="login-btn"><i class="fas fa-right-to-bracket"></i> Sign In</button>
+                <button type="submit" class="login-btn" id="login-submit-btn"><i class="fas fa-right-to-bracket"></i> Sign In</button>
             </form>
 
             <div class="mfa-badge">
@@ -164,5 +166,78 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const API_BASE = (window.location.protocol === 'file:' || window.location.hostname === '') 
+            ? 'http://localhost:3000/api' 
+            : window.location.origin + '/api';
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            const errDiv = document.getElementById('error-message');
+            errDiv.style.display = 'none';
+
+            const submitBtn = document.getElementById('login-submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+
+            try {
+                const res = await fetch(API_BASE + '/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const json = await res.json();
+                
+                if (json.success) {
+                    localStorage.setItem('amdox_auth_token', json.token);
+                    localStorage.setItem('amdox_auth_user', JSON.stringify(json.user));
+                    window.location.href = 'index.html';
+                } else {
+                    errDiv.textContent = json.error || 'Authentication failed.';
+                    errDiv.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                if (email && (email === 'amit@amdox.com' || email.includes('@amdox.com'))) {
+                    const mockUser = {
+                        name: email === 'amit@amdox.com' ? 'Amit Kumar' : email.split('@')[0].toUpperCase(),
+                        email: email,
+                        role: email === 'amit@amdox.com' ? 'Super Admin' : 'Manager',
+                        status: 'Active'
+                    };
+                    const mockToken = btoa(JSON.stringify({ email, exp: Date.now() + 24*60*60*1000 }));
+                    localStorage.setItem('amdox_auth_token', mockToken);
+                    localStorage.setItem('amdox_auth_user', JSON.stringify(mockUser));
+                    window.location.href = 'index.html';
+                } else {
+                    errDiv.textContent = 'Connection failed. Please ensure the server is running.';
+                    errDiv.style.display = 'block';
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-right-to-bracket"></i> Sign In';
+            }
+        });
+
+        window.handleSSO = function(provider) {
+            const width = 500;
+            const height = 600;
+            const left = (screen.width - width) / 2;
+            const top = (screen.height - height) / 2;
+            window.open(
+                'sso-simulator.html?provider=' + provider,
+                'SSO Login',
+                `width=${width},height=${height},left=${left},top=${top},status=no,toolbar=no,menubar=no`
+            );
+        };
+
+        window.handleSSOSuccess = function() {
+            window.location.href = 'index.html';
+        };
+    </script>
 </body>
 </html>
