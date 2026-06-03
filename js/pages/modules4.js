@@ -369,7 +369,7 @@ pages.devops = function(container) {
         <div class="stat-card"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fas fa-cubes"></i></div></div><div class="stat-value" id="devops-stat-pods">${stats.pods}</div><div class="stat-label">Active Pods</div></div>
         <div class="stat-card"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-gauge-high"></i></div></div><div class="stat-value" id="devops-stat-latency">${stats.latency}ms</div><div class="stat-label">Avg Latency</div></div>
       </div>
-      <div class="grid-2">
+      <div class="grid-2" style="margin-bottom: 24px;">
         <div class="card">
           <div class="card-header">
             <span class="card-title">CI/CD Pipeline Status</span>
@@ -386,6 +386,31 @@ pages.devops = function(container) {
             <div class="list-item"><div class="list-icon" style="background:rgba(59,130,246,0.12);color:var(--info)"><i class="fas fa-dharmachakra"></i></div><div class="list-content"><div class="list-title">Kubernetes (EKS)</div><div class="list-subtitle">3 nodes, 24 pods</div></div><span class="badge badge-success">Healthy</span></div>
             <div class="list-item"><div class="list-icon" style="background:rgba(168,85,247,0.12);color:var(--purple)"><i class="fas fa-cloud"></i></div><div class="list-content"><div class="list-title">Terraform</div><div class="list-subtitle">42 resources managed</div></div><span class="badge badge-success">Synced</span></div>
             <div class="list-item"><div class="list-icon" style="background:rgba(245,158,11,0.12);color:var(--warning)"><i class="fas fa-chart-area"></i></div><div class="list-content"><div class="list-title">Prometheus + Grafana</div><div class="list-subtitle">156 metrics tracked</div></div><span class="badge badge-success">Active</span></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Manual ZIP Deployment Package Upload -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-file-archive" style="color:var(--cyan); margin-right:8px;"></i> Manual Deployment (ZIP Package)</span>
+        </div>
+        <div style="padding: 20px;">
+          <div id="zip-upload-zone" style="border: 2px dashed rgba(6, 182, 212, 0.3); border-radius: 12px; padding: 30px; text-align: center; background: rgba(6, 182, 212, 0.02); cursor: pointer; transition: all 0.3s ease;">
+            <div style="font-size: 40px; color: var(--cyan); margin-bottom: 12px;">
+              <i class="fas fa-cloud-arrow-up" id="upload-icon"></i>
+            </div>
+            <h4 style="font-size: 15px; margin-bottom: 6px; color: var(--text-primary);" id="upload-zone-title">Drag & Drop ZIP deploy package here, or click to browse</h4>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Max file size: 50MB. Only .zip extension files are allowed.</p>
+            <input type="file" id="zip-file-input" accept=".zip" style="display: none;" />
+            <button class="btn btn-secondary btn-sm" id="select-zip-btn"><i class="fas fa-folder-open"></i> Select ZIP File</button>
+            <div id="selected-file-info" style="display: none; margin-top: 15px; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+              <span style="font-size: 13px; font-family: var(--font-mono); color: var(--accent-light);" id="selected-file-name">filename.zip</span>
+              <span style="font-size: 12px; color: var(--text-muted); margin-left: 10px;" id="selected-file-size">(0 KB)</span>
+            </div>
+          </div>
+          <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+            <button class="btn btn-primary" id="start-zip-upload-btn" disabled><i class="fas fa-upload"></i> Upload & Deploy Package</button>
           </div>
         </div>
       </div>`;
@@ -418,6 +443,148 @@ pages.devops = function(container) {
         </div>
         <span class="badge ${badgeClass(b.status)}">${escHtml(b.status)}</span>
       </div>`).join('');
+
+    // Select ZIP File Event Hooks
+    const zipFileInput = document.getElementById('zip-file-input');
+    const zipUploadZone = document.getElementById('zip-upload-zone');
+    const selectZipBtn = document.getElementById('select-zip-btn');
+    const selectedFileInfo = document.getElementById('selected-file-info');
+    const selectedFileName = document.getElementById('selected-file-name');
+    const selectedFileSize = document.getElementById('selected-file-size');
+    const startZipUploadBtn = document.getElementById('start-zip-upload-btn');
+    const uploadIcon = document.getElementById('upload-icon');
+    const uploadZoneTitle = document.getElementById('upload-zone-title');
+
+    // Click on zone or select button triggers file selection
+    zipUploadZone.addEventListener('click', (e) => {
+      if (e.target !== selectZipBtn && e.target !== startZipUploadBtn && !startZipUploadBtn.contains(e.target)) {
+        zipFileInput.click();
+      }
+    });
+    selectZipBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      zipFileInput.click();
+    });
+
+    zipFileInput.addEventListener('change', () => {
+      if (zipFileInput.files.length > 0) {
+        const file = zipFileInput.files[0];
+        selectedFileName.textContent = file.name;
+        selectedFileSize.textContent = `(${(file.size / 1024).toFixed(1)} KB)`;
+        selectedFileInfo.style.display = 'block';
+        startZipUploadBtn.disabled = false;
+        
+        // Visual feedback
+        zipUploadZone.style.borderColor = 'var(--cyan)';
+        zipUploadZone.style.background = 'rgba(6, 182, 212, 0.05)';
+        uploadIcon.className = 'fas fa-file-zipper';
+        uploadZoneTitle.textContent = 'ZIP File Selected';
+      } else {
+        selectedFileInfo.style.display = 'none';
+        startZipUploadBtn.disabled = true;
+        zipUploadZone.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+        zipUploadZone.style.background = 'rgba(6, 182, 212, 0.02)';
+        uploadIcon.className = 'fas fa-cloud-arrow-up';
+        uploadZoneTitle.textContent = 'Drag & Drop ZIP deploy package here, or click to browse';
+      }
+    });
+
+    // Drag and Drop simulation/handling
+    zipUploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      zipUploadZone.style.borderColor = 'var(--cyan)';
+      zipUploadZone.style.background = 'rgba(6, 182, 212, 0.08)';
+    });
+
+    zipUploadZone.addEventListener('dragleave', () => {
+      if (zipFileInput.files.length === 0) {
+        zipUploadZone.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+        zipUploadZone.style.background = 'rgba(6, 182, 212, 0.02)';
+      }
+    });
+
+    zipUploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer.files.length > 0) {
+        const file = e.dataTransfer.files[0];
+        if (file.name.endsWith('.zip')) {
+          zipFileInput.files = e.dataTransfer.files;
+          zipFileInput.dispatchEvent(new Event('change'));
+        } else {
+          showToast('Only .zip files are allowed!', 'error');
+          zipUploadZone.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+          zipUploadZone.style.background = 'rgba(6, 182, 212, 0.02)';
+        }
+      }
+    });
+
+    // Upload & Deploy handler
+    startZipUploadBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (zipFileInput.files.length === 0) return;
+
+      const file = zipFileInput.files[0];
+      const formData = new FormData();
+      formData.append('zipFile', file);
+
+      startZipUploadBtn.disabled = true;
+      startZipUploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+      
+      try {
+        const response = await fetch('/api/upload-zip', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showToast('ZIP package uploaded & deployment verified!', 'success');
+          
+          // Clear input and UI state
+          zipFileInput.value = '';
+          selectedFileInfo.style.display = 'none';
+          startZipUploadBtn.disabled = true;
+          startZipUploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload & Deploy Package';
+          zipUploadZone.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+          zipUploadZone.style.background = 'rgba(6, 182, 212, 0.02)';
+          uploadIcon.className = 'fas fa-cloud-arrow-up';
+          uploadZoneTitle.textContent = 'Drag & Drop ZIP deploy package here, or click to browse';
+
+          // Insert a new Passed build to list
+          const list = getBuilds();
+          const currentStats = getStats();
+          const nextBuildId = String(currentStats.builds + 1);
+          
+          const newBuild = {
+            id: nextBuildId,
+            branch: 'manual-zip',
+            action: `Deployed package: ${result.fileInfo.originalName}`,
+            time: 'Just now',
+            status: 'Passed'
+          };
+          
+          list.unshift(newBuild);
+          saveBuilds(list);
+          
+          // Update Stats
+          currentStats.builds += 1;
+          currentStats.latency = Math.floor(30 + Math.random() * 10);
+          saveStats(currentStats);
+
+          renderDevOps();
+        } else {
+          showToast(`Error: ${result.error}`, 'error');
+          startZipUploadBtn.disabled = false;
+          startZipUploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload & Deploy Package';
+        }
+      } catch (error) {
+        console.error('Upload failed:', error);
+        showToast('Server upload error occurred!', 'error');
+        startZipUploadBtn.disabled = false;
+        startZipUploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload & Deploy Package';
+      }
+    });
 
     // Deploy simulation
     document.getElementById('devops-deploy-btn').addEventListener('click', (e) => {

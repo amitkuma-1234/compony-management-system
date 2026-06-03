@@ -12,7 +12,7 @@
     <style>
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
         :root{--bg:#0a0e1a;--card:#111827;--border:rgba(255,255,255,0.08);--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;--accent:#6366f1;--accent2:#818cf8;--purple:#a855f7;--pink:#ec4899;--success:#22c55e;--glow:rgba(99,102,241,0.3)}
-        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow:hidden}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow-y:auto;overflow-x:hidden}
         
         /* Left Side - Branding */
         .login-brand{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px;position:relative;overflow:hidden}
@@ -31,7 +31,7 @@
         .brand-feature strong{display:block;font-size:14px;color:var(--text);margin-bottom:2px}
         
         /* Right Side - Login Form */
-        .login-form-side{width:520px;display:flex;align-items:center;justify-content:center;padding:40px;background:var(--card);border-left:1px solid var(--border)}
+        .login-form-side{width:520px;display:flex;align-items:center;justify-content:center;padding:40px;background:var(--card);border-left:1px solid var(--border);overflow-y:auto;max-height:100vh}
         .login-form-container{width:100%;max-width:380px}
         .login-header{margin-bottom:32px}
         .login-header h2{font-size:24px;font-weight:700;margin-bottom:6px}
@@ -77,6 +77,91 @@
         .tenant-select select{background:transparent;border:none;color:var(--accent2);font-family:inherit;font-size:13px;font-weight:500;outline:none;cursor:pointer;flex:1}
         .tenant-select select option{background:var(--card);color:var(--text)}
         
+        /* Demo Roles Selector Styles */
+        .demo-roles-container {
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .demo-roles-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .demo-roles-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .demo-role-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 4px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+        .demo-role-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+        .demo-role-card.active {
+            background: rgba(99, 102, 241, 0.08);
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+        .demo-role-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+        .demo-role-card:hover .demo-role-icon {
+            transform: scale(1.1);
+        }
+        .demo-role-icon.admin {
+            background: rgba(245, 158, 11, 0.12);
+            color: #f59e0b;
+        }
+        .demo-role-icon.hr {
+            background: rgba(168, 85, 247, 0.12);
+            color: #a855f7;
+        }
+        .demo-role-icon.employee {
+            background: rgba(34, 197, 94, 0.12);
+            color: #22c55e;
+        }
+        .demo-role-icon.manager {
+            background: rgba(6, 182, 212, 0.12);
+            color: #06b6d4;
+        }
+        .demo-role-name {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text2);
+        }
+        .demo-role-card.active .demo-role-name {
+            color: var(--text);
+        }
+
         @media(max-width:900px){
             .login-brand{display:none}
             .login-form-side{width:100%;border-left:none}
@@ -133,6 +218,29 @@
                 <button class="sso-btn" onclick="handleSSO('Microsoft')"><i class="fab fa-microsoft"></i> Microsoft</button>
             </div>
 
+            <!-- Demo Credentials Helper -->
+            <div class="demo-roles-container">
+                <div class="demo-roles-title">Demo Roles Quick Sign-in</div>
+                <div class="demo-roles-grid">
+                    <div class="demo-role-card active" data-email="amit@amdox.com" data-pass="admin123">
+                        <div class="demo-role-icon admin"><i class="fas fa-user-shield"></i></div>
+                        <span class="demo-role-name">Admin</span>
+                    </div>
+                    <div class="demo-role-card" data-email="neha@amdox.com" data-pass="neha123">
+                        <div class="demo-role-icon hr"><i class="fas fa-users-gear"></i></div>
+                        <span class="demo-role-name">HR Manager</span>
+                    </div>
+                    <div class="demo-role-card" data-email="karan@amdox.com" data-pass="karan123">
+                        <div class="demo-role-icon manager"><i class="fas fa-briefcase"></i></div>
+                        <span class="demo-role-name">Manager</span>
+                    </div>
+                    <div class="demo-role-card" data-email="rahul@amdox.com" data-pass="rahul123">
+                        <div class="demo-role-icon employee"><i class="fas fa-user-tie"></i></div>
+                        <span class="demo-role-name">Employee</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="divider">or sign in with email</div>
 
             <div id="error-message" style="display:none; color:#ef4444; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:10px; border-radius:8px; font-size:13px; margin-bottom:16px; text-align:center;"></div>
@@ -145,7 +253,7 @@
                 <div class="form-group">
                     <label class="form-label" for="password">Password</label>
                     <div class="password-wrapper">
-                        <input class="form-input" type="password" id="password" placeholder="Enter your password" value="password123">
+                        <input class="form-input" type="password" id="password" placeholder="Enter your password" value="admin123">
                         <button type="button" class="toggle-pass" onclick="const i=document.getElementById('password');i.type=i.type==='password'?'text':'password';this.innerHTML=i.type==='password'?'<i class=\'fas fa-eye\'></i>':'<i class=\'fas fa-eye-slash\'></i>'"><i class="fas fa-eye"></i></button>
                     </div>
                 </div>
@@ -203,10 +311,26 @@
             } catch (err) {
                 console.error(err);
                 if (email && (email === 'amit@amdox.com' || email.includes('@amdox.com'))) {
+                    let role = 'Senior Developer';
+                    let name = email.split('@')[0];
+                    name = name.charAt(0).toUpperCase() + name.slice(1);
+                    if (email === 'amit@amdox.com') {
+                        role = 'Super Admin';
+                        name = 'Amit Kumar';
+                    } else if (email === 'neha@amdox.com') {
+                        role = 'HR Manager';
+                        name = 'Neha Kapoor';
+                    } else if (email === 'karan@amdox.com') {
+                        role = 'Manager';
+                        name = 'Karan Mehta';
+                    } else if (email === 'rahul@amdox.com') {
+                        role = 'Senior Developer';
+                        name = 'Rahul Singh';
+                    }
                     const mockUser = {
-                        name: email === 'amit@amdox.com' ? 'Amit Kumar' : email.split('@')[0].toUpperCase(),
+                        name: name,
                         email: email,
-                        role: email === 'amit@amdox.com' ? 'Super Admin' : 'Manager',
+                        role: role,
                         status: 'Active'
                     };
                     const mockToken = btoa(JSON.stringify({ email, exp: Date.now() + 24*60*60*1000 }));
@@ -238,6 +362,38 @@
         window.handleSSOSuccess = function() {
             window.location.href = 'index.html';
         };
+
+        // Interactive Demo Roles click logic
+        document.querySelectorAll('.demo-role-card').forEach(card => {
+            card.addEventListener('click', () => {
+                // Clear active states from all cards
+                document.querySelectorAll('.demo-role-card').forEach(c => c.classList.remove('active'));
+                
+                // Add active state to current card
+                card.classList.add('active');
+                
+                // Set input values
+                const emailInput = document.getElementById('email');
+                const passwordInput = document.getElementById('password');
+                emailInput.value = card.getAttribute('data-email');
+                passwordInput.value = card.getAttribute('data-pass');
+                
+                // Visual feedback highlight transition
+                emailInput.style.borderColor = 'var(--accent)';
+                passwordInput.style.borderColor = 'var(--accent)';
+                setTimeout(() => {
+                    emailInput.style.borderColor = '';
+                    passwordInput.style.borderColor = '';
+                }, 800);
+            });
+        });
+
+        // Clear active class if inputs are manually edited
+        const clearActiveRole = () => {
+            document.querySelectorAll('.demo-role-card').forEach(c => c.classList.remove('active'));
+        };
+        document.getElementById('email').addEventListener('input', clearActiveRole);
+        document.getElementById('password').addEventListener('input', clearActiveRole);
     </script>
 </body>
 </html>

@@ -6,8 +6,41 @@ const express = require('express');
 const cors    = require('cors');
 const path    = require('path');
 const db      = require('./database');
+const multer  = require('multer');
+const fs      = require('fs');
 
 const app  = express();
+
+// ── Multer Storage Configuration for ZIP Uploads ────────────────
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (ext === '.zip') {
+    cb(null, true);
+  } else {
+    cb(new Error('Only ZIP files are allowed!'), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 50 * 1024 * 1024 } // 50MB Limit
+});
 const PORT = process.env.PORT || 3000;
 
 // ── Middleware ────────────────────────────────────────────
@@ -34,12 +67,19 @@ app.post('/api/auth/login', (req, res) => {
     }
     
     let user = null;
+    let correctPassword = null;
+
     if (email === 'amit@amdox.com') {
       user = { name: 'Amit Kumar', email: 'amit@amdox.com', role: 'Super Admin', status: 'Active' };
+      correctPassword = 'admin123';
+    } else if (email === 'karan@amdox.com') {
+      user = { name: 'Karan Mehta', email: 'karan@amdox.com', role: 'Manager', status: 'Active' };
+      correctPassword = 'karan123';
     } else {
       const emp = db.prepare('SELECT * FROM employees WHERE email = ?').get(email);
       if (emp) {
         user = { name: emp.name, email: emp.email, role: emp.role, status: emp.status };
+        correctPassword = emp.password;
       }
     }
     
@@ -47,8 +87,8 @@ app.post('/api/auth/login', (req, res) => {
       return res.status(401).json({ success: false, error: 'User not found or account is inactive.' });
     }
     
-    if (password !== 'password123') {
-      return res.status(401).json({ success: false, error: 'Invalid password. Use "password123"' });
+    if (password !== correctPassword) {
+      return res.status(401).json({ success: false, error: 'Invalid password. Please try again.' });
     }
     
     const token = Buffer.from(JSON.stringify({ email: user.email, exp: Date.now() + 24*60*60*1000 })).toString('base64');
@@ -410,6 +450,32 @@ app.get('/api/activity-log', (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const logs = db.prepare('SELECT * FROM activity_log ORDER BY created_at DESC LIMIT ?').all(limit);
     res.json({ success: true, data: logs });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// ZIP FILE UPLOAD
+// ═══════════════════════════════════════════════════════════
+
+app.post('/api/upload-zip', upload.single('zipFile'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Please select a ZIP file to upload.' });
+    }
+    
+    logActivity('DevOps', 'UPLOAD', `Uploaded ZIP file: ${req.file.originalname}`);
+    
+    res.json({
+      success: true,
+      message: 'ZIP file uploaded successfully!',
+      fileInfo: {
+        originalName: req.file.originalname,
+        savedName: req.file.filename,
+        size: req.file.size
+      }
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

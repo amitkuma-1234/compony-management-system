@@ -22,6 +22,25 @@ function updateSidebarAndProfile() {
       if (sidebarName) sidebarName.textContent = user.name;
       const sidebarRole = document.querySelector('.sidebar-user .user-role');
       if (sidebarRole) sidebarRole.textContent = user.role;
+
+      // Add role badge next to user role in sidebar footer
+      const existingBadge = document.querySelector('.sidebar-user .role-badge');
+      if (existingBadge) existingBadge.remove();
+      if (sidebarRole) {
+        const roleKey = getRoleKey(user.role);
+        const roleColors = {
+          admin:    { bg: 'rgba(245,158,11,0.15)',  color: '#f59e0b',  label: 'Admin' },
+          hr:       { bg: 'rgba(168,85,247,0.15)',   color: '#a855f7',  label: 'HR' },
+          manager:  { bg: 'rgba(6,182,212,0.15)',    color: '#06b6d4',  label: 'Manager' },
+          employee: { bg: 'rgba(34,197,94,0.15)',    color: '#22c55e',  label: 'Staff' }
+        };
+        const rc = roleColors[roleKey] || roleColors.employee;
+        const badge = document.createElement('span');
+        badge.className = 'role-badge';
+        badge.textContent = rc.label;
+        badge.style.cssText = `display:inline-block;margin-left:6px;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;background:${rc.bg};color:${rc.color};letter-spacing:0.4px;vertical-align:middle;`;
+        sidebarRole.appendChild(badge);
+      }
       
       const topbarAvatar = document.querySelector('.topbar-profile .profile-avatar span');
       if (topbarAvatar) topbarAvatar.textContent = initials;
@@ -37,6 +56,38 @@ function logoutUser() {
   localStorage.removeItem('amdox_auth_token');
   localStorage.removeItem('amdox_auth_user');
   window.location.href = 'login.html';
+}
+
+// ── RBAC: Map role string → key ──
+function getRoleKey(roleStr) {
+  const r = (roleStr || '').toLowerCase();
+  if (r.includes('admin'))   return 'admin';
+  if (r.includes('hr'))      return 'hr';
+  if (r.includes('manager')) return 'manager';
+  return 'employee';
+}
+
+// ── RBAC: Show/hide sidebar items by role ──
+function applyRoleSidebar() {
+  let roleKey = 'employee';
+  try {
+    const u = JSON.parse(localStorage.getItem('amdox_auth_user') || '{}');
+    roleKey = getRoleKey(u.role);
+  } catch {}
+
+  document.querySelectorAll('.nav-item[data-roles]').forEach(item => {
+    const allowed = (item.dataset.roles || '').split(',').map(s => s.trim());
+    const visible = allowed.includes(roleKey);
+    item.style.display = visible ? '' : 'none';
+  });
+
+  // Also hide section headings whose ALL items are hidden
+  document.querySelectorAll('.nav-section').forEach(section => {
+    const items = section.querySelectorAll('.nav-item');
+    const anyVisible = Array.from(items).some(i => i.style.display !== 'none');
+    const heading = section.querySelector('.nav-section-title');
+    if (heading) heading.style.display = anyVisible ? '' : 'none';
+  });
 }
 
 // ── Page Renderers (imported below) ──
@@ -57,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     document.getElementById('preloader').classList.add('hidden');
     document.getElementById('app').classList.add('visible');
+    applyRoleSidebar();
     initRouter();
     initSidebar();
     initTopbar();
@@ -80,6 +132,23 @@ function handleRoute() {
 
 function navigateTo(page) {
   const container = document.getElementById('page-content');
+
+  // ── Route Guard: block forbidden pages ──
+  let roleKey = 'employee';
+  try {
+    const u = JSON.parse(localStorage.getItem('amdox_auth_user') || '{}');
+    roleKey = getRoleKey(u.role);
+  } catch {}
+  const targetNav = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if (targetNav) {
+    const allowed = (targetNav.dataset.roles || '').split(',').map(s => s.trim());
+    if (!allowed.includes(roleKey)) {
+      showToast('⛔ Access denied — insufficient permissions.', 'error');
+      page = 'dashboard';
+      location.hash = 'dashboard';
+    }
+  }
+
   // Update nav
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const navItem = document.querySelector(`.nav-item[data-page="${page}"]`);

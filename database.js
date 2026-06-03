@@ -19,6 +19,7 @@ db.exec(`
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     name        TEXT    NOT NULL,
     email       TEXT    NOT NULL UNIQUE,
+    password    TEXT    NOT NULL DEFAULT 'password123',
     department  TEXT    NOT NULL,
     role        TEXT    NOT NULL,
     status      TEXT    NOT NULL DEFAULT 'Active',
@@ -84,15 +85,15 @@ db.exec(`
 const seedEmployees = db.prepare('SELECT COUNT(*) as count FROM employees').get();
 if (seedEmployees.count === 0) {
   const insert = db.prepare(`
-    INSERT INTO employees (name, email, department, role, status, joined)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO employees (name, email, password, department, role, status, joined)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `);
   const seed = db.transaction(() => {
-    insert.run('Rahul Singh',  'rahul@amdox.com',  'Engineering', 'Senior Developer',   'Active',   'Jan 2024');
-    insert.run('Anita Patel',  'anita@amdox.com',  'Sales',       'Sales Manager',       'Active',   'Mar 2023');
-    insert.run('Vikram Kumar', 'vikram@amdox.com', 'Finance',     'Financial Analyst',   'Active',   'Jun 2023');
-    insert.run('Priya Sharma', 'priya@amdox.com',  'Engineering', 'Frontend Developer',  'Probation','May 2026');
-    insert.run('Neha Kapoor',  'neha@amdox.com',   'HR',          'HR Manager',          'Active',   'Sep 2022');
+    insert.run('Rahul Singh',  'rahul@amdox.com',  'rahul123',  'Engineering', 'Senior Developer',   'Active',   'Jan 2024');
+    insert.run('Anita Patel',  'anita@amdox.com',  'anita123',  'Sales',       'Sales Manager',       'Active',   'Mar 2023');
+    insert.run('Vikram Kumar', 'vikram@amdox.com', 'vikram123', 'Finance',     'Financial Analyst',   'Active',   'Jun 2023');
+    insert.run('Priya Sharma', 'priya@amdox.com',  'priya123',  'Engineering', 'Frontend Developer',  'Probation','May 2026');
+    insert.run('Neha Kapoor',  'neha@amdox.com',   'neha123',   'HR',          'HR Manager',          'Active',   'Sep 2022');
   });
   seed();
 }
