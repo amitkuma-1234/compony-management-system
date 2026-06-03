@@ -4,6 +4,9 @@ body { font-family:var(--font-sans); background:var(--bg-primary); color:var(--t
 a { text-decoration:none; color:inherit; }
 button { border:none; background:none; cursor:pointer; font-family:inherit; color:inherit; }
 input { font-family:inherit; border:none; outline:none; background:none; color:var(--text-primary); }
+select { font-family:inherit; color:var(--text-primary); }
+select option, select optgroup { background:var(--bg-secondary); color:var(--text-primary); padding:8px 12px; }
+select option:hover, select option:checked { background:var(--accent); color:#fff; }
 ul,ol { list-style:none; }
 ::-webkit-scrollbar { width:6px; }
 ::-webkit-scrollbar-track { background:transparent; }
