@@ -74,6 +74,7 @@
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 @keyframes slideIn { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:translateX(0); } }
+@keyframes scanLine { 0% { top:0; } 50% { top:calc(100% - 2px); } 100% { top:0; } }
 .animate-fade { animation:fadeIn 0.5s ease; }
 .animate-slide-up { animation:slideUp 0.5s ease; }
 
@@ -115,6 +116,14 @@
   .quick-action-items { grid-template-columns:1fr; }
   .quick-action-content { margin:4vh auto; max-height:90vh; }
 }
+
+/* Chart Menu Dropdown */
+.chart-menu-wrapper { position:relative; }
+.chart-dropdown { position:absolute; top:calc(100% + 6px); right:0; width:180px; background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-md); box-shadow:var(--shadow-lg); padding:6px; display:none; flex-direction:column; z-index:50; animation:fadeIn 0.2s ease; }
+.chart-dropdown.open { display:flex; }
+.chart-dropdown a { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:var(--radius-sm); font-size:13px; color:var(--text-secondary); transition:var(--transition); text-decoration:none; }
+.chart-dropdown a:hover { background:var(--bg-surface); color:var(--text-primary); }
+.chart-dropdown i { width:16px; text-align:center; font-size:13px; color:var(--text-muted); }
 
 /* Profile Dropdown */
 .topbar-profile { position:relative; }
