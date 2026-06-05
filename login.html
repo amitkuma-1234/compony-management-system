@@ -87,7 +87,9 @@
     <!-- Left Branding -->
     <div class="login-brand">
         <div class="brand-content">
-            <div class="brand-logo"><i class="fas fa-cube"></i></div>
+            <div class="brand-logo" style="background: none; box-shadow: none;">
+                <img src="assets/logos/logo_amdox_main_1780462600365.png" alt="Amdox Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 20px; box-shadow: 0 0 40px rgba(168,85,247,0.3);">
+            </div>
             <h1>Amdox ERP Suite</h1>
             <p>AI-Powered Cloud Enterprise Platform for modern businesses. Manage HR, Finance, Inventory, CRM, and more from a single dashboard.</p>
             <div class="brand-features">
@@ -135,25 +137,37 @@
 
             <div class="divider">or sign in with email</div>
 
+<<<<<<< HEAD
+=======
             <div id="error-message" style="display:none; color:#ef4444; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:10px; border-radius:8px; font-size:13px; margin-bottom:16px; text-align:center;"></div>
 
+>>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
             <form id="login-form">
                 <div class="form-group">
                     <label class="form-label" for="email">Email Address</label>
-                    <input class="form-input" type="email" id="email" placeholder="amit@amdox.com" value="amit@amdox.com">
+                    <input class="form-input" type="email" id="email" placeholder="admin@amdox.com" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="password">Password</label>
                     <div class="password-wrapper">
+<<<<<<< HEAD
+                        <input class="form-input" type="password" id="password" placeholder="Enter your password" required>
+=======
                         <input class="form-input" type="password" id="password" placeholder="Enter your password" value="password123">
+>>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
                         <button type="button" class="toggle-pass" onclick="const i=document.getElementById('password');i.type=i.type==='password'?'text':'password';this.innerHTML=i.type==='password'?'<i class=\'fas fa-eye\'></i>':'<i class=\'fas fa-eye-slash\'></i>'"><i class="fas fa-eye"></i></button>
                     </div>
                 </div>
+                <div id="login-error" style="color: #ef4444; font-size: 13px; margin-bottom: 16px; display: none; text-align: center;"></div>
                 <div class="form-row">
                     <label><input type="checkbox" checked> Remember me</label>
                     <a href="#">Forgot password?</a>
                 </div>
+<<<<<<< HEAD
+                <button type="submit" id="login-submit" class="login-btn"><i class="fas fa-right-to-bracket"></i> Sign In</button>
+=======
                 <button type="submit" class="login-btn" id="login-submit-btn"><i class="fas fa-right-to-bracket"></i> Sign In</button>
+>>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
             </form>
 
             <div class="mfa-badge">
@@ -168,6 +182,23 @@
     </div>
 
     <script>
+<<<<<<< HEAD
+        const form = document.getElementById('login-form');
+        const errDiv = document.getElementById('login-error');
+        const submitBtn = document.getElementById('login-submit');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            errDiv.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('http://localhost:4000/api/auth/login', {
+=======
         const API_BASE = (window.location.protocol === 'file:' || window.location.hostname === '') 
             ? 'http://localhost:3000/api' 
             : window.location.origin + '/api';
@@ -186,10 +217,27 @@
 
             try {
                 const res = await fetch(API_BASE + '/auth/login', {
+>>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
+<<<<<<< HEAD
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.setItem('amdox_token', data.token);
+                    localStorage.setItem('amdox_user', JSON.stringify(data.user));
+                    window.location.href = 'index.html';
+                } else {
+                    errDiv.textContent = data.error || 'Login failed. Please try again.';
+                    errDiv.style.display = 'block';
+                }
+            } catch (err) {
+                errDiv.textContent = 'Connection error. Is the server running?';
+                errDiv.style.display = 'block';
+=======
                 const json = await res.json();
                 
                 if (json.success) {
@@ -217,10 +265,13 @@
                     errDiv.textContent = 'Connection failed. Please ensure the server is running.';
                     errDiv.style.display = 'block';
                 }
+>>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-right-to-bracket"></i> Sign In';
             }
+<<<<<<< HEAD
+=======
         });
 
         window.handleSSO = function(provider) {
@@ -237,7 +288,9 @@
 
         window.handleSSOSuccess = function() {
             window.location.href = 'index.html';
+>>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
         };
     </script>
 </body>
 </html>
+
