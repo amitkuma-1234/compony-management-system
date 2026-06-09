@@ -11,10 +11,10 @@ pages.analytics = function(container) {
       </div>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-chart-pie"></i></div></div><div class="stat-value" id="analytics-dashboards">12</div><div class="stat-label">Active Dashboards</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-file-lines"></i></div></div><div class="stat-value" id="analytics-reports">248</div><div class="stat-label">Reports Generated</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-database"></i></div></div><div class="stat-value">1.2TB</div><div class="stat-label">Data Processed</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fas fa-clock-rotate-left"></i></div></div><div class="stat-value">45ms</div><div class="stat-label">Avg Query Time</div></div>
+      <div class="stat-card" id="analytics-stat-dashboards"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-chart-pie"></i></div></div><div class="stat-value" id="analytics-dashboards">12</div><div class="stat-label">Active Dashboards</div></div>
+      <div class="stat-card" id="analytics-stat-reports"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-file-lines"></i></div></div><div class="stat-value" id="analytics-reports">248</div><div class="stat-label">Reports Generated</div></div>
+      <div class="stat-card" id="analytics-stat-data"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-database"></i></div></div><div class="stat-value">1.2TB</div><div class="stat-label">Data Processed</div></div>
+      <div class="stat-card" id="analytics-stat-query"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fas fa-clock-rotate-left"></i></div></div><div class="stat-value">45ms</div><div class="stat-label">Avg Query Time</div></div>
     </div>
     <div class="grid-2">
       <div class="card"><div class="card-header"><span class="card-title">Revenue Trends</span></div><div class="chart-container"><canvas data-chart="revenue"></canvas></div></div>
@@ -505,6 +505,86 @@ pages.analytics = function(container) {
   }
 
   renderDashboards();
+
+  // ── Stat Card Click Handlers ──
+  document.getElementById('analytics-stat-dashboards')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-chart-pie" style="color:var(--info)"></i> Active Dashboards Overview',
+      submitLabel: 'Create New Dashboard',
+      fields: [
+        { label: 'System Dashboards', default: '8 (Built-in)', readonly: true },
+        { label: 'Custom Dashboards', default: String(getDashboards().length + 4), readonly: true },
+        { label: 'Most Viewed', default: 'Revenue Analytics (342 views)', readonly: true },
+        { label: 'Last Updated', default: new Date().toLocaleDateString('en-IN', { dateStyle: 'medium' }), readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        document.getElementById('analytics-new-dashboard')?.click();
+      }
+    });
+  });
+
+  document.getElementById('analytics-stat-reports')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-file-lines" style="color:var(--success)"></i> Reports Generated — Breakdown',
+      submitLabel: 'Generate New Report',
+      fields: [
+        { label: 'Total Reports', default: '248', readonly: true },
+        { label: 'PDF Reports', default: '112 (45%)', readonly: true },
+        { label: 'Excel Reports', default: '89 (36%)', readonly: true },
+        { label: 'Dashboard Reports', default: '47 (19%)', readonly: true },
+        { label: 'Top Requester', default: 'Finance Team (68 reports)', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        showToast('📊 Generating a new summary report...', 'info');
+        setTimeout(() => {
+          const rEl = document.getElementById('analytics-reports');
+          if (rEl) rEl.textContent = parseInt(rEl.textContent) + 1;
+          showToast('✅ Report #' + (249 + Math.floor(Math.random() * 50)) + ' generated successfully!', 'success');
+        }, 1500);
+      }
+    });
+  });
+
+  document.getElementById('analytics-stat-data')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-database" style="color:var(--purple)"></i> Data Processing Insights',
+      submitLabel: 'Close',
+      submitClass: 'btn-secondary',
+      fields: [
+        { label: 'Total Processed', default: '1.2 TB', readonly: true },
+        { label: 'This Month', default: '184 GB (+12%)', readonly: true },
+        { label: 'Data Sources', default: 'ERP DB, CRM API, Shopify, HR System', readonly: true },
+        { label: 'Storage Used', default: '234 GB / 300 GB (78%)', readonly: true },
+        { label: 'ETL Pipeline', default: 'Healthy — Last run: 15 min ago', readonly: true }
+      ],
+      onSubmit(data, close) { close(); }
+    });
+  });
+
+  document.getElementById('analytics-stat-query')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-clock-rotate-left" style="color:var(--cyan)"></i> Query Performance Metrics',
+      submitLabel: 'Run Benchmark',
+      fields: [
+        { label: 'Avg Response Time', default: '45ms', readonly: true },
+        { label: 'P95 Latency', default: '120ms', readonly: true },
+        { label: 'P99 Latency', default: '280ms', readonly: true },
+        { label: 'Queries/sec', default: '1,240 QPS', readonly: true },
+        { label: 'Slow Queries (>500ms)', default: '3 in last 24h', readonly: true },
+        { label: 'Cache Hit Rate', default: '94.6%', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        showToast('⚡ Running performance benchmark...', 'info');
+        setTimeout(() => {
+          const newTime = 38 + Math.floor(Math.random() * 15);
+          showToast('✅ Benchmark complete — Avg: ' + newTime + 'ms, P95: ' + (newTime * 2.5).toFixed(0) + 'ms', 'success');
+        }, 2000);
+      }
+    });
+  });
 };
 
 /* Auth & Security Page */
@@ -549,9 +629,9 @@ pages.auth = function(container) {
         <p>Multi-tenant RBAC, MFA/SSO, JWT security, OWASP protection, audit logging, and AI threat detection.</p>
       </div>
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-shield-check"></i></div></div><div class="stat-value">99.9%</div><div class="stat-label">Security Score</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-users"></i></div></div><div class="stat-value">162</div><div class="stat-label">Active Users</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-ban"></i></div></div><div class="stat-value">47</div><div class="stat-label">Threats Blocked</div></div>
+        <div class="stat-card" id="sec-stat-score" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-shield-check"></i></div></div><div class="stat-value">99.9%</div><div class="stat-label">Security Score</div></div>
+        <div class="stat-card" id="sec-stat-users" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-users"></i></div></div><div class="stat-value">162</div><div class="stat-label">Active Users</div></div>
+        <div class="stat-card" id="sec-stat-threats" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-ban"></i></div></div><div class="stat-value">47</div><div class="stat-label">Threats Blocked</div></div>
         <div class="stat-card" id="btn-toggle-mfa-stat" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-key"></i></div></div><div class="stat-value">${mfaEnabled ? 'MFA' : 'SMS'}</div><div class="stat-label">Auth Method</div></div>
       </div>
       <div class="grid-2" style="margin-bottom:24px">
@@ -605,6 +685,57 @@ pages.auth = function(container) {
     document.getElementById('auth-mfa-btn').addEventListener('click', toggleMFA);
     document.getElementById('btn-toggle-mfa-stat').addEventListener('click', toggleMFA);
     document.getElementById('auth-apikey-btn').addEventListener('click', generateApiKey);
+
+    // ── Security Stat Card Click Handlers ──
+    document.getElementById('sec-stat-score')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-shield-check" style="color:var(--success)"></i> Security Posture Analysis',
+        submitLabel: 'Run Audit',
+        fields: [
+          { label: 'Integrity Score', default: '99.9%', readonly: true },
+          { label: 'SSL Expiry', default: '284 Days Left', readonly: true },
+          { label: 'SQLi Protection', default: 'Level 5 (Max)', readonly: true },
+          { label: 'DDoS Defense', default: 'Cloudflare active', readonly: true }
+        ],
+        onSubmit(data, close) {
+          showToast('🛡️ Deep security audit triggered. System integrity confirmed.', 'success');
+          close();
+        }
+      });
+    });
+
+    document.getElementById('sec-stat-users')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-users" style="color:var(--info)"></i> Session Management',
+        submitLabel: 'Manage Roles',
+        fields: [
+          { label: 'Active Sessions', default: '162', readonly: true },
+          { label: 'Idle Users', default: '12', readonly: true },
+          { label: 'MFA Adoption', default: '98.5%', readonly: true }
+        ],
+        onSubmit(data, close) {
+          close();
+          location.hash = '#hr';
+        }
+      });
+    });
+
+    document.getElementById('sec-stat-threats')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-ban" style="color:var(--danger)"></i> Threat Intelligence',
+        submitLabel: 'View Audit Logs',
+        fields: [
+          { label: 'Blocked Attacks', default: '47', readonly: true },
+          { label: 'Latest IP Blocked', default: '103.45.67.89', readonly: true },
+          { label: 'Vulnerability Scan', default: 'Passed (0 issues)', readonly: true }
+        ],
+        onSubmit(data, close) {
+          close();
+          const logs = document.getElementById('security-audit-logs');
+          if (logs) logs.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
 
     loadAuditLogs();
   };
@@ -664,20 +795,20 @@ pages.notifications = function(container) {
       <p>Multi-channel notifications — Email, SMS, WhatsApp, Push, Webhooks, Slack/Discord with BullMQ queue and retry mechanism.</p>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-envelope"></i></div></div><div class="stat-value">2,847</div><div class="stat-label">Emails Sent</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-comment-sms"></i></div></div><div class="stat-value">456</div><div class="stat-label">SMS Delivered</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fab fa-whatsapp"></i></div></div><div class="stat-value">189</div><div class="stat-label">WhatsApp Messages</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-code"></i></div></div><div class="stat-value">34</div><div class="stat-label">Webhooks Active</div></div>
+      <div class="stat-card" id="notif-stat-email" style="cursor:pointer"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-envelope"></i></div></div><div class="stat-value">2,847</div><div class="stat-label">Emails Sent</div></div>
+      <div class="stat-card" id="notif-stat-sms" style="cursor:pointer"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-comment-sms"></i></div></div><div class="stat-value">456</div><div class="stat-label">SMS Delivered</div></div>
+      <div class="stat-card" id="notif-stat-whatsapp" style="cursor:pointer"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fab fa-whatsapp"></i></div></div><div class="stat-value">189</div><div class="stat-label">WhatsApp Messages</div></div>
+      <div class="stat-card" id="notif-stat-webhooks" style="cursor:pointer"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-code"></i></div></div><div class="stat-value">34</div><div class="stat-label">Webhooks Active</div></div>
     </div>
     <div class="grid-2">
       <div class="card">
         <div class="card-header"><span class="card-title">Notification Channels</span></div>
         <div class="activity-list">
-          <div class="list-item"><div class="list-icon" style="background:rgba(59,130,246,0.12);color:var(--info)"><i class="fas fa-envelope"></i></div><div class="list-content"><div class="list-title">Email (SMTP)</div><div class="list-subtitle">SendGrid integration · 99.2% delivery</div></div><span class="badge badge-success">Active</span></div>
-          <div class="list-item"><div class="list-icon" style="background:rgba(34,197,94,0.12);color:var(--success)"><i class="fas fa-comment-sms"></i></div><div class="list-content"><div class="list-title">SMS Gateway</div><div class="list-subtitle">Twilio · OTP & alerts</div></div><span class="badge badge-success">Active</span></div>
-          <div class="list-item"><div class="list-icon" style="background:rgba(6,182,212,0.12);color:var(--cyan)"><i class="fab fa-whatsapp"></i></div><div class="list-content"><div class="list-title">WhatsApp Business</div><div class="list-subtitle">Meta Cloud API</div></div><span class="badge badge-success">Active</span></div>
-          <div class="list-item"><div class="list-icon" style="background:rgba(168,85,247,0.12);color:var(--purple)"><i class="fab fa-slack"></i></div><div class="list-content"><div class="list-title">Slack Integration</div><div class="list-subtitle">Workspace notifications</div></div><span class="badge badge-success">Active</span></div>
-          <div class="list-item"><div class="list-icon" style="background:rgba(99,102,241,0.12);color:var(--accent)"><i class="fab fa-discord"></i></div><div class="list-content"><div class="list-title">Discord Webhooks</div><div class="list-subtitle">Dev team alerts</div></div><span class="badge badge-info">Config</span></div>
+          <div class="list-item" id="notif-ch-email" style="cursor:pointer"><div class="list-icon" style="background:rgba(59,130,246,0.12);color:var(--info)"><i class="fas fa-envelope"></i></div><div class="list-content"><div class="list-title">Email (SMTP)</div><div class="list-subtitle">SendGrid integration · 99.2% delivery</div></div><span class="badge badge-success">Active</span></div>
+          <div class="list-item" id="notif-ch-sms" style="cursor:pointer"><div class="list-icon" style="background:rgba(34,197,94,0.12);color:var(--success)"><i class="fas fa-comment-sms"></i></div><div class="list-content"><div class="list-title">SMS Gateway</div><div class="list-subtitle">Twilio · OTP & alerts</div></div><span class="badge badge-success">Active</span></div>
+          <div class="list-item" id="notif-ch-whatsapp" style="cursor:pointer"><div class="list-icon" style="background:rgba(6,182,212,0.12);color:var(--cyan)"><i class="fab fa-whatsapp"></i></div><div class="list-content"><div class="list-title">WhatsApp Business</div><div class="list-subtitle">Meta Cloud API</div></div><span class="badge badge-success">Active</span></div>
+          <div class="list-item" id="notif-ch-slack" style="cursor:pointer"><div class="list-icon" style="background:rgba(168,85,247,0.12);color:var(--purple)"><i class="fab fa-slack"></i></div><div class="list-content"><div class="list-title">Slack Integration</div><div class="list-subtitle">Workspace notifications</div></div><span class="badge badge-success">Active</span></div>
+          <div class="list-item" id="notif-ch-discord" style="cursor:pointer"><div class="list-icon" style="background:rgba(99,102,241,0.12);color:var(--accent)"><i class="fab fa-discord"></i></div><div class="list-content"><div class="list-title">Discord Webhooks</div><div class="list-subtitle">Dev team alerts</div></div><span class="badge badge-info">Config</span></div>
         </div>
       </div>
       <div class="card">
@@ -690,6 +821,161 @@ pages.notifications = function(container) {
         </div>
       </div>
     </div>`;
+
+  // ── Stat card click handlers ──
+  document.getElementById('notif-stat-email')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-envelope" style="color:var(--info)"></i> Email Analytics',
+      submitLabel: 'Send Test Email',
+      fields: [
+        { name: 'to', label: 'Recipient Email', required: true, placeholder: 'e.g. user@amdox.com' },
+        { name: 'subject', label: 'Subject', required: true, placeholder: 'e.g. Monthly Report' },
+        { name: 'template', label: 'Template', type: 'select', options: ['Invoice Notification','Welcome Email','Password Reset','Leave Approval','System Alert'], default: 'Invoice Notification' }
+      ],
+      onSubmit(data, close) {
+        showToast('📧 Test email sent to ' + data.to + ' with template "' + data.template + '"!', 'success');
+        close();
+      }
+    });
+  });
+
+  document.getElementById('notif-stat-sms')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-comment-sms" style="color:var(--success)"></i> SMS Analytics',
+      submitLabel: 'Send Test SMS',
+      fields: [
+        { name: 'phone', label: 'Phone Number', required: true, placeholder: 'e.g. +91-9876543210' },
+        { name: 'message', label: 'Message', required: true, placeholder: 'e.g. Your OTP is 482910' },
+        { name: 'priority', label: 'Priority', type: 'select', options: ['Normal','High','Critical'], default: 'Normal' }
+      ],
+      onSubmit(data, close) {
+        showToast('💬 Test SMS sent to ' + data.phone + '!', 'success');
+        close();
+      }
+    });
+  });
+
+  document.getElementById('notif-stat-whatsapp')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp Analytics',
+      submitLabel: 'Send Test Message',
+      fields: [
+        { name: 'phone', label: 'WhatsApp Number', required: true, placeholder: 'e.g. +91-9876543210' },
+        { name: 'template', label: 'Message Template', type: 'select', options: ['Order Confirmation','Payment Receipt','Leave Status','Shipment Update','Custom Message'], default: 'Order Confirmation' },
+        { name: 'message', label: 'Custom Text (optional)', placeholder: 'Additional message text...' }
+      ],
+      onSubmit(data, close) {
+        showToast('📱 WhatsApp message sent to ' + data.phone + '!', 'success');
+        close();
+      }
+    });
+  });
+
+  document.getElementById('notif-stat-webhooks')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-code" style="color:var(--purple)"></i> Webhook Manager',
+      submitLabel: 'Register Webhook',
+      fields: [
+        { name: 'url', label: 'Endpoint URL', required: true, placeholder: 'https://api.example.com/webhook' },
+        { name: 'event', label: 'Trigger Event', type: 'select', options: ['invoice.created','invoice.paid','employee.onboarded','inventory.stock.low','order.placed','leave.approved'], default: 'invoice.created' },
+        { name: 'secret', label: 'Signing Secret', placeholder: 'Auto-generated if empty' }
+      ],
+      onSubmit(data, close) {
+        showToast('⚡ Webhook registered for event "' + data.event + '"!', 'success');
+        const valEl = document.querySelector('#notif-stat-webhooks .stat-value');
+        if (valEl) valEl.textContent = parseInt(valEl.textContent) + 1;
+        close();
+      }
+    });
+  });
+
+  // ── Channel list item click handlers ──
+  document.getElementById('notif-ch-email')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-envelope" style="color:var(--info)"></i> Email (SMTP) Configuration',
+      submitLabel: 'Save Settings',
+      fields: [
+        { name: 'provider', label: 'SMTP Provider', type: 'select', options: ['SendGrid','Mailgun','Amazon SES','Custom SMTP'], default: 'SendGrid' },
+        { name: 'from_email', label: 'From Email', required: true, default: 'noreply@amdox.com' },
+        { name: 'from_name', label: 'From Name', default: 'Amdox ERP Suite' },
+        { name: 'daily_limit', label: 'Daily Send Limit', default: '5000' }
+      ],
+      onSubmit(data, close) {
+        showToast('📧 Email SMTP settings updated — Provider: ' + data.provider, 'success');
+        close();
+      }
+    });
+  });
+
+  document.getElementById('notif-ch-sms')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-comment-sms" style="color:var(--success)"></i> SMS Gateway Configuration',
+      submitLabel: 'Save Settings',
+      fields: [
+        { name: 'provider', label: 'SMS Provider', type: 'select', options: ['Twilio','MSG91','Vonage','AWS SNS'], default: 'Twilio' },
+        { name: 'sender_id', label: 'Sender ID', required: true, default: 'AMDOX' },
+        { name: 'api_key', label: 'API Key', placeholder: '••••••••••••' },
+        { name: 'otp_length', label: 'OTP Length', type: 'select', options: ['4','6','8'], default: '6' }
+      ],
+      onSubmit(data, close) {
+        showToast('💬 SMS Gateway updated — Provider: ' + data.provider + ', Sender: ' + data.sender_id, 'success');
+        close();
+      }
+    });
+  });
+
+  document.getElementById('notif-ch-whatsapp')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp Business Configuration',
+      submitLabel: 'Save Settings',
+      fields: [
+        { name: 'business_id', label: 'Business Account ID', required: true, placeholder: 'e.g. 1234567890' },
+        { name: 'phone_number', label: 'Business Phone Number', required: true, default: '+91-9876543210' },
+        { name: 'api_version', label: 'API Version', type: 'select', options: ['v18.0','v17.0','v16.0'], default: 'v18.0' },
+        { name: 'template_status', label: 'Template Status', type: 'select', options: ['Approved','Pending Review','Rejected'], default: 'Approved' }
+      ],
+      onSubmit(data, close) {
+        showToast('📱 WhatsApp Business settings updated for ' + data.phone_number, 'success');
+        close();
+      }
+    });
+  });
+
+  document.getElementById('notif-ch-slack')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fab fa-slack" style="color:var(--purple)"></i> Slack Integration Settings',
+      submitLabel: 'Save Settings',
+      fields: [
+        { name: 'workspace', label: 'Workspace Name', required: true, default: 'Amdox Technologies' },
+        { name: 'channel', label: 'Default Channel', required: true, default: '#erp-alerts' },
+        { name: 'webhook_url', label: 'Incoming Webhook URL', placeholder: 'https://hooks.slack.com/services/...' },
+        { name: 'notify_on', label: 'Notify On', type: 'select', options: ['All Events','Critical Only','Invoices & Payments','HR Updates','Inventory Alerts'], default: 'All Events' }
+      ],
+      onSubmit(data, close) {
+        showToast('🔔 Slack integration updated — Channel: ' + data.channel, 'success');
+        close();
+      }
+    });
+  });
+
+  document.getElementById('notif-ch-discord')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fab fa-discord" style="color:var(--accent)"></i> Discord Webhook Configuration',
+      submitLabel: 'Save & Activate',
+      fields: [
+        { name: 'server', label: 'Server Name', required: true, placeholder: 'e.g. Amdox Dev Team' },
+        { name: 'webhook_url', label: 'Webhook URL', required: true, placeholder: 'https://discord.com/api/webhooks/...' },
+        { name: 'channel', label: 'Channel Name', default: '#dev-alerts' },
+        { name: 'bot_name', label: 'Bot Display Name', default: 'Amdox ERP Bot' }
+      ],
+      onSubmit(data, close) {
+        const badge = document.querySelector('#notif-ch-discord .badge');
+        if (badge) { badge.textContent = 'Active'; badge.className = 'badge badge-success'; }
+        showToast('🎮 Discord webhook configured for server "' + data.server + '"!', 'success');
+        close();
+      }
+    });
+  });
 };
 
 /* Asset Management Page */
@@ -848,10 +1134,10 @@ pages.assets = function(container) {
       <p>Company assets tracking, device management, maintenance schedules, depreciation calculation, and QR code check-in.</p>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fas fa-laptop"></i></div></div><div class="stat-value" id="asset-stat-total"></div><div class="stat-label">Total Assets</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-circle-check"></i></div></div><div class="stat-value" id="asset-stat-inuse"></div><div class="stat-label">In Use</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-wrench"></i></div></div><div class="stat-value" id="asset-stat-maint"></div><div class="stat-label">Under Maintenance</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-box-archive"></i></div></div><div class="stat-value" id="asset-stat-retired"></div><div class="stat-label">Retired</div></div>
+      <div class="stat-card" id="asset-card-total" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fas fa-laptop"></i></div></div><div class="stat-value" id="asset-stat-total"></div><div class="stat-label">Total Assets</div></div>
+      <div class="stat-card" id="asset-card-inuse" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-circle-check"></i></div></div><div class="stat-value" id="asset-stat-inuse"></div><div class="stat-label">In Use</div></div>
+      <div class="stat-card" id="asset-card-maint" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-wrench"></i></div></div><div class="stat-value" id="asset-stat-maint"></div><div class="stat-label">Under Maintenance</div></div>
+      <div class="stat-card" id="asset-card-retired" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-box-archive"></i></div></div><div class="stat-value" id="asset-stat-retired"></div><div class="stat-label">Retired</div></div>
     </div>
     <div class="card">
       <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
@@ -1001,6 +1287,79 @@ pages.assets = function(container) {
       } else if (delBtn) {
         handleDeleteAsset(delBtn.dataset.id);
       }
+    });
+
+    // ── Asset Stat Card Click Handlers ──
+    document.getElementById('asset-card-total')?.addEventListener('click', () => {
+      const totalVal = document.getElementById('asset-stat-total')?.textContent || '0';
+      const totalValue = assets.reduce((s, a) => s + (a.value || 0), 0);
+      showModal({
+        title: '<i class="fas fa-laptop" style="color:var(--cyan)"></i> Asset Portfolio Value',
+        submitLabel: 'Export CSV',
+        fields: [
+          { label: 'Total Inventory', default: totalVal + ' Assets', readonly: true },
+          { label: 'Portfolio Book Value', default: '₹' + totalValue.toLocaleString('en-IN'), readonly: true },
+          { label: 'Depreciation Rate', default: '15% Annual', readonly: true }
+        ],
+        onSubmit(data, close) {
+          showToast('Asset register exported to CSV format.', 'success');
+          close();
+        }
+      });
+    });
+
+    document.getElementById('asset-card-inuse')?.addEventListener('click', () => {
+      const inUseVal = document.getElementById('asset-stat-inuse')?.textContent || '0';
+      showModal({
+        title: '<i class="fas fa-circle-check" style="color:var(--success)"></i> Operational Assets',
+        submitLabel: 'Filter In-Use',
+        fields: [
+          { label: 'Currently In Use', default: inUseVal, readonly: true },
+          { label: 'Utilization Rate', default: ((parseInt(inUseVal)/assets.length)*100).toFixed(1) + '%', readonly: true },
+          { label: 'Avg Unit Age', default: '1.4 Years', readonly: true }
+        ],
+        onSubmit(data, close) {
+          const filter = document.getElementById('asset-status-filter');
+          if (filter) { filter.value = 'In Use'; renderRows(); }
+          close();
+        }
+      });
+    });
+
+    document.getElementById('asset-card-maint')?.addEventListener('click', () => {
+      const maintVal = document.getElementById('asset-stat-maint')?.textContent || '0';
+      showModal({
+        title: '<i class="fas fa-wrench" style="color:var(--warning)"></i> Maintenance Schedule',
+        submitLabel: 'Filter Maintenance',
+        fields: [
+          { label: 'Units Under Repair', default: maintVal, readonly: true },
+          { label: 'Avg Down Time', default: '4.2 Business Days', readonly: true },
+          { label: 'Next Major Audit', default: 'July 15, 2026', readonly: true }
+        ],
+        onSubmit(data, close) {
+          const filter = document.getElementById('asset-status-filter');
+          if (filter) { filter.value = 'Maintenance'; renderRows(); }
+          close();
+        }
+      });
+    });
+
+    document.getElementById('asset-card-retired')?.addEventListener('click', () => {
+      const retiredVal = document.getElementById('asset-stat-retired')?.textContent || '0';
+      showModal({
+        title: '<i class="fas fa-box-archive" style="color:var(--danger)"></i> Asset Retirement summary',
+        submitLabel: 'Filter Retired',
+        fields: [
+          { label: 'Retired Assets', default: retiredVal, readonly: true },
+          { label: 'Recovery Value', default: '₹' + (parseInt(retiredVal) * 12500).toLocaleString('en-IN'), readonly: true },
+          { label: 'Disposal Method', default: 'E-waste Recycling', readonly: true }
+        ],
+        onSubmit(data, close) {
+          const filter = document.getElementById('asset-status-filter');
+          if (filter) { filter.value = 'Retired'; renderRows(); }
+          close();
+        }
+      });
     });
   }
 
@@ -1176,10 +1535,10 @@ pages.legal = function(container) {
       <p>Contract management, compliance workflows, legal approvals, document storage, and regulatory tracking.</p>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-file-contract"></i></div></div><div class="stat-value" id="contract-stat-active">0</div><div class="stat-label">Active Contracts</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-check-double"></i></div></div><div class="stat-value" id="contract-stat-gdpr">100%</div><div class="stat-label">GDPR Compliant</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-clock"></i></div></div><div class="stat-value" id="contract-stat-expiring">0</div><div class="stat-label">Expiring Soon</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-stamp"></i></div></div><div class="stat-value" id="contract-stat-pending">0</div><div class="stat-label">Pending Approvals</div></div>
+      <div class="stat-card" id="legal-card-active" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-file-contract"></i></div></div><div class="stat-value" id="contract-stat-active">0</div><div class="stat-label">Active Contracts</div></div>
+      <div class="stat-card" id="legal-card-gdpr" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-check-double"></i></div></div><div class="stat-value" id="contract-stat-gdpr">100%</div><div class="stat-label">GDPR Compliant</div></div>
+      <div class="stat-card" id="legal-card-expiring" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-clock"></i></div></div><div class="stat-value" id="contract-stat-expiring">0</div><div class="stat-label">Expiring Soon</div></div>
+      <div class="stat-card" id="legal-card-pending" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-stamp"></i></div></div><div class="stat-value" id="contract-stat-pending">0</div><div class="stat-label">Pending Approvals</div></div>
     </div>
     <div class="card">
       <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
@@ -1327,7 +1686,6 @@ pages.legal = function(container) {
     });
 
     // ── Bind Edit and Delete actions via Event Delegation ──
-    const tbody = document.getElementById('contract-tbody');
     tbody?.addEventListener('click', (e) => {
       const editBtn = e.target.closest('.contract-edit-btn');
       const delBtn = e.target.closest('.contract-del-btn');
@@ -1336,6 +1694,77 @@ pages.legal = function(container) {
       } else if (delBtn) {
         handleDeleteContract(parseInt(delBtn.dataset.id));
       }
+    });
+
+    // ── Legal Stat Card Click Handlers ──
+    document.getElementById('legal-card-active')?.addEventListener('click', () => {
+      const activeVal = document.getElementById('contract-stat-active')?.textContent || '0';
+      showModal({
+        title: '<i class="fas fa-file-contract" style="color:var(--warning)"></i> Contract Portfolio Health',
+        submitLabel: 'Export Register',
+        fields: [
+          { label: 'Active Agreements', default: activeVal, readonly: true },
+          { label: 'Risk Rating', default: 'Low (0.4%)', readonly: true },
+          { label: 'Avg Cycle Time', default: '14 Days', readonly: true }
+        ],
+        onSubmit(data, close) {
+          showToast('Full contract register exported to PDF.', 'success');
+          close();
+        }
+      });
+    });
+
+    document.getElementById('legal-card-gdpr')?.addEventListener('click', () => {
+      const gdprVal = document.getElementById('contract-stat-gdpr')?.textContent || '100%';
+      showModal({
+        title: '<i class="fas fa-check-double" style="color:var(--success)"></i> Regulatory Compliance',
+        submitLabel: 'Download Certificate',
+        fields: [
+          { label: 'GDPR Score', default: gdprVal, readonly: true },
+          { label: 'Data Residency', default: 'EU / Mumbai Region', readonly: true },
+          { label: 'Last External Audit', default: 'May 10, 2026', readonly: true }
+        ],
+        onSubmit(data, close) {
+          showToast('Compliance certification downloaded successfully.', 'success');
+          close();
+        }
+      });
+    });
+
+    document.getElementById('legal-card-expiring')?.addEventListener('click', () => {
+      const expiringVal = document.getElementById('contract-stat-expiring')?.textContent || '0';
+      showModal({
+        title: '<i class="fas fa-clock" style="color:var(--danger)"></i> Renewal Alerts',
+        submitLabel: 'Filter Expiring',
+        fields: [
+          { label: 'Agreements Expiring', default: expiringVal, readonly: true },
+          { label: 'Auto-Renew Active', default: '84%', readonly: true },
+          { label: 'Renewal Pipeline', default: '₹12.4L Value', readonly: true }
+        ],
+        onSubmit(data, close) {
+          const filter = document.getElementById('contract-status-filter');
+          if (filter) { filter.value = 'Expiring'; renderRows(); }
+          close();
+        }
+      });
+    });
+
+    document.getElementById('legal-card-pending')?.addEventListener('click', () => {
+      const pendingVal = document.getElementById('contract-stat-pending')?.textContent || '0';
+      showModal({
+        title: '<i class="fas fa-stamp" style="color:var(--purple)"></i> Approval Workflow',
+        submitLabel: 'Filter Pending',
+        fields: [
+          { label: 'Awaiting Signature', default: pendingVal, readonly: true },
+          { label: 'Bottleneck Stage', default: 'Financial Review', readonly: true },
+          { label: 'Est. Completion', default: '2 Business Days', readonly: true }
+        ],
+        onSubmit(data, close) {
+          const filter = document.getElementById('contract-status-filter');
+          if (filter) { filter.value = 'Pending Approval'; renderRows(); }
+          close();
+        }
+      });
     });
   }
 

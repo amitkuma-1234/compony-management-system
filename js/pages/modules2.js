@@ -10,10 +10,10 @@ pages.crm = function(container) {
       </div>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-users"></i></div><span class="stat-trend up"><i class="fas fa-arrow-up"></i> 12%</span></div><div class="stat-value" id="crm-stats-total">—</div><div class="stat-label">Total Leads</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-trophy"></i></div></div><div class="stat-value" id="crm-stats-won">—</div><div class="stat-label">Won This Month</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-indian-rupee-sign"></i></div></div><div class="stat-value" id="crm-stats-value">—</div><div class="stat-label">Pipeline Value</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-percent"></i></div></div><div class="stat-value">68%</div><div class="stat-label">Win Rate</div></div>
+      <div class="stat-card" id="crm-stat-total"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-users"></i></div><span class="stat-trend up"><i class="fas fa-arrow-up"></i> 12%</span></div><div class="stat-value" id="crm-stats-total">—</div><div class="stat-label">Total Leads</div></div>
+      <div class="stat-card" id="crm-stat-won"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-trophy"></i></div></div><div class="stat-value" id="crm-stats-won">—</div><div class="stat-label">Won This Month</div></div>
+      <div class="stat-card" id="crm-stat-value"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-indian-rupee-sign"></i></div></div><div class="stat-value" id="crm-stats-value">—</div><div class="stat-label">Pipeline Value</div></div>
+      <div class="stat-card" id="crm-stat-rate"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-percent"></i></div></div><div class="stat-value">68%</div><div class="stat-label">Win Rate</div></div>
     </div>
     <div class="card" style="margin-bottom:24px">
       <div class="card-header"><span class="card-title">Sales Pipeline</span></div>
@@ -271,6 +271,73 @@ pages.crm = function(container) {
   document.getElementById('crm-campaign-btn').addEventListener('click', () => {
     showToast('CRM marketing campaigns simulator active. Check back in a bit!', 'info');
   });
+
+  // ── Stat Card Click Handlers ──
+  document.getElementById('crm-stat-total')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-users" style="color:var(--info)"></i> Lead Acquisition Summary',
+      submitLabel: 'New Lead',
+      fields: [
+        { label: 'Total Leads', default: String(cachedLeads.length), readonly: true },
+        { label: 'Conversion Rate', default: '22.4%', readonly: true },
+        { label: 'Acquisition Cost', default: '₹420 / lead', readonly: true },
+        { label: 'Top Source', default: 'Direct Outreach (45%)', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        document.getElementById('crm-add-btn')?.click();
+      }
+    });
+  });
+
+  document.getElementById('crm-stat-won')?.addEventListener('click', () => {
+    const wonCount = cachedLeads.filter(l => l.stage === 'Closed Won' || l.stage === 'Won').length;
+    showModal({
+      title: '<i class="fas fa-trophy" style="color:var(--success)"></i> Success Metrics',
+      submitLabel: 'Close',
+      submitClass: 'btn-secondary',
+      fields: [
+        { label: 'Deals Won', default: String(wonCount), readonly: true },
+        { label: 'Avg Deal Size', default: '₹12.5L', readonly: true },
+        { label: 'Target Achievement', default: '84% of monthly goal', readonly: true }
+      ],
+      onSubmit(data, close) { close(); }
+    });
+  });
+
+  document.getElementById('crm-stat-value')?.addEventListener('click', () => {
+    const pipeVal = document.getElementById('crm-stats-value')?.textContent || '—';
+    showModal({
+      title: '<i class="fas fa-indian-rupee-sign" style="color:var(--purple)"></i> Sales Pipeline Analysis',
+      submitLabel: 'Refresh Stages',
+      fields: [
+        { label: 'Total Value', default: pipeVal, readonly: true },
+        { label: 'Wait Time (Avg)', default: '14 Days', readonly: true },
+        { label: 'Pipeline Velocity', default: '₹8.5L / week', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        loadLeads();
+      }
+    });
+  });
+
+  document.getElementById('crm-stat-rate')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-percent" style="color:var(--warning)"></i> Relationship Health',
+      submitLabel: 'View Analytics',
+      fields: [
+        { label: 'Win Rate', default: '68%', readonly: true },
+        { label: 'Churn Rate', default: '4.2%', readonly: true },
+        { label: 'Customer NPS', default: '72 (Excellent)', readonly: true },
+        { label: 'Brand Loyalty', default: '88% Retention', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        location.hash = '#analytics';
+      }
+    });
+  });
 };
 
 /* Projects Page */
@@ -285,42 +352,128 @@ pages.projects = function(container) {
       </div>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon indigo"><i class="fas fa-folder-open"></i></div></div><div class="stat-value" id="project-stats-active">—</div><div class="stat-label">Active Projects</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-check-double"></i></div></div><div class="stat-value" id="project-stats-done">—</div><div class="stat-label">Tasks Completed</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-clock"></i></div></div><div class="stat-value" id="project-stats-progress">—</div><div class="stat-label">In Progress</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-flag"></i></div></div><div class="stat-value">7</div><div class="stat-label">Overdue</div></div>
+      <div class="stat-card" id="proj-stat-active"><div class="stat-card-header"><div class="stat-icon indigo"><i class="fas fa-folder-open"></i></div></div><div class="stat-value" id="project-stats-active">—</div><div class="stat-label">Active Projects</div></div>
+      <div class="stat-card" id="proj-stat-done"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-check-double"></i></div></div><div class="stat-value" id="project-stats-done">—</div><div class="stat-label">Tasks Completed</div></div>
+      <div class="stat-card" id="proj-stat-progress"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-clock"></i></div></div><div class="stat-value" id="project-stats-progress">—</div><div class="stat-label">In Progress</div></div>
+      <div class="stat-card" id="proj-stat-overdue"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-flag"></i></div></div><div class="stat-value">7</div><div class="stat-label">Overdue</div></div>
     </div>
-    <div class="tabs"><div class="tab active" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Kanban Board</div><div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Gantt Chart</div><div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Sprint</div><div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Timeline</div></div>
+    <div class="tabs">
+      <div class="tab active" data-proj-tab="kanban" onclick="projectTabSwitch(this, 'kanban')">Kanban Board</div>
+      <div class="tab" data-proj-tab="gantt" onclick="projectTabSwitch(this, 'gantt')">Gantt Chart</div>
+      <div class="tab" data-proj-tab="sprint" onclick="projectTabSwitch(this, 'sprint')">Sprint</div>
+      <div class="tab" data-proj-tab="timeline" onclick="projectTabSwitch(this, 'timeline')">Timeline</div>
+    </div>
     
-    <div class="kanban-board" style="margin-bottom:24px" id="project-kanban-board">
-      <div class="kanban-column">
-        <div class="kanban-column-header"><span class="kanban-column-title" style="color:var(--text-muted)">📋 Backlog</span><span class="kanban-count" id="proj-count-backlog">0</span></div>
-        <div class="kanban-cards" id="proj-col-backlog"></div>
-      </div>
-      <div class="kanban-column">
-        <div class="kanban-column-header"><span class="kanban-column-title" style="color:var(--info)">🔄 In Progress</span><span class="kanban-count" id="proj-count-progress">0</span></div>
-        <div class="kanban-cards" id="proj-col-progress"></div>
-      </div>
-      <div class="kanban-column">
-        <div class="kanban-column-header"><span class="kanban-column-title" style="color:var(--warning)">👀 Review</span><span class="kanban-count" id="proj-count-review">0</span></div>
-        <div class="kanban-cards" id="proj-col-review"></div>
-      </div>
-      <div class="kanban-column">
-        <div class="kanban-column-header"><span class="kanban-column-title" style="color:var(--success)">✅ Done</span><span class="kanban-count" id="proj-count-done">0</span></div>
-        <div class="kanban-cards" id="proj-col-done"></div>
-      </div>
-    </div>
+    <div id="project-main-content">
+      <!-- Kanban Board (Default) -->
+      <div id="view-kanban" class="project-view-container active">
+        <div class="kanban-board" style="margin-bottom:24px" id="project-kanban-board">
+          <div class="kanban-column">
+            <div class="kanban-column-header"><span class="kanban-column-title" style="color:var(--text-muted)">📋 Backlog</span><span class="kanban-count" id="proj-count-backlog">0</span></div>
+            <div class="kanban-cards" id="proj-col-backlog"></div>
+          </div>
+          <div class="kanban-column">
+            <div class="kanban-column-header"><span class="kanban-column-title" style="color:var(--info)">🔄 In Progress</span><span class="kanban-count" id="proj-count-progress">0</span></div>
+            <div class="kanban-cards" id="proj-col-progress"></div>
+          </div>
+          <div class="kanban-column">
+            <div class="kanban-column-header"><span class="kanban-column-title" style="color:var(--warning)">👀 Review</span><span class="kanban-count" id="proj-count-review">0</span></div>
+            <div class="kanban-cards" id="proj-col-review"></div>
+          </div>
+          <div class="kanban-column">
+            <div class="kanban-column-header"><span class="kanban-column-title" style="color:var(--success)">✅ Done</span><span class="kanban-count" id="proj-count-done">0</span></div>
+            <div class="kanban-cards" id="proj-col-done"></div>
+          </div>
+        </div>
 
-    <div class="grid-2">
-      <div class="card"><div class="card-header"><span class="card-title">Sprint Burndown — Sprint 14</span></div><div class="chart-container"><canvas data-chart="sprint"></canvas></div></div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Project Timeline</span></div>
-        <div style="padding-top:8px">
-          <div class="gantt-row"><div class="gantt-label">ERP v3.2</div><div class="gantt-bar-container"><div class="gantt-bar" style="left:5%;width:60%;background:linear-gradient(90deg,var(--accent),var(--purple))">60%</div></div></div>
-          <div class="gantt-row"><div class="gantt-label">Mobile App</div><div class="gantt-bar-container"><div class="gantt-bar" style="left:15%;width:35%;background:linear-gradient(90deg,var(--info),var(--cyan))">35%</div></div></div>
-          <div class="gantt-row"><div class="gantt-label">AI Module</div><div class="gantt-bar-container"><div class="gantt-bar" style="left:25%;width:45%;background:linear-gradient(90deg,var(--pink),var(--purple))">45%</div></div></div>
-          <div class="gantt-row"><div class="gantt-label">CRM Revamp</div><div class="gantt-bar-container"><div class="gantt-bar" style="left:0%;width:80%;background:linear-gradient(90deg,var(--success),var(--cyan))">80%</div></div></div>
-          <div class="gantt-row"><div class="gantt-label">DevOps</div><div class="gantt-bar-container"><div class="gantt-bar" style="left:10%;width:90%;background:linear-gradient(90deg,var(--warning),var(--danger))">90%</div></div></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-header"><span class="card-title">Quick Stats</span></div><div style="padding:10px 0;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:var(--text-secondary)">Task Efficiency</span><span style="font-weight:600; color:var(--success)">92%</span></div>
+            <div class="progress-bar" style="height:6px; margin-bottom:20px;"><div class="progress-fill" style="width:92%; background:var(--success)"></div></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:var(--text-secondary)">Resource Utilization</span><span style="font-weight:600; color:var(--accent)">78%</span></div>
+            <div class="progress-bar" style="height:6px;"><div class="progress-fill" style="width:78%; background:var(--accent)"></div></div>
+          </div></div>
+          <div class="card"><div class="card-header"><span class="card-title">Recent Activity</span></div><div class="activity-list" style="margin-top:10px">
+            <div class="activity-item"><div class="activity-dot blue"></div><div><div class="activity-text"><strong>Rahul</strong> moved ERP v3.2 to In Progress</div><div class="activity-time">5m ago</div></div></div>
+            <div class="activity-item"><div class="activity-dot green"></div><div><div class="activity-text"><strong>Anita</strong> completed Payment Gateway</div><div class="activity-time">2h ago</div></div></div>
+            <div class="activity-item"><div class="activity-dot yellow"></div><div><div class="activity-text"><strong>Vikram</strong> added subtasks to AI Module</div><div class="activity-time">Yesterday</div></div></div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- Gantt Chart View -->
+      <div id="view-gantt" class="project-view-container" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><i class="fas fa-chart-gantt" style="color:var(--accent)"></i> Detailed Project Gantt</span>
+            <div style="display:flex; gap:10px;" id="gantt-granularity-toggles">
+              <button class="btn btn-secondary btn-xs" data-gantt="day">Day</button>
+              <button class="btn btn-primary btn-xs" data-gantt="week">Week</button>
+              <button class="btn btn-secondary btn-xs" data-gantt="month">Month</button>
+            </div>
+          </div>
+          <div id="gantt-content" style="padding:20px 0;">
+            <!-- Gantt timeline and rows will be rendered here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Sprint View -->
+      <div id="view-sprint" class="project-view-container" style="display:none;">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Sprint 14 Burndown</span>
+              <span class="badge badge-info">4 Days Left</span>
+            </div>
+            <div class="chart-container"><canvas data-chart="sprint"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Active Sprint Backlog</span></div>
+            <div class="activity-list">
+              ${[
+                { id: "S-102", task: "Implement OAuth2.0 Flow", story: 8, owner: "RS", status: "In Progress" },
+                { id: "S-105", task: "Database Schema Migration", story: 5, owner: "VK", status: "In Progress" },
+                { id: "S-108", task: "Landing Page SEO Audit", story: 3, owner: "AP", status: "Done" },
+                { id: "S-112", task: "Bug #847: Login redirect", story: 2, owner: "RS", status: "Review" }
+              ].map(s => `
+                <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border);">
+                  <div style="width:40px; height:40px; border-radius:10px; background:rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--accent)">${s.id}</div>
+                  <div style="flex:1;">
+                    <div style="font-size:13.5px; font-weight:600; color:var(--text-primary);">${s.task}</div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">Story Points: ${s.story} • ${s.owner}</div>
+                  </div>
+                  <span class="badge ${s.status === 'Done' ? 'badge-success' : (s.status === 'Review' ? 'badge-warning' : 'badge-info')}" style="font-size:10px;">${s.status}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline View -->
+      <div id="view-timeline" class="project-view-container" style="display:none;">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Organization Roadmap 2026</span></div>
+          <div style="padding:20px 0;">
+            <div style="position:relative; padding-left:40px; border-left:2px solid var(--border); margin-left:20px;">
+              ${[
+                { month: "June", title: "ERP v3.2 Release", desc: "Full migration to cloud-native architecture.", icon: "fa-rocket", color: "var(--accent)" },
+                { month: "July", title: "AI Integration Phase 1", desc: "Beta launch of AI-driven demand forecasting.", icon: "fa-brain", color: "var(--purple)" },
+                { month: "August", title: "Mobile App 2.0", desc: "Complete overhaul of iOS/Android user experience.", icon: "fa-mobile-screen", color: "var(--info)" },
+                { month: "October", title: "Global Expansion", desc: "Support for multi-region data centers and localization.", icon: "fa-earth-americas", color: "var(--success)" }
+              ].map(item => `
+                <div class="roadmap-item" style="position:relative; margin-bottom:35px; cursor:pointer;" data-title="${item.title}" data-desc="${item.desc}" data-month="${item.month}">
+                  <div style="position:absolute; left:-55px; top:0; width:30px; height:30px; border-radius:50%; background:${item.color}; border:4px solid var(--bg-card); display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; z-index:2;">
+                    <i class="fas ${item.icon}"></i>
+                  </div>
+                  <div style="font-size:11px; font-weight:800; color:${item.color}; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">${item.month}</div>
+                  <div style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">${item.title}</div>
+                  <div style="font-size:13px; color:var(--text-secondary);">${item.desc}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
         </div>
       </div>
     </div>`;
@@ -538,6 +691,182 @@ pages.projects = function(container) {
 
   document.getElementById('project-tasks-btn').addEventListener('click', () => {
     showToast('Task manager simulator active. 0 tasks overdue.', 'success');
+  });
+
+  // ── Tab Switching Logic ──
+  window.projectTabSwitch = function(tabEl, viewId) {
+    // 1. Update UI classes for tabs
+    const tabs = tabEl.parentElement.querySelectorAll('.tab');
+    tabs.forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+
+    // 2. Hide all view containers
+    const containers = document.querySelectorAll('.project-view-container');
+    containers.forEach(c => c.style.display = 'none');
+
+    // 3. Show the selected container
+    const target = document.getElementById('view-' + viewId);
+    if (target) {
+      target.style.display = 'block';
+      // Trigger chart re-initialization if needed (especially for Sprint chart)
+      if (viewId === 'sprint' && typeof initChartsOnPage === 'function') {
+        setTimeout(() => initChartsOnPage('projects'), 100);
+      }
+    }
+  };
+
+  // ── Stat Card Click Handlers ──
+  document.getElementById('proj-stat-active')?.addEventListener('click', () => {
+    const activeCount = cachedProjects.filter(p => p.status !== 'Done').length;
+    showModal({
+      title: '<i class="fas fa-folder-open" style="color:var(--accent-light)"></i> Active Project Portfolio',
+      submitLabel: 'New Project',
+      fields: [
+        { label: 'Active Projects', default: String(activeCount), readonly: true },
+        { label: 'Portfolio Health', default: 'Green (92%)', readonly: true },
+        { label: 'Budget Utilization', default: '₹54.2L / ₹60L', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        document.getElementById('project-add-btn')?.click();
+      }
+    });
+  });
+
+  document.getElementById('proj-stat-done')?.addEventListener('click', () => {
+    const doneVal = document.getElementById('project-stats-done')?.textContent || '—';
+    showModal({
+      title: '<i class="fas fa-check-double" style="color:var(--success)"></i> Productivity Report',
+      submitLabel: 'View Sprint',
+      fields: [
+        { label: 'Tasks Completed', default: doneVal, readonly: true },
+        { label: 'Velocity', default: '42 story pts / week', readonly: true },
+        { label: 'Quality Score', default: '98% Pass Rate', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        document.querySelector('[data-proj-tab="sprint"]')?.click();
+      }
+    });
+  });
+
+  document.getElementById('proj-stat-progress')?.addEventListener('click', () => {
+    const progVal = document.getElementById('project-stats-progress')?.textContent || '—';
+    showModal({
+      title: '<i class="fas fa-clock" style="color:var(--warning)"></i> Work in Progress',
+      submitLabel: 'My Tasks',
+      fields: [
+        { label: 'Items in Progress', default: progVal, readonly: true },
+        { label: 'Avg Cycle Time', default: '3.5 Days', readonly: true },
+        { label: 'Blocked Items', default: '2 Tasks', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        document.getElementById('project-tasks-btn')?.click();
+      }
+    });
+  });
+
+  document.getElementById('proj-stat-overdue')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-flag" style="color:var(--danger)"></i> Critical Timeline Alerts',
+      submitLabel: 'Open Kanban',
+      fields: [
+        { label: 'Overdue Tasks', default: '7', readonly: true },
+        { label: 'High Priority', default: '3 Tasks', readonly: true },
+        { label: 'Est. Delay Impact', default: '2 Business Days', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        document.querySelector('[data-proj-tab="kanban"]')?.click();
+      }
+    });
+  });
+
+  // ── Gantt Re-rendering Logic ──
+  const renderGantt = (mode = 'week') => {
+    const ganttBox = document.getElementById('gantt-content');
+    if (!ganttBox) return;
+
+    let headers = [];
+    if (mode === 'day') {
+      headers = ['01 Jun', '02 Jun', '03 Jun', '04 Jun', '05 Jun', '06 Jun', '07 Jun', '08 Jun', '09 Jun', '10 Jun'];
+    } else if (mode === 'week') {
+      headers = ['Wk 22', 'Wk 23', 'Wk 24', 'Wk 25', 'Wk 26', 'Wk 27', 'Wk 28', 'Wk 29', 'Wk 30', 'Wk 31'];
+    } else if (mode === 'month') {
+      headers = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+    }
+
+    const rows = [
+      { name: "ERP v3.2 Core", start: mode==='day'?10:0, end: mode==='day'?90:70, color: "var(--accent)" },
+      { name: "Mobile UI Kit", start: mode==='day'?30:15, end: mode==='day'?60:40, color: "var(--info)" },
+      { name: "API Security", start: mode==='day'?40:30, end: mode==='day'?80:60, color: "var(--purple)" },
+      { name: "AI Engine Beta", start: mode==='day'?50:50, end: mode==='day'?100:90, color: "var(--pink)" },
+      { name: "QA & Testing", start: mode==='day'?80:70, end: mode==='day'?120:100, color: "var(--success)" }
+    ];
+
+    ganttBox.innerHTML = `
+      <div style="display:flex; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:10px;">
+        <div style="width:160px; font-weight:700; color:var(--text-muted); font-size:11px; text-transform:uppercase;">Task / Project</div>
+        <div style="flex:1; display:flex; font-weight:700; color:var(--text-muted); font-size:11px;">
+          ${headers.map(h => `<div style="flex:1; text-align:center;">${h}</div>`).join('')}
+        </div>
+      </div>
+      ${rows.map(row => `
+        <div style="display:flex; align-items:center; height:45px; border-bottom:1px solid rgba(255,255,255,0.03);">
+          <div style="width:160px; font-size:13px; font-weight:600; color:var(--text-primary);">${row.name}</div>
+          <div style="flex:1; position:relative; height:12px; background:rgba(255,255,255,0.01); border-radius:10px;">
+            <div style="position:absolute; left:${row.start}%; width:${Math.min(100, row.end - row.start)}%; height:100%; background:${row.color}; border-radius:10px; box-shadow:0 0 15px ${row.color}44;"></div>
+          </div>
+        </div>
+      `).join('')}
+    `;
+  };
+
+  // Initial render
+  renderGantt('week');
+
+  // ── Gantt Granularity Toggles ──
+  document.getElementById('gantt-granularity-toggles')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    
+    // Update active state classes
+    const buttons = e.currentTarget.querySelectorAll('button');
+    buttons.forEach(b => {
+      b.classList.remove('btn-primary');
+      b.classList.add('btn-secondary');
+    });
+    btn.classList.remove('btn-secondary');
+    btn.classList.add('btn-primary');
+    
+    const mode = btn.getAttribute('data-gantt');
+    renderGantt(mode);
+  });
+
+  // ── Roadmap Timeline Handlers ──
+  document.getElementById('view-timeline')?.addEventListener('click', (e) => {
+    const item = e.target.closest('.roadmap-item');
+    if (!item) return;
+
+    const title = item.getAttribute('data-title');
+    const desc = item.getAttribute('data-desc');
+    const month = item.getAttribute('data-month');
+
+    showModal({
+      title: `<i class="fas fa-flag" style="color:var(--accent)"></i> Milestone: ${title}`,
+      submitLabel: 'Set Reminder',
+      fields: [
+        { label: 'Phase', default: month + ' 2026', readonly: true },
+        { label: 'Objective', default: desc, readonly: true },
+        { label: 'Status', default: 'Scheduled', readonly: true },
+        { label: 'KPI Target', default: '99.9% Scalability', readonly: true }
+      ],
+      onSubmit(data, close) {
+        showToast(`✅ Reminder set for ${title}!`, 'success');
+        close();
+      }
+    });
   });
 };
 

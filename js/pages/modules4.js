@@ -27,15 +27,15 @@ pages.ecommerce = function(container) {
         <p>Shopify, WooCommerce, and marketplace API integrations with unified order management and inventory sync.</p>
       </div>
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-shopping-bag"></i></div><span class="stat-trend up"><i class="fas fa-arrow-up"></i> 24%</span></div><div class="stat-value" id="ecom-stat-count">${totalOrders}</div><div class="stat-label">Orders This Month</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-indian-rupee-sign"></i></div></div><div class="stat-value" id="ecom-stat-rev">₹${(totalRev / 100000).toFixed(2)}L</div><div class="stat-label">E-Com Revenue</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-store"></i></div></div><div class="stat-value">3</div><div class="stat-label">Connected Stores</div></div>
+        <div class="stat-card" id="ecom-card-orders" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-shopping-bag"></i></div><span class="stat-trend up"><i class="fas fa-arrow-up"></i> 24%</span></div><div class="stat-value" id="ecom-stat-count">${totalOrders}</div><div class="stat-label">Orders This Month</div></div>
+        <div class="stat-card" id="ecom-card-rev" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-indian-rupee-sign"></i></div></div><div class="stat-value" id="ecom-stat-rev">₹${(totalRev / 100000).toFixed(2)}L</div><div class="stat-label">E-Com Revenue</div></div>
+        <div class="stat-card" id="ecom-card-stores" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-store"></i></div></div><div class="stat-value">3</div><div class="stat-label">Connected Stores</div></div>
         <div class="stat-card" id="ecom-sync-btn" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-rotate"></i></div></div><div class="stat-value" id="ecom-sync-text">Synced</div><div class="stat-label">Click to Force Sync</div></div>
       </div>
       <div class="grid-3" style="margin-bottom: 24px;">
-        <div class="card" style="border-color:rgba(34,197,94,0.3)"><div style="text-align:center;padding:20px"><div style="width:50px;height:50px;border-radius:12px;background:rgba(34,197,94,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px;color:var(--success)"><i class="fab fa-shopify"></i></div><h3 style="font-size:15px;margin-bottom:4px">Shopify</h3><p style="font-size:12px;color:var(--text-muted)">842 products synced</p><span class="badge badge-success" style="margin-top:8px">Connected</span></div></div>
-        <div class="card" style="border-color:rgba(168,85,247,0.3)"><div style="text-align:center;padding:20px"><div style="width:50px;height:50px;border-radius:12px;background:rgba(168,85,247,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px;color:var(--purple)"><i class="fab fa-wordpress"></i></div><h3 style="font-size:15px;margin-bottom:4px">WooCommerce</h3><p style="font-size:12px;color:var(--text-muted)">356 products synced</p><span class="badge badge-success" style="margin-top:8px">Connected</span></div></div>
-        <div class="card" style="border-color:rgba(245,158,11,0.3)"><div style="text-align:center;padding:20px"><div style="width:50px;height:50px;border-radius:12px;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px;color:var(--warning)"><i class="fab fa-amazon"></i></div><h3 style="font-size:15px;margin-bottom:4px">Amazon Marketplace</h3><p style="font-size:12px;color:var(--text-muted)">289 products synced</p><span class="badge badge-success" style="margin-top:8px">Connected</span></div></div>
+        <div class="card" id="ecom-card-shopify" style="border-color:rgba(34,197,94,0.3); cursor:pointer;"><div style="text-align:center;padding:20px"><div style="width:50px;height:50px;border-radius:12px;background:rgba(34,197,94,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px;color:var(--success)"><i class="fab fa-shopify"></i></div><h3 style="font-size:15px;margin-bottom:4px">Shopify</h3><p style="font-size:12px;color:var(--text-muted)">842 products synced</p><span class="badge badge-success" style="margin-top:8px">Connected</span></div></div>
+        <div class="card" id="ecom-card-woo" style="border-color:rgba(168,85,247,0.3); cursor:pointer;"><div style="text-align:center;padding:20px"><div style="width:50px;height:50px;border-radius:12px;background:rgba(168,85,247,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px;color:var(--purple)"><i class="fab fa-wordpress"></i></div><h3 style="font-size:15px;margin-bottom:4px">WooCommerce</h3><p style="font-size:12px;color:var(--text-muted)">356 products synced</p><span class="badge badge-success" style="margin-top:8px">Connected</span></div></div>
+        <div class="card" id="ecom-card-amazon" style="border-color:rgba(245,158,11,0.3); cursor:pointer;"><div style="text-align:center;padding:20px"><div style="width:50px;height:50px;border-radius:12px;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px;color:var(--warning)"><i class="fab fa-amazon"></i></div><h3 style="font-size:15px;margin-bottom:4px">Amazon Marketplace</h3><p style="font-size:12px;color:var(--text-muted)">289 products synced</p><span class="badge badge-success" style="margin-top:8px">Connected</span></div></div>
       </div>
       <div class="card">
         <div class="card-header">
@@ -84,9 +84,19 @@ pages.ecommerce = function(container) {
         <td><span class="badge ${platBadgeClass(o.platform)}">${platIcon(o.platform)} ${escHtml(o.platform)}</span></td>
         <td>${escHtml(o.customer)}</td>
         <td style="font-family:var(--font-mono)">₹${Number(o.amount).toLocaleString('en-IN')}</td>
-        <td><span class="badge ${statusBadge(o.status)}">${escHtml(o.status)}</span></td>
         <td>
-          <button class="btn btn-secondary btn-sm" style="color:var(--danger); padding:4px 8px;" onclick="ecomDeleteOrder('${o.id}')"><i class="fas fa-trash"></i></button>
+          <select class="form-control" style="font-size:11px; padding:4px 8px; height:auto; width:120px; border-radius:8px; border-color:${o.status === 'Delivered' ? 'var(--success)' : (o.status === 'Shipped' ? 'var(--info)' : 'var(--warning)')};" onchange="ecomUpdateStatus('${o.id}', this.value)">
+            <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
+            <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+            <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+          </select>
+        </td>
+        <td>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-secondary btn-sm" style="color:var(--info); padding:4px 8px;" onclick="ecomViewOrder('${o.id}')" title="View Details"><i class="fas fa-eye"></i></button>
+            <button class="btn btn-secondary btn-sm" style="color:var(--accent); padding:4px 8px;" onclick="ecomEditOrder('${o.id}')" title="Edit Order"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-secondary btn-sm" style="color:var(--danger); padding:4px 8px;" onclick="ecomDeleteOrder('${o.id}')" title="Delete Order"><i class="fas fa-trash"></i></button>
+          </div>
         </td>
       </tr>`).join('');
 
@@ -114,14 +124,119 @@ pages.ecommerce = function(container) {
     });
 
     // Hook Force Sync button
-    document.getElementById('ecom-sync-btn').addEventListener('click', () => {
+    document.getElementById('ecom-sync-btn')?.addEventListener('click', () => {
       const text = document.getElementById('ecom-sync-text');
+      if (!text) return;
       text.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
       showToast('Syncing orders from active store integrations...', 'info');
       setTimeout(() => {
         text.textContent = 'Synced';
         showToast('✅ All stores synchronized successfully!', 'success');
       }, 1500);
+    });
+
+    // ── E-Commerce Stat Card Handlers ──
+    document.getElementById('ecom-card-orders')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-shopping-bag" style="color:var(--success)"></i> Sales Momentum',
+        submitLabel: 'View Detailed Log',
+        fields: [
+          { label: 'Orders (Monthly)', default: totalOrders.toString(), readonly: true },
+          { label: 'Growth Trend', default: '+24.6% vs April', readonly: true },
+          { label: 'Avg Order Value', default: '₹' + (totalRev / totalOrders).toLocaleString('en-IN', {maximumFractionDigits: 0}), readonly: true }
+        ],
+        onSubmit(data, close) {
+          close();
+          const table = document.getElementById('ecom-orders-tbody');
+          if (table) table.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    document.getElementById('ecom-card-rev')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-indian-rupee-sign" style="color:var(--info)"></i> Revenue Breakdown',
+        submitLabel: 'Analytics Portal',
+        fields: [
+          { label: 'Total Revenue', default: '₹' + totalRev.toLocaleString('en-IN'), readonly: true },
+          { label: 'Processing Fees', default: '₹' + (totalRev * 0.02).toLocaleString('en-IN'), readonly: true },
+          { label: 'Net Payout', default: '₹' + (totalRev * 0.98).toLocaleString('en-IN'), readonly: true }
+        ],
+        onSubmit(data, close) {
+          close();
+          location.hash = '#analytics';
+        }
+      });
+    });
+
+    document.getElementById('ecom-card-stores')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-store" style="color:var(--purple)"></i> Integration Hub',
+        submitLabel: 'Manage APIs',
+        fields: [
+          { label: 'Shopify Store', default: 'Active (842 SKUs)', readonly: true },
+          { label: 'WooCommerce', default: 'Active (356 SKUs)', readonly: true },
+          { label: 'Amazon Seller', default: 'Active (289 SKUs)', readonly: true }
+        ],
+        onSubmit(data, close) {
+          close();
+          document.getElementById('ecom-card-shopify')?.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Shopify card click
+    document.getElementById('ecom-card-shopify')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fab fa-shopify" style="color:var(--success)"></i> Shopify Store Settings',
+        submitLabel: 'Save Configuration',
+        fields: [
+          { name: 'store_url', label: 'Store URL', required: true, default: 'amdox-store.myshopify.com' },
+          { name: 'api_key', label: 'API Key', required: true, placeholder: '••••••••••••••••' },
+          { name: 'sync_mode', label: 'Sync Mode', type: 'select', options: ['Real-time','Every 5 min','Every 15 min','Hourly','Manual'], default: 'Real-time' },
+          { name: 'sync_products', label: 'Sync Products', type: 'select', options: ['All Products','Active Only','In Stock Only'], default: 'All Products' }
+        ],
+        onSubmit(data, close) {
+          showToast('🛍️ Shopify store configured — ' + data.store_url, 'success');
+          close();
+        }
+      });
+    });
+
+    // WooCommerce card click
+    document.getElementById('ecom-card-woo')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fab fa-wordpress" style="color:var(--purple)"></i> WooCommerce Settings',
+        submitLabel: 'Save Configuration',
+        fields: [
+          { name: 'site_url', label: 'WordPress Site URL', required: true, default: 'https://store.amdox.com' },
+          { name: 'consumer_key', label: 'Consumer Key', required: true, placeholder: 'ck_xxxxxxxxxxxx' },
+          { name: 'consumer_secret', label: 'Consumer Secret', placeholder: 'cs_xxxxxxxxxxxx' },
+          { name: 'api_version', label: 'WC API Version', type: 'select', options: ['wc/v3','wc/v2','wc/v1'], default: 'wc/v3' }
+        ],
+        onSubmit(data, close) {
+          showToast('🔌 WooCommerce connected — ' + data.site_url, 'success');
+          close();
+        }
+      });
+    });
+
+    // Amazon card click
+    document.getElementById('ecom-card-amazon')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fab fa-amazon" style="color:var(--warning)"></i> Amazon Marketplace Settings',
+        submitLabel: 'Save Configuration',
+        fields: [
+          { name: 'seller_id', label: 'Seller ID', required: true, placeholder: 'e.g. A1B2C3D4E5F6G7' },
+          { name: 'marketplace', label: 'Marketplace Region', type: 'select', options: ['Amazon.in (India)','Amazon.com (US)','Amazon.co.uk (UK)','Amazon.de (Germany)','Amazon.co.jp (Japan)'], default: 'Amazon.in (India)' },
+          { name: 'mws_token', label: 'MWS Auth Token', placeholder: 'amzn.mws.xxxxxxxx' },
+          { name: 'fulfillment', label: 'Fulfillment', type: 'select', options: ['FBA (Fulfilled by Amazon)','FBM (Merchant Fulfilled)','Both'], default: 'FBA (Fulfilled by Amazon)' }
+        ],
+        onSubmit(data, close) {
+          showToast('📦 Amazon Marketplace configured — Seller: ' + data.seller_id, 'success');
+          close();
+        }
+      });
     });
   };
 
@@ -131,6 +246,63 @@ pages.ecommerce = function(container) {
       saveOrders(list);
       showToast(`Order ${id} deleted.`, 'success');
       renderECom();
+    });
+  };
+
+  window.ecomUpdateStatus = function(id, newStatus) {
+    const list = getOrders();
+    const idx = list.findIndex(o => o.id === id);
+    if (idx > -1) {
+      list[idx].status = newStatus;
+      saveOrders(list);
+      showToast(`Order ${id} status updated to ${newStatus}`, 'success');
+      renderECom();
+    }
+  };
+
+  window.ecomViewOrder = function(id) {
+    const order = getOrders().find(o => o.id === id);
+    if (!order) return;
+    
+    showModal({
+      title: `<i class="fas fa-eye" style="color:var(--info)"></i> View Order Details: ${id}`,
+      submitLabel: 'Close',
+      submitClass: 'btn-secondary',
+      fields: [
+        { label: 'Order ID', default: order.id, readonly: true },
+        { label: 'Platform', default: order.platform, readonly: true },
+        { label: 'Customer', default: order.customer, readonly: true },
+        { label: 'Amount', default: `₹${Number(order.amount).toLocaleString('en-IN')}`, readonly: true },
+        { label: 'Status', default: order.status, readonly: true }
+      ],
+      onSubmit(data, close) { close(); }
+    });
+  };
+
+  window.ecomEditOrder = function(id) {
+    const list = getOrders();
+    const order = list.find(o => o.id === id);
+    if (!order) return;
+
+    showModal({
+      title: `<i class="fas fa-edit" style="color:var(--accent)"></i> Edit Order: ${id}`,
+      submitLabel: 'Save Changes',
+      fields: [
+        { name: 'customer', label: 'Customer Name', required: true, default: order.customer },
+        { name: 'amount', label: 'Order Value (₹)', required: true, type: 'number', default: order.amount },
+        { name: 'platform', label: 'Store Platform', type: 'select', options: ['Shopify', 'WooCommerce', 'Amazon'], default: order.platform },
+        { name: 'status', label: 'Delivery Status', type: 'select', options: ['Processing', 'Shipped', 'Delivered'], default: order.status }
+      ],
+      async onSubmit(data, close) {
+        const idx = list.findIndex(o => o.id === id);
+        if (idx > -1) {
+          list[idx] = { ...list[idx], ...data };
+          saveOrders(list);
+          showToast(`✅ Order ${id} updated successfully!`, 'success');
+          close();
+          renderECom();
+        }
+      }
     });
   };
 
@@ -199,9 +371,9 @@ pages.communication = function(container) {
         <p>Team chat, video meetings, company announcements, knowledge base, and SOP documentation portal.</p>
       </div>
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-message"></i></div></div><div class="stat-value" id="comm-total-msgs">1,245</div><div class="stat-label">Messages Today</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-video"></i></div></div><div class="stat-value">8</div><div class="stat-label">Active Meetings</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-bullhorn"></i></div></div><div class="stat-value" id="comm-total-ann">${anns.length}</div><div class="stat-label">Announcements</div></div>
+        <div class="stat-card" id="comm-card-msgs" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-message"></i></div></div><div class="stat-value" id="comm-total-msgs">1,245</div><div class="stat-label">Messages Today</div></div>
+        <div class="stat-card" id="comm-card-meetings" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-video"></i></div></div><div class="stat-value" id="comm-total-meetings">8</div><div class="stat-label">Active Meetings</div></div>
+        <div class="stat-card" id="comm-card-ann" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-bullhorn"></i></div></div><div class="stat-value" id="comm-total-ann">${anns.length}</div><div class="stat-label">Announcements</div></div>
         <div class="stat-card" id="btn-start-meet" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fas fa-camera"></i></div></div><div class="stat-value">Meet</div><div class="stat-label">Start Huddle</div></div>
       </div>
       <div class="grid-2">
@@ -312,8 +484,114 @@ pages.communication = function(container) {
     });
 
     // Start Huddle
-    document.getElementById('btn-start-meet').addEventListener('click', () => {
-      showToast('🎥 Meeting room created! Huddle room #amdox-office is now live.', 'success');
+    document.getElementById('btn-start-meet')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-camera" style="color:var(--cyan)"></i> Start Instant Huddle',
+        submitLabel: 'Go Live',
+        fields: [
+          { name: 'topic', label: 'Meeting Topic', required: true, placeholder: 'e.g. Quick Sync' },
+          { name: 'channel', label: 'Broadcast to', type: 'select', options: ['#general', '#engineering', '#sales', 'Private'], default: '#general' },
+          { name: 'record', label: 'Record Session', type: 'select', options: [{value:'yes', label:'Yes'}, {value:'no', label:'No'}], default: 'no' }
+        ],
+        onSubmit(data, close) {
+          showToast(`🎥 Huddle "${data.topic}" is live on ${data.channel}!`, 'success');
+          close();
+        }
+      });
+    });
+
+    // ── Communication Stat Card Handlers ──
+    document.getElementById('comm-card-msgs')?.addEventListener('click', () => {
+      const msgCount = document.getElementById('comm-total-msgs')?.textContent || '1,245';
+      showModal({
+        title: '<i class="fas fa-comments" style="color:var(--info)"></i> Engagement Overview',
+        submitLabel: 'Export as PDF',
+        fields: [
+          { label: 'Total Messages (24h)', default: msgCount, readonly: true },
+          { label: 'Active Channel', default: `#${activeChannel}`, readonly: true },
+          { label: 'Peak Activity', default: '11:30 AM', readonly: true }
+        ],
+        async onSubmit(data, close) {
+          const { jsPDF } = window.jspdf || { jsPDF: null };
+          if (!jsPDF) {
+            showToast('PDF Engine not loaded. Falling back to TXT...', 'warning');
+            const blob = new Blob([JSON.stringify(getMsgs(activeChannel), null, 2)], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `chat_log_${activeChannel}.txt`;
+            a.click();
+            close();
+            return;
+          }
+
+          const doc = new jsPDF();
+          const msgs = getMsgs(activeChannel);
+          
+          doc.setFontSize(18);
+          doc.setTextColor(40, 116, 166);
+          doc.text(`Amdox Communication Log: #${activeChannel}`, 14, 22);
+          
+          doc.setFontSize(10);
+          doc.setTextColor(100);
+          doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+          doc.text(`Total daily volume: ${msgCount} messages`, 14, 35);
+          
+          doc.setLineWidth(0.5);
+          doc.line(14, 40, 196, 40);
+          
+          let y = 50;
+          doc.setFontSize(11);
+          msgs.forEach((m, idx) => {
+            if (y > 270) { doc.addPage(); y = 20; }
+            doc.setTextColor(0);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${m.sender} [${m.time}]`, 14, y);
+            y += 6;
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(60);
+            const splitText = doc.splitTextToSize(m.text, 170);
+            doc.text(splitText, 16, y);
+            y += (splitText.length * 6) + 4;
+          });
+
+          doc.save(`Amdox_Chat_#${activeChannel}.pdf`);
+          showToast(`📄 #${activeChannel} chat log exported to PDF!`, 'success');
+          close();
+        }
+      });
+    });
+
+    document.getElementById('comm-card-meetings')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-video" style="color:var(--success)"></i> Active Conferences',
+        submitLabel: 'Join General Room',
+        fields: [
+          { label: 'Active Huddles', default: '8', readonly: true },
+          { label: 'Current Participants', default: '24 Total', readonly: true },
+          { label: 'Avg Duration', default: '14 mins', readonly: true }
+        ],
+        onSubmit(data, close) {
+          showToast('🎥 Joining #general huddle room...', 'info');
+          close();
+        }
+      });
+    });
+
+    document.getElementById('comm-card-ann')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-bullhorn" style="color:var(--purple)"></i> Broadcast Stats',
+        submitLabel: 'Scroll to Posts',
+        fields: [
+          { label: 'Total Announcements', default: anns.length.toString(), readonly: true },
+          { label: 'Read Ratio', default: '92%', readonly: true },
+          { label: 'Latest Update', default: anns[0]?.text || 'N/A', readonly: true }
+        ],
+        onSubmit(data, close) {
+          close();
+          const list = document.getElementById('comm-ann-list');
+          if (list) list.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
     });
   };
 
@@ -364,10 +642,10 @@ pages.devops = function(container) {
         <p>CI/CD pipelines, Docker/Kubernetes, Terraform IaC, ArgoCD GitOps, and Prometheus/Grafana monitoring.</p>
       </div>
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-circle-check"></i></div></div><div class="stat-value" id="devops-stat-uptime">${stats.uptime}</div><div class="stat-label">Uptime</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-code-branch"></i></div></div><div class="stat-value" id="devops-stat-builds">${stats.builds}</div><div class="stat-label">Deployments</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fas fa-cubes"></i></div></div><div class="stat-value" id="devops-stat-pods">${stats.pods}</div><div class="stat-label">Active Pods</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-gauge-high"></i></div></div><div class="stat-value" id="devops-stat-latency">${stats.latency}ms</div><div class="stat-label">Avg Latency</div></div>
+        <div class="stat-card" id="devops-card-uptime" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-circle-check"></i></div></div><div class="stat-value" id="devops-stat-uptime">${stats.uptime}</div><div class="stat-label">Uptime</div></div>
+        <div class="stat-card" id="devops-card-deployments" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-code-branch"></i></div></div><div class="stat-value" id="devops-stat-builds">${stats.builds}</div><div class="stat-label">Deployments</div></div>
+        <div class="stat-card" id="devops-card-pods" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fas fa-cubes"></i></div></div><div class="stat-value" id="devops-stat-pods">${stats.pods}</div><div class="stat-label">Active Pods</div></div>
+        <div class="stat-card" id="devops-card-latency" style="cursor:pointer;"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-gauge-high"></i></div></div><div class="stat-value" id="devops-stat-latency">${stats.latency}ms</div><div class="stat-label">Avg Latency</div></div>
       </div>
       <div class="grid-2" style="margin-bottom: 24px;">
         <div class="card">
@@ -638,6 +916,72 @@ pages.devops = function(container) {
         renderDevOps();
       }, 3500);
     });
+
+    // ── DevOps Stat Card Handlers ──
+    document.getElementById('devops-card-uptime')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-circle-check" style="color:var(--success)"></i> Cluster Availability',
+        submitLabel: 'Run Health Check',
+        fields: [
+          { label: 'System Uptime', default: stats.uptime, readonly: true },
+          { label: 'Unscheduled Downtime', default: '8 mins (Last 30d)', readonly: true },
+          { label: 'Critical Errors', default: '0 Active', readonly: true }
+        ],
+        onSubmit(data, close) {
+          showToast('🛡️ Deep infrastructure health scan completed. No anomalies found.', 'success');
+          close();
+        }
+      });
+    });
+
+    document.getElementById('devops-card-deployments')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-code-branch" style="color:var(--info)"></i> release Velocity',
+        submitLabel: 'View Build Pipeline',
+        fields: [
+          { label: 'Total Deployments', default: stats.builds.toString(), readonly: true },
+          { label: 'Success Rate', default: '94.2%', readonly: true },
+          { label: 'Avg Build Time', default: '2m 45s', readonly: true }
+        ],
+        onSubmit(data, close) {
+          close();
+          const list = document.getElementById('devops-builds-list');
+          if (list) list.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    document.getElementById('devops-card-pods')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-cubes" style="color:var(--cyan)"></i> Kubernetes Resources',
+        submitLabel: 'Scale Cluster',
+        fields: [
+          { label: 'Running Pods', default: stats.pods.toString(), readonly: true },
+          { label: 'CPU Utilization', default: '42.8%', readonly: true },
+          { label: 'Memory Reserved', default: '16.4 GB', readonly: true }
+        ],
+        onSubmit(data, close) {
+          showToast('🚀 Autoscaling rules updated. Cluster capacity increased by 20%.', 'success');
+          close();
+        }
+      });
+    });
+
+    document.getElementById('devops-card-latency')?.addEventListener('click', () => {
+      showModal({
+        title: '<i class="fas fa-gauge-high" style="color:var(--purple)"></i> Networking Performance',
+        submitLabel: 'Analyze Traffic',
+        fields: [
+          { label: 'Avg Latency', default: stats.latency + 'ms', readonly: true },
+          { label: 'P99 Latency', default: (stats.latency * 1.5).toFixed(0) + 'ms', readonly: true },
+          { label: 'Request Success', default: '99.99%', readonly: true }
+        ],
+        onSubmit(data, close) {
+          showToast('📊 Network traffic analysis report generated in Analytics.', 'info');
+          close();
+        }
+      });
+    });
   };
 
   renderDevOps();
@@ -736,13 +1080,42 @@ pages.settings = function(container) {
 
     // Hook backup actions
     document.getElementById('set-card-backup').addEventListener('click', () => {
-      showConfirm('Trigger cloud backup of active system storage data?', () => {
-        showToast('Running background DB schema export...', 'info');
-        setTimeout(() => {
-          const nowStr = new Date().toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-          document.getElementById('settings-info-backup').textContent = nowStr + ' IST';
-          showToast('✅ Enterprise system backup completed successfully!', 'success');
-        }, 1200);
+      showModal({
+        title: '<i class="fas fa-database" style="color:var(--cyan)"></i> Data Management',
+        submitLabel: 'Process Action',
+        fields: [
+          { name: 'action', label: 'Select Action', type: 'select', options: [
+            { value: 'export', label: 'Export Local Cache (JSON)' },
+            { value: 'backup', label: 'Trigger Cloud Backup' },
+            { value: 'clear',  label: 'Clear All Local Data' }
+          ], default: 'export' },
+          { label: 'Estimated Size', default: (JSON.stringify(localStorage).length / 1024).toFixed(1) + ' KB', readonly: true }
+        ],
+        async onSubmit(data, close) {
+          if (data.action === 'export') {
+            const blob = new Blob([JSON.stringify(localStorage, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `amdox_erp_backup_${new Date().getTime()}.json`;
+            a.click();
+            showToast('✅ Local cache exported successfully!', 'success');
+          } else if (data.action === 'backup') {
+            showToast('☁️ Initiating cloud synchronization...', 'info');
+            setTimeout(() => {
+              const nowStr = new Date().toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+              const infoEl = document.getElementById('settings-info-backup');
+              if (infoEl) infoEl.textContent = nowStr + ' IST';
+              showToast('✅ Enterprise cloud backup completed!', 'success');
+            }, 1000);
+          } else if (data.action === 'clear') {
+            showConfirm('🚨 CRITICAL: This will wipe all local ERP data and reset the system. Continue?', () => {
+              localStorage.clear();
+              location.reload();
+            });
+          }
+          close();
+        }
       });
     });
   };

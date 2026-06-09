@@ -172,7 +172,11 @@ function navigateTo(page) {
   // Init charts after render
   setTimeout(() => initChartsOnPage(page), 100);
   // Close mobile sidebar
-  document.getElementById('sidebar').classList.remove('mobile-open');
+  // Close mobile sidebar + overlay
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.remove('mobile-open');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (overlay) { overlay.classList.remove('active'); overlay.style.display = 'none'; }
 }
 
 // ── Sidebar ──
@@ -180,9 +184,35 @@ function initSidebar() {
   const sidebar = document.getElementById('sidebar');
   const toggle = document.getElementById('sidebar-toggle');
   const mobileBtn = document.getElementById('mobile-menu-btn');
+  const overlay = document.getElementById('sidebar-overlay');
 
+  // Desktop: collapse/expand sidebar
   toggle.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
-  mobileBtn.addEventListener('click', () => sidebar.classList.toggle('mobile-open'));
+
+  // Mobile: open/close sidebar + overlay
+  const openMobileSidebar = () => {
+    sidebar.classList.add('mobile-open');
+    overlay.style.display = 'block';
+    requestAnimationFrame(() => overlay.classList.add('active'));
+  };
+  const closeMobileSidebar = () => {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+    setTimeout(() => { overlay.style.display = 'none'; }, 250);
+  };
+
+  mobileBtn.addEventListener('click', () => {
+    if (sidebar.classList.contains('mobile-open')) {
+      closeMobileSidebar();
+    } else {
+      openMobileSidebar();
+    }
+  });
+
+  // Tap overlay to close sidebar
+  if (overlay) {
+    overlay.addEventListener('click', closeMobileSidebar);
+  }
 
   // Search filter
   document.getElementById('sidebar-search-input').addEventListener('input', (e) => {
@@ -193,12 +223,16 @@ function initSidebar() {
     });
   });
 
-  // Nav clicks
+  // Nav clicks — also close mobile sidebar
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', (e) => {
       e.preventDefault();
       const page = item.dataset.page;
       location.hash = page;
+      // Close sidebar on mobile/tablet
+      if (window.innerWidth <= 1024) {
+        closeMobileSidebar();
+      }
     });
   });
 
@@ -511,7 +545,20 @@ function initNotifications() {
   const dot = document.querySelector('.notification-dot');
   const countBadge = document.querySelector('.nav-count');
 
-  btn.addEventListener('click', () => panel.classList.toggle('open'));
+  btn.addEventListener('click', () => {
+    panel.classList.toggle('open');
+    // Hide notifications indicator when opened
+    if (dot) dot.style.display = 'none';
+    if (countBadge) countBadge.style.display = 'none';
+  });
+
+  const navItem = document.getElementById('nav-notifications');
+  if (navItem) {
+    navItem.addEventListener('click', () => {
+      if (dot) dot.style.display = 'none';
+      if (countBadge) countBadge.style.display = 'none';
+    });
+  }
 
   // Mark all read
   document.getElementById('mark-all-read').addEventListener('click', () => {
@@ -550,6 +597,9 @@ function initGlobalActions() {
     if (btn) {
       // Skip modal-specific buttons that are handled by their own logic
       if (btn.closest('.modal-overlay') || btn.dataset.modalTrigger || btn.dataset.apiAction) return;
+      // Skip admin dashboard Export/Quick Action buttons (handled by dashboard.js)
+      if (btn.id === 'admin-export-btn' || btn.id === 'admin-quick-action-btn') return;
+      if (btn.closest('#admin-export-dropdown') || btn.closest('#admin-quick-action-dropdown')) return;
       const text = btn.textContent.trim();
       if (text.toLowerCase().includes('export')) {
         showToast(`Exporting data... ${text}`, 'info');
@@ -585,7 +635,7 @@ function showModal({ title, fields, onSubmit, submitLabel = 'Save', submitClass 
 
   const modalTitle = document.createElement('h3');
   modalTitle.className = 'modal-title';
-  modalTitle.textContent = title;
+  modalTitle.innerHTML = title;
   modalHeader.appendChild(modalTitle);
 
   const closeBtn = document.createElement('button');

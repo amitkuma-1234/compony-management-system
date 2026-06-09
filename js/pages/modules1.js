@@ -21,42 +21,147 @@ pages.hr = function(container) {
       <p>Complete workforce management with AI-powered insights, attendance tracking, payroll processing, and performance reviews.</p>
       <div class="page-actions" style="margin-top:16px">
         <button class="btn btn-primary btn-sm" id="hr-add-btn"><i class="fas fa-user-plus"></i> Add Employee</button>
-        <button class="btn btn-secondary btn-sm"><i class="fas fa-file-export"></i> Export Report</button>
+        <button class="btn btn-secondary btn-sm" id="hr-export-btn"><i class="fas fa-file-export"></i> Export Report</button>
         <button class="btn btn-secondary btn-sm" id="hr-ai-insights-btn"><i class="fas fa-brain"></i> AI Insights</button>
       </div>
     </div>
     <div class="stats-grid" id="hr-stats">
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-users"></i></div></div><div class="stat-value" id="hr-total">—</div><div class="stat-label">Total Employees</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-user-check"></i></div></div><div class="stat-value" id="hr-active">—</div><div class="stat-label">Active</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-plane-departure"></i></div></div><div class="stat-value" id="hr-onleave">12</div><div class="stat-label">On Leave</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-user-plus"></i></div></div><div class="stat-value" id="hr-new">—</div><div class="stat-label">New This Month</div></div>
+      <div class="stat-card" id="hr-stat-total"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-users"></i></div></div><div class="stat-value" id="hr-total">—</div><div class="stat-label">Total Employees</div></div>
+      <div class="stat-card" id="hr-stat-active"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-user-check"></i></div></div><div class="stat-value" id="hr-active">—</div><div class="stat-label">Active</div></div>
+      <div class="stat-card" id="hr-stat-onleave"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-plane-departure"></i></div></div><div class="stat-value" id="hr-onleave">12</div><div class="stat-label">On Leave</div></div>
+      <div class="stat-card" id="hr-stat-new"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-user-plus"></i></div></div><div class="stat-value" id="hr-new">—</div><div class="stat-label">New This Month</div></div>
     </div>
-    <div class="tabs"><div class="tab active" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Employees</div><div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Attendance</div><div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Leave</div><div class="tab" onclick="this.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Payroll</div></div>
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-header"><span class="card-title">Attendance This Week</span></div>
-        <div class="chart-container"><canvas data-chart="attendance"></canvas></div>
+    <div class="tabs" id="hr-tabs">
+      <div class="tab active" data-tab="employees">Employees</div>
+      <div class="tab" data-tab="attendance">Attendance</div>
+      <div class="tab" data-tab="leave">Leave</div>
+      <div class="tab" data-tab="payroll">Payroll</div>
+    </div>
+    
+    <div id="hr-tab-employees" class="hr-tab-content" style="display:block;">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Attendance This Week</span></div>
+          <div class="chart-container"><canvas data-chart="attendance"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Department Distribution</span></div>
+          <div id="hr-dept-distribution" style="display:flex;flex-direction:column;gap:12px;padding-top:8px">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
       </div>
       <div class="card">
-        <div class="card-header"><span class="card-title">Department Distribution</span></div>
-        <div id="hr-dept-distribution" style="display:flex;flex-direction:column;gap:12px;padding-top:8px">
-          <!-- Dynamically populated -->
+        <div class="card-header">
+          <span class="card-title">Employee Directory</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" class="form-control" id="emp-search" placeholder="Search employees..." style="width:200px;padding:6px 12px;font-size:13px;">
+            <button class="btn btn-primary btn-sm" id="hr-add-btn2"><i class="fas fa-plus"></i> Add</button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Employee</th><th>Department</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+            <tbody id="emp-tbody"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted)"><i class="fas fa-spinner fa-spin"></i> Loading employees...</td></tr></tbody>
+          </table>
         </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">Employee Directory</span>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input type="text" class="form-control" id="emp-search" placeholder="Search employees..." style="width:200px;padding:6px 12px;font-size:13px;">
-          <button class="btn btn-primary btn-sm" id="hr-add-btn2"><i class="fas fa-plus"></i> Add</button>
+
+    <div id="hr-tab-attendance" class="hr-tab-content" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Today's Attendance</span>
+          <button class="btn btn-primary btn-sm" id="hr-manual-entry-btn"><i class="fas fa-clock"></i> Manual Entry</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Employee</th><th>Clock In</th><th>Clock Out</th><th>Effective Hours</th><th>Status</th></tr></thead>
+            <tbody id="attendance-tbody">
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">AM</div><div><div style="font-weight:600">Arjun Mehta</div><div style="font-size:11px;color:var(--text-muted)">Engineering</div></div></div></td>
+                <td>08:58 AM</td><td>06:15 PM</td><td>9h 17m</td>
+                <td><select class="badge badge-success" style="cursor:pointer; appearance:auto; outline:none; border:none; padding:4px 8px; font-family:inherit; text-align:center;" onchange="this.className='badge ' + (this.value==='Present' ? 'badge-success' : (this.value==='Absent' ? 'badge-danger' : 'badge-warning'))"><option value="Present" selected>Present</option><option value="Absent">Absent</option><option value="Half Day">Half Day</option></select></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#ec4899,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">PS</div><div><div style="font-weight:600">Priya Sharma</div><div style="font-size:11px;color:var(--text-muted)">HR & Admin</div></div></div></td>
+                <td>09:12 AM</td><td>--</td><td>--</td>
+                <td><select class="badge badge-success" style="cursor:pointer; appearance:auto; outline:none; border:none; padding:4px 8px; font-family:inherit; text-align:center;" onchange="this.className='badge ' + (this.value==='Present' ? 'badge-success' : (this.value==='Absent' ? 'badge-danger' : 'badge-warning'))"><option value="Present" selected>Present</option><option value="Absent">Absent</option><option value="Half Day">Half Day</option></select></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">RD</div><div><div style="font-weight:600">Rahul Desai</div><div style="font-size:11px;color:var(--text-muted)">Sales & Marketing</div></div></div></td>
+                <td>--</td><td>--</td><td>--</td>
+                <td><select class="badge badge-danger" style="cursor:pointer; appearance:auto; outline:none; border:none; padding:4px 8px; font-family:inherit; text-align:center;" onchange="this.className='badge ' + (this.value==='Present' ? 'badge-success' : (this.value==='Absent' ? 'badge-danger' : 'badge-warning'))"><option value="Present">Present</option><option value="Absent" selected>Absent</option><option value="Half Day">Half Day</option></select></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-      <div class="table-container">
-        <table>
-          <thead><tr><th>Employee</th><th>Department</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
-          <tbody id="emp-tbody"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted)"><i class="fas fa-spinner fa-spin"></i> Loading employees...</td></tr></tbody>
-        </table>
+    </div>
+
+    <div id="hr-tab-leave" class="hr-tab-content" style="display:none;">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Leave Balances</span></div>
+          <div style="padding:16px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>Casual Leave</span><strong>8 / 12</strong></div><div class="progress-bar" style="margin-bottom:16px"><div class="progress-fill green" style="width:66%"></div></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>Sick Leave</span><strong>3 / 10</strong></div><div class="progress-bar" style="margin-bottom:16px"><div class="progress-fill yellow" style="width:30%"></div></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>Earned Leave</span><strong>14 / 20</strong></div><div class="progress-bar"><div class="progress-fill purple" style="width:70%"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Recent Requests</span><button class="btn btn-sm btn-primary" id="hr-apply-leave-btn">Apply</button></div>
+          <div class="activity-list" style="padding:16px;" id="hr-leave-requests-list">
+            <div class="list-item"><div class="list-icon" style="background:var(--bg-card)"><i class="fas fa-plane"></i></div><div class="list-content"><div class="list-title">Vacation - Priya Sharma</div><div class="list-subtitle">Jun 12 - Jun 16</div></div><select class="badge badge-warning" style="cursor:pointer; appearance:auto; outline:none; border:none; padding:4px 8px; font-family:inherit; text-align:center;" onchange="this.className='badge ' + (this.value==='Approved' ? 'badge-success' : (this.value==='Pending' ? 'badge-warning' : 'badge-danger'))"><option value="Approved">Approved</option><option value="Pending" selected>Pending</option><option value="Rejected">Rejected</option></select></div>
+            <div class="list-item"><div class="list-icon" style="background:var(--bg-card)"><i class="fas fa-thermometer"></i></div><div class="list-content"><div class="list-title">Sick Leave - Rahul Desai</div><div class="list-subtitle">May 21 (1 Day)</div></div><select class="badge badge-success" style="cursor:pointer; appearance:auto; outline:none; border:none; padding:4px 8px; font-family:inherit; text-align:center;" onchange="this.className='badge ' + (this.value==='Approved' ? 'badge-success' : (this.value==='Pending' ? 'badge-warning' : 'badge-danger'))"><option value="Approved" selected>Approved</option><option value="Pending">Pending</option><option value="Rejected">Rejected</option></select></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="hr-tab-payroll" class="hr-tab-content" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">May 2026 Payroll</span>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-secondary btn-sm" id="hr-download-slips-btn"><i class="fas fa-file-invoice"></i> Download All Slips</button>
+            <button class="btn btn-primary btn-sm" id="hr-run-payroll-btn"><i class="fas fa-play"></i> Run Payroll</button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Employee</th><th>Base Salary</th><th>Bonus/Allowances</th><th>Deductions</th><th>Net Pay</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">AM</div><div><div style="font-weight:600">Arjun Mehta</div></div></div></td>
+                <td>₹85,000</td><td>₹12,000</td><td><span style="color:var(--danger)">-₹6,500</span></td><td><strong style="color:var(--success)">₹90,500</strong></td>
+                <td>
+                  <select class="badge badge-success" style="cursor:pointer; appearance:auto; outline:none; border:none; padding:4px 8px; font-family:inherit;" onchange="this.className='badge ' + (this.value==='Processed' ? 'badge-success' : (this.value==='Pending' ? 'badge-warning' : 'badge-danger'))">
+                    <option value="Processed" selected>Processed</option><option value="Pending">Pending</option><option value="Failed">Failed</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#ec4899,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">PS</div><div><div style="font-weight:600">Priya Sharma</div></div></div></td>
+                <td>₹95,000</td><td>₹8,000</td><td><span style="color:var(--danger)">-₹8,200</span></td><td><strong style="color:var(--success)">₹94,800</strong></td>
+                <td>
+                  <select class="badge badge-success" style="cursor:pointer; appearance:auto; outline:none; border:none; padding:4px 8px; font-family:inherit;" onchange="this.className='badge ' + (this.value==='Processed' ? 'badge-success' : (this.value==='Pending' ? 'badge-warning' : 'badge-danger'))">
+                    <option value="Processed" selected>Processed</option><option value="Pending">Pending</option><option value="Failed">Failed</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">RD</div><div><div style="font-weight:600">Rahul Desai</div></div></div></td>
+                <td>₹45,000</td><td>₹5,000</td><td><span style="color:var(--danger)">-₹2,100</span></td><td><strong style="color:var(--success)">₹47,900</strong></td>
+                <td>
+                  <select class="badge badge-warning" style="cursor:pointer; appearance:auto; outline:none; border:none; padding:4px 8px; font-family:inherit;" onchange="this.className='badge ' + (this.value==='Processed' ? 'badge-success' : (this.value==='Pending' ? 'badge-warning' : 'badge-danger'))">
+                    <option value="Processed">Processed</option><option value="Pending" selected>Pending</option><option value="Failed">Failed</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>`;
 
@@ -162,11 +267,21 @@ pages.hr = function(container) {
           <td><div style="display:flex;align-items:center;gap:10px">${empAvatar(e.name)}<div><div style="font-weight:600">${e.name}</div><div style="font-size:11px;color:var(--text-muted)">${e.email}</div></div></div></td>
           <td>${e.department}</td>
           <td>${e.role}</td>
-          <td><span class="badge ${statusBadge(e.status)}">${e.status}</span></td>
+          <td>
+            <select class="form-control" style="font-size:11px; padding:4px 8px; height:auto; width:110px; border-radius:8px; border-color:${e.status === 'Active' ? 'var(--success)' : (e.status === 'Probation' ? 'var(--info)' : (e.status === 'On Leave' ? 'var(--warning)' : 'var(--danger)'))};" onchange="hrUpdateStatus(${e.id}, this.value)">
+              <option value="Active" ${e.status === 'Active' ? 'selected' : ''}>Active</option>
+              <option value="Probation" ${e.status === 'Probation' ? 'selected' : ''}>Probation</option>
+              <option value="On Leave" ${e.status === 'On Leave' ? 'selected' : ''}>On Leave</option>
+              <option value="Inactive" ${e.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+            </select>
+          </td>
           <td>${e.joined}</td>
-          <td style="display:flex;gap:6px">
-            <button class="btn btn-secondary btn-sm" onclick="hrEditEmployee(${e.id})"><i class="fas fa-pen"></i></button>
-            <button class="btn btn-secondary btn-sm" style="color:var(--danger)" onclick="hrDeleteEmployee(${e.id},'${e.name.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-secondary btn-sm" onclick="hrViewEmployee(${e.id})" title="View Profile"><i class="fas fa-eye" style="color:var(--info)"></i></button>
+              <button class="btn btn-secondary btn-sm" onclick="hrEditEmployee(${e.id})" title="Edit Employee"><i class="fas fa-pen" style="color:var(--accent)"></i></button>
+              <button class="btn btn-secondary btn-sm" style="color:var(--danger)" onclick="hrDeleteEmployee(${e.id},'${e.name.replace(/'/g,"\\'")}')" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
           </td>
         </tr>`).join('');
     };
@@ -235,6 +350,43 @@ pages.hr = function(container) {
   document.getElementById('hr-add-btn')?.addEventListener('click',  openAddModal);
   document.getElementById('hr-add-btn2')?.addEventListener('click', openAddModal);
 
+  document.getElementById('hr-export-btn')?.addEventListener('click', () => {
+    if (!cachedEmployees || !cachedEmployees.length) {
+      if (typeof showToast !== 'undefined') showToast('No employee data available to export', 'warning');
+      return;
+    }
+    
+    // Create CSV content
+    const headers = ['ID', 'Name', 'Email', 'Department', 'Role', 'Status', 'Joined Date'];
+    const csvRows = [headers.join(',')];
+    
+    cachedEmployees.forEach(emp => {
+      const row = [
+        emp.id,
+        `"${(emp.name || '').replace(/"/g, '""')}"`,
+        `"${emp.email || ''}"`,
+        `"${emp.department || ''}"`,
+        `"${emp.role || ''}"`,
+        `"${emp.status || ''}"`,
+        `"${emp.joined || ''}"`
+      ];
+      csvRows.push(row.join(','));
+    });
+    
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `hr_employee_report_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    if (typeof showToast !== 'undefined') showToast('Report exported successfully!', 'success');
+  });
+
   document.getElementById('hr-ai-insights-btn')?.addEventListener('click', () => {
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
@@ -273,6 +425,38 @@ pages.hr = function(container) {
     overlay.querySelector('#hr-ai-done').addEventListener('click', closeModal);
     overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
   });
+
+  window.hrUpdateStatus = function(id, newStatus) {
+    const list = lsGetEmployees();
+    const idx = list.findIndex(emp => emp.id === id);
+    if (idx > -1) {
+      list[idx].status = newStatus;
+      lsSaveEmployees(list);
+      cachedEmployees = list;
+      showToast(`Employee status updated to ${newStatus}`, 'success');
+      loadEmployees();
+    }
+  };
+
+  window.hrViewEmployee = function(id) {
+    const e = cachedEmployees.find(emp => emp.id === id);
+    if (!e) return;
+
+    showModal({
+      title: `<i class="fas fa-user-circle" style="color:var(--info)"></i> Employee Profile: ${e.name}`,
+      submitLabel: 'Done',
+      submitClass: 'btn-secondary',
+      fields: [
+        { label: 'Full Name', default: e.name, readonly: true },
+        { label: 'Work Email', default: e.email, readonly: true },
+        { label: 'Department', default: e.department, readonly: true },
+        { label: 'Job Role', default: e.role, readonly: true },
+        { label: 'Current Status', default: e.status, readonly: true },
+        { label: 'Joining Date', default: e.joined, readonly: true }
+      ],
+      onSubmit(data, close) { close(); }
+    });
+  };
 
   // Edit employee
   window.hrEditEmployee = async function(id) {
@@ -344,6 +528,200 @@ pages.hr = function(container) {
       loadEmployees();
     });
   };
+
+  // Tab switching logic
+  const tabs = document.querySelectorAll('#hr-tabs .tab');
+  const tabContents = document.querySelectorAll('.hr-tab-content');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(c => c.style.display = 'none');
+      
+      tab.classList.add('active');
+      const targetId = 'hr-tab-' + tab.getAttribute('data-tab');
+      const targetContent = document.getElementById(targetId);
+      if (targetContent) targetContent.style.display = 'block';
+    });
+  });
+
+  // Payroll actions
+  document.getElementById('hr-download-slips-btn')?.addEventListener('click', () => {
+    // Generate a dummy PDF blob
+    const content = "Payroll Slips Document (Dummy Data for Amdox ERP)";
+    const blob = new Blob([content], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `payroll_slips_may_2026.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    if (typeof showToast !== 'undefined') showToast('Slips downloaded successfully as PDF!', 'success');
+  });
+
+  document.getElementById('hr-run-payroll-btn')?.addEventListener('click', () => {
+    if (typeof showToast !== 'undefined') showToast('<i class="fas fa-spinner fa-spin"></i> Running payroll calculations...', 'info');
+    setTimeout(() => {
+      const selects = document.querySelectorAll('#hr-tab-payroll select');
+      selects.forEach(s => {
+        s.value = 'Processed';
+        s.className = 'badge badge-success';
+      });
+      if (typeof showToast !== 'undefined') showToast('✅ Payroll executed for all employees.', 'success');
+    }, 1500);
+  });
+
+  // Leave actions
+  document.getElementById('hr-apply-leave-btn')?.addEventListener('click', () => {
+    if (typeof showModal !== 'undefined') {
+      showModal({
+        title: '<i class="fas fa-calendar-plus" style="color:var(--accent-light)"></i> Apply for Leave',
+        submitLabel: 'Submit Request',
+        fields: [
+          { name: 'employee', label: 'Employee Name', required: true, placeholder: 'e.g. Arjun Mehta' },
+          { name: 'type', label: 'Leave Type', type: 'select', options: ['Casual Leave', 'Sick Leave', 'Earned Leave'], default: 'Casual Leave' },
+          { name: 'start_date', label: 'Start Date', required: true, placeholder: 'e.g. Jun 15, 2026' },
+          { name: 'end_date', label: 'End Date', required: true, placeholder: 'e.g. Jun 18, 2026' }
+        ],
+        onSubmit(data, close) {
+          const list = document.getElementById('hr-leave-requests-list');
+          if (list) {
+            const icon = data.type === 'Sick Leave' ? 'fa-thermometer' : 'fa-plane';
+            const newItem = document.createElement('div');
+            newItem.className = 'list-item';
+            newItem.innerHTML = `
+              <div class="list-icon" style="background:var(--bg-card)"><i class="fas ${icon}"></i></div>
+              <div class="list-content">
+                <div class="list-title">${data.type.split(' ')[0]} - ${data.employee}</div>
+                <div class="list-subtitle">${data.start_date.split(',')[0]} - ${data.end_date.split(',')[0]}</div>
+              </div>
+              <select class="badge badge-warning" style="cursor:pointer; appearance:auto; outline:none; border:none; padding:4px 8px; font-family:inherit; text-align:center;" onchange="this.className='badge ' + (this.value==='Approved' ? 'badge-success' : (this.value==='Pending' ? 'badge-warning' : 'badge-danger'))">
+                <option value="Approved">Approved</option>
+                <option value="Pending" selected>Pending</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            `;
+            list.insertBefore(newItem, list.firstChild);
+            if (list.children.length > 4) list.removeChild(list.lastChild);
+          }
+          if (typeof showToast !== 'undefined') showToast(`✅ Leave request submitted for ${data.employee}.`, 'success');
+          close();
+        }
+      });
+    }
+  });
+
+  // Attendance actions
+  document.getElementById('hr-manual-entry-btn')?.addEventListener('click', () => {
+    if (typeof showModal !== 'undefined') {
+      showModal({
+        title: '<i class="fas fa-clock" style="color:var(--accent-light)"></i> Manual Attendance Entry',
+        submitLabel: 'Save Record',
+        fields: [
+          { name: 'employee', label: 'Employee Name', required: true, placeholder: 'e.g. Arjun Mehta' },
+          { name: 'date', label: 'Date', required: true, default: new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) },
+          { name: 'clock_in', label: 'Clock In Time', placeholder: 'e.g. 09:00 AM' },
+          { name: 'clock_out', label: 'Clock Out Time', placeholder: 'e.g. 06:00 PM' },
+          { name: 'status', label: 'Status', type: 'select', options: ['Present', 'Absent', 'Half Day'], default: 'Present' }
+        ],
+        onSubmit(data, close) {
+          const list = document.getElementById('attendance-tbody');
+          if (list) {
+            const tr = document.createElement('tr');
+            // Calculate initials
+            let initials = 'EMP';
+            if (data.employee) {
+               initials = data.employee.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+            }
+            
+            tr.innerHTML = `
+              <td><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${initials}</div><div><div style="font-weight:600">${data.employee}</div><div style="font-size:11px;color:var(--text-muted)">Manual Entry</div></div></div></td>
+              <td>${data.clock_in || '--'}</td>
+              <td>${data.clock_out || '--'}</td>
+              <td>--</td>
+              <td>
+                <select class="badge ${data.status === 'Present' ? 'badge-success' : data.status === 'Absent' ? 'badge-danger' : 'badge-warning'}" style="cursor:pointer; appearance:auto; outline:none; border:none; padding:4px 8px; font-family:inherit; text-align:center;" onchange="this.className='badge ' + (this.value==='Present' ? 'badge-success' : (this.value==='Absent' ? 'badge-danger' : 'badge-warning'))">
+                  <option value="Present" ${data.status==='Present' ? 'selected':''}>Present</option>
+                  <option value="Absent" ${data.status==='Absent' ? 'selected':''}>Absent</option>
+                  <option value="Half Day" ${data.status==='Half Day' ? 'selected':''}>Half Day</option>
+                </select>
+              </td>
+            `;
+            list.insertBefore(tr, list.firstChild);
+          }
+          if (typeof showToast !== 'undefined') showToast(`✅ Attendance saved for ${data.employee}.`, 'success');
+          close();
+        }
+      });
+    }
+  });
+
+  // ── Stat Card Click Handlers ──
+  document.getElementById('hr-stat-total')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-users" style="color:var(--accent-light)"></i> Workforce Summary',
+      submitLabel: 'Refresh Directory',
+      fields: [
+        { label: 'Total Headcount', default: String(cachedEmployees.length), readonly: true },
+        { label: 'Full-time', default: '84%', readonly: true },
+        { label: 'Contractors', default: '12%', readonly: true },
+        { label: 'Interns', default: '4%', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        loadEmployees();
+      }
+    });
+  });
+
+  document.getElementById('hr-stat-active')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-user-check" style="color:var(--success)"></i> Active Personnel',
+      submitLabel: 'Close',
+      submitClass: 'btn-secondary',
+      fields: [
+        { label: 'Currently Clocked In', default: '118', readonly: true },
+        { label: 'Work From Home', default: '14', readonly: true },
+        { label: 'Office Presence', default: '88%', readonly: true }
+      ],
+      onSubmit(data, close) { close(); }
+    });
+  });
+
+  document.getElementById('hr-stat-onleave')?.addEventListener('click', () => {
+    const leaveCount = document.getElementById('hr-onleave')?.textContent || '12';
+    showModal({
+      title: '<i class="fas fa-plane-departure" style="color:var(--warning)"></i> Absence Tracking',
+      submitLabel: 'Manage Leaves',
+      fields: [
+        { label: 'Total on Leave', default: leaveCount, readonly: true },
+        { label: 'Planned Leaves', default: '8', readonly: true },
+        { label: 'Sick Leaves', default: '4', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        const leaveTab = document.querySelector('[data-tab="leave"]');
+        if (leaveTab) leaveTab.click();
+      }
+    });
+  });
+
+  document.getElementById('hr-stat-new')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-user-plus" style="color:var(--purple)"></i> Onboarding Analytics',
+      submitLabel: 'Add New',
+      fields: [
+        { label: 'Joined this Month', default: document.getElementById('hr-new')?.textContent || '1', readonly: true },
+        { label: 'Pending Training', default: '3', readonly: true },
+        { label: 'Onboarding Health', default: '94% Completeness', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        openAddModal();
+      }
+    });
+  });
 };
 
 /* ============================================================
@@ -361,9 +739,9 @@ pages.finance = function(container) {
       </div>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-arrow-trend-up"></i></div></div><div class="stat-value" id="fin-revenue">—</div><div class="stat-label">Revenue (Paid Invoices)</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-arrow-trend-down"></i></div></div><div class="stat-value" id="fin-expenses">—</div><div class="stat-label">Total Expenses & Taxes</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-file-invoice-dollar"></i></div></div><div class="stat-value" id="fin-pending">—</div><div class="stat-label">Pending Invoices</div></div>
+      <div class="stat-card" id="fin-stat-revenue"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-arrow-trend-up"></i></div></div><div class="stat-value" id="fin-revenue">—</div><div class="stat-label">Revenue (Paid Invoices)</div></div>
+      <div class="stat-card" id="fin-stat-expenses"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-arrow-trend-down"></i></div></div><div class="stat-value" id="fin-expenses">—</div><div class="stat-label">Total Expenses & Taxes</div></div>
+      <div class="stat-card" id="fin-stat-pending"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-file-invoice-dollar"></i></div></div><div class="stat-value" id="fin-pending">—</div><div class="stat-label">Pending Invoices</div></div>
       <div class="stat-card" id="fin-profit-card" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
         <div class="stat-card-header">
           <div class="stat-icon purple"><i class="fas fa-piggy-bank"></i></div>
@@ -914,10 +1292,10 @@ pages.inventory = function(container) {
       </div>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fas fa-boxes-stacked"></i></div></div><div class="stat-value" id="inv-total">—</div><div class="stat-label">Total Products</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-check-circle"></i></div></div><div class="stat-value" id="inv-instock">—</div><div class="stat-label">In Stock</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div></div><div class="stat-value" id="inv-low">—</div><div class="stat-label">Low Stock Alerts</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-truck-fast"></i></div></div><div class="stat-value" id="inv-pending-po">—</div><div class="stat-label">Pending Orders</div></div>
+      <div class="stat-card" id="inv-stat-total"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fas fa-boxes-stacked"></i></div></div><div class="stat-value" id="inv-total">—</div><div class="stat-label">Total Products</div></div>
+      <div class="stat-card" id="inv-stat-instock"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-check-circle"></i></div></div><div class="stat-value" id="inv-instock">—</div><div class="stat-label">In Stock</div></div>
+      <div class="stat-card" id="inv-stat-low"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div></div><div class="stat-value" id="inv-low">—</div><div class="stat-label">Low Stock Alerts</div></div>
+      <div class="stat-card" id="inv-stat-orders"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-truck-fast"></i></div></div><div class="stat-value" id="inv-pending-po">—</div><div class="stat-label">Pending Orders</div></div>
     </div>
     <div class="grid-2">
       <div class="card"><div class="card-header"><span class="card-title">Stock by Category</span></div><div class="chart-container"><canvas data-chart="inventory"></canvas></div></div>
@@ -1515,5 +1893,70 @@ pages.inventory = function(container) {
     });
 
     renderShelf();
+  });
+
+  // ── Stat Card Click Handlers ──
+  document.getElementById('inv-stat-total')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-boxes-stacked" style="color:var(--cyan)"></i> Inventory Catalog Summary',
+      submitLabel: 'Add New Product',
+      fields: [
+        { label: 'Total Unique SKU', default: String(allProducts.length), readonly: true },
+        { label: 'Total Units', default: String(allProducts.reduce((s,p)=>s+p.stock,0)), readonly: true },
+        { label: 'Warehouse Capacity', default: '68% utilized', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        document.getElementById('prod-add-btn')?.click();
+      }
+    });
+  });
+
+  document.getElementById('inv-stat-instock')?.addEventListener('click', () => {
+    const instock = allProducts.filter(p => p.stock > p.reorder_level).length;
+    showModal({
+      title: '<i class="fas fa-check-circle" style="color:var(--success)"></i> Healthy Stock Levels',
+      submitLabel: 'Close',
+      submitClass: 'btn-secondary',
+      fields: [
+        { label: 'Sufficient Stock', default: instock + ' Products', readonly: true },
+        { label: 'Top Moving', default: 'MacBook Pro 16"', readonly: true },
+        { label: 'Value in Stock', default: '₹14.2L', readonly: true }
+      ],
+      onSubmit(data, close) { close(); }
+    });
+  });
+
+  document.getElementById('inv-stat-low')?.addEventListener('click', () => {
+    const lowCount = allProducts.filter(p => p.stock <= p.reorder_level).length;
+    showModal({
+      title: '<i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> Replenishment Needed',
+      submitLabel: 'Bulk Reorder',
+      fields: [
+        { label: 'Low Stock SKU', default: String(lowCount), readonly: true },
+        { label: 'Critical (<5 units)', default: '1 Product', readonly: true },
+        { label: 'Auto-Reorder Status', default: 'Ready to Process', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        document.getElementById('inv-po-btn')?.click();
+      }
+    });
+  });
+
+  document.getElementById('inv-stat-orders')?.addEventListener('click', () => {
+    showModal({
+      title: '<i class="fas fa-truck-fast" style="color:var(--purple)"></i> Logistics & Orders',
+      submitLabel: 'New PO',
+      fields: [
+        { label: 'Pending Shipments', default: String(lsGetPOs()), readonly: true },
+        { label: 'Est. Delivery', default: '2-4 Days', readonly: true },
+        { label: 'In-Transit Value', default: '₹2.85L', readonly: true }
+      ],
+      onSubmit(data, close) {
+        close();
+        document.getElementById('inv-po-btn')?.click();
+      }
+    });
   });
 };
