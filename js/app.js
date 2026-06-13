@@ -90,8 +90,8 @@ function applyRoleSidebar() {
   });
 }
 
-// ── Page Renderers (imported below) ──
-const pages = {};
+// ── Page Renderers (Global Registry) ──
+window.pages = {};
 
 // ── App Init ──
 document.addEventListener('DOMContentLoaded', () => {
@@ -167,10 +167,19 @@ function navigateTo(page) {
   // Render page
   container.innerHTML = '';
   container.className = 'page-content animate-fade';
-  const renderFn = Object.hasOwn(pages, safePage) ? pages[safePage] : pages.dashboard;
+  
+  // Robust lookup: check global pages object
+  let renderFn = window.pages[safePage];
+  
+  // Fallback check
+  if (!renderFn) {
+    console.warn(`Page renderer for "${safePage}" not found. Falling back to dashboard.`);
+    renderFn = window.pages.dashboard;
+  }
+  
   if (renderFn) renderFn(container);
   // Init charts after render
-  setTimeout(() => initChartsOnPage(page), 100);
+  setTimeout(() => initChartsOnPage(safePage), 100);
   // Close mobile sidebar
   // Close mobile sidebar + overlay
   const sidebar = document.getElementById('sidebar');
@@ -833,6 +842,66 @@ function showConfirm(message, onConfirm) {
 
   cancelBtn.addEventListener('click', () => overlay.remove());
   okBtn.addEventListener('click', () => { overlay.remove(); onConfirm(); });
+}
+
+// ── Content Modal (Custom HTML) ──
+function showContentModal({ title, content, maxWidth = '650px' }) {
+  const existingModal = document.querySelector('.modal-overlay:not(#scan-modal-overlay):not(#profit-modal-overlay)');
+  existingModal?.remove();
+
+  const cleanTitle = title.replace(/<[^>]*>/g, '').replace(/"/g, '&quot;');
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+
+  const modalBox = document.createElement('div');
+  modalBox.className = 'modal-box';
+  modalBox.style.maxWidth = maxWidth;
+  modalBox.setAttribute('role', 'dialog');
+  modalBox.setAttribute('aria-modal', 'true');
+  modalBox.setAttribute('aria-label', cleanTitle);
+
+  const modalHeader = document.createElement('div');
+  modalHeader.className = 'modal-header';
+
+  const modalTitle = document.createElement('h3');
+  modalTitle.className = 'modal-title';
+  modalTitle.innerHTML = title;
+  modalHeader.appendChild(modalTitle);
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'modal-close';
+  closeBtn.id = 'modal-close-btn';
+  closeBtn.setAttribute('aria-label', 'Close');
+  closeBtn.innerHTML = '<i class="fas fa-xmark"></i>';
+  modalHeader.appendChild(closeBtn);
+
+  const modalBody = document.createElement('div');
+  modalBody.className = 'modal-body';
+  modalBody.innerHTML = content;
+
+  const modalFooter = document.createElement('div');
+  modalFooter.className = 'modal-footer text-right';
+  modalFooter.style.justifyContent = 'flex-end';
+  
+  const closeFooterBtn = document.createElement('button');
+  closeFooterBtn.className = 'btn btn-secondary';
+  closeFooterBtn.textContent = 'Close';
+  const closeModal = () => {
+    overlay.classList.remove('open');
+    setTimeout(() => overlay.remove(), 200);
+  };
+  closeFooterBtn.addEventListener('click', closeModal);
+  modalFooter.appendChild(closeFooterBtn);
+
+  modalBox.appendChild(modalHeader);
+  modalBox.appendChild(modalBody);
+  modalBox.appendChild(modalFooter);
+  overlay.appendChild(modalBox);
+  document.body.appendChild(overlay);
+
+  requestAnimationFrame(() => overlay.classList.add('open'));
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 }
 
 // ── Toast ──

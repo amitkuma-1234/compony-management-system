@@ -705,19 +705,77 @@ pages.auth = function(container) {
     });
 
     document.getElementById('sec-stat-users')?.addEventListener('click', () => {
-      showModal({
-        title: '<i class="fas fa-users" style="color:var(--info)"></i> Session Management',
-        submitLabel: 'Manage Roles',
-        fields: [
-          { label: 'Active Sessions', default: '162', readonly: true },
-          { label: 'Idle Users', default: '12', readonly: true },
-          { label: 'MFA Adoption', default: '98.5%', readonly: true }
-        ],
-        onSubmit(data, close) {
-          close();
-          location.hash = '#hr';
-        }
+      const names = ['Arjun Mehta','Priya Sharma','Rahul Desai','Anita Patel','Sneha Reddy','Karan Mehta','Rajesh Gupta','Deepak Verma','Sonia Gill','Vikram Singh','Meera Iyer','Amit Kumar','Pooja Hegde','Suresh Raina','Ishani Bose'];
+      const depts = ['Engineering','HR','Sales','Finance','Marketing','Legal','Operations'];
+      const roles = ['Software Engineer','Manager','Lead Designer','Analyst','Executive','Director','Super Admin'];
+      
+      const users = [];
+      for (let i = 1; i <= 162; i++) {
+        const name = names[i % names.length] + ' ' + (i > 15 ? '#' + i : '');
+        users.push({
+          id: i,
+          name: name,
+          role: roles[i % roles.length],
+          status: i % 15 === 0 ? 'Idle' : 'Active',
+          lastLogin: i % 5 === 0 ? '5 mins ago' : (i % 3 === 0 ? '1 hour ago' : 'Just now'),
+          ip: `192.168.1.${10 + i}`,
+          mfa: i % 4 === 0 ? 'Enabled' : 'Disabled'
+        });
+      }
+
+      const buildRows = (list) => {
+        return list.map(u => `
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:12px 10px"><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">${u.name.substring(0,2).toUpperCase()}</div><div style="font-weight:600">${u.name}</div></div></td>
+            <td><span class="badge badge-purple">${u.role}</span></td>
+            <td><span class="badge ${u.status === 'Active' ? 'badge-success' : 'badge-warning'}">${u.status}</span></td>
+            <td style="font-size:12px;color:var(--text-muted)">${u.lastLogin}</td>
+            <td style="font-family:var(--font-mono);font-size:11px">${u.ip}</td>
+            <td><span class="badge ${u.mfa === 'Enabled' ? 'badge-success' : 'badge-danger'}">${u.mfa}</span></td>
+          </tr>`).join('');
+      };
+
+      const html = `
+        <div style="padding:5px">
+          <div style="margin-bottom:15px; display:flex; gap:10px; align-items:center">
+            <div style="position:relative; flex:1">
+              <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted)"></i>
+              <input type="text" id="sec-user-search" class="form-input" placeholder="Search by name, role or IP..." style="padding-left:35px; width:100%">
+            </div>
+            <div style="font-size:13px; color:var(--text-muted)">Total: <strong>162</strong> Active Sessions</div>
+          </div>
+          <div class="table-container" style="max-height:450px; overflow-y:auto">
+            <table style="width:100%; border-collapse:collapse">
+              <thead style="position:sticky; top:0; background:var(--bg-card); z-index:1">
+                <tr style="text-align:left; border-bottom:1px solid var(--border)">
+                  <th style="padding:10px">User</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Last Activity</th>
+                  <th>Source IP</th>
+                  <th>MFA</th>
+                </tr>
+              </thead>
+              <tbody id="sec-user-tbody">${buildRows(users)}</tbody>
+            </table>
+          </div>
+        </div>`;
+
+      showContentModal({
+        title: '<i class="fas fa-users" style="color:var(--info)"></i> System Access Directory',
+        content: html,
+        maxWidth: '850px'
       });
+
+      const searchInput = document.getElementById('sec-user-search');
+      const tbody = document.getElementById('sec-user-tbody');
+      if (searchInput && tbody) {
+        searchInput.addEventListener('input', (e) => {
+          const q = e.target.value.toLowerCase();
+          const filtered = users.filter(u => u.name.toLowerCase().includes(q) || u.role.toLowerCase().includes(q) || u.ip.includes(q));
+          tbody.innerHTML = buildRows(filtered);
+        });
+      }
     });
 
     document.getElementById('sec-stat-threats')?.addEventListener('click', () => {
@@ -788,6 +846,110 @@ pages.auth = function(container) {
 };
 
 /* Notifications Page */
+/* Notifications Page */
+const MOCK_SENT_MESSAGES = (function() {
+  const base = [
+    { id: 4000, type: 'Email', recipient: 'infosys_accounts@example.com', subject: 'Invoice #INV-2847', time: '2 min ago', content: 'Dear Infosys Accounts Team,\n\nPlease find the attached invoice #INV-2847 for the professional services rendered in May 2026. The total amount due is Rs. 8,75,000.\n\nPayment Link: https://pay.amdox.com/inv-2847\nDue Date: 25th May 2026.\n\nThank you for your business.\n\nBest Regards,\nBilling Department\nAmdox Technologies', status: 'Delivered' },
+    { id: 3999, type: 'SMS', recipient: '+91-9876543210', subject: 'OTP Verification', time: '10 min ago', content: 'Your Amdox ERP secure login OTP is 482910. This code is valid for 5 minutes. Please do not share it with anyone.', status: 'Delivered' },
+    { id: 3998, type: 'WhatsApp', recipient: '+91-9876500112', subject: 'Leave Approval', time: '30 min ago', content: 'Hello Priya,\n\nYour leave request for June 12-14 (3 days) has been APPROVED by your manager. \n\nEnjoy your time off!\n— HR Bot', status: 'Read' },
+    { id: 3997, type: 'Webhook', recipient: 'https://hooks.slack.com/inv-alert', subject: 'inventory.stock.low', time: '1 hour ago', content: '{"event": "inventory.stock.low", "timestamp": "2026-06-09T20:51:00Z", "sku": "SKU-0033", "product": "Printer Ink Black", "current_stock": 5, "reorder_level": 15}', status: '200 OK' }
+  ];
+
+  const clients = ['Wipro Cloud', 'Tata Motors', 'HCL Tech', 'Reliance Industries', 'ICICI Bank', 'Amazon India', 'Flipkart', 'Zomato', 'Freshworks', 'Swiggy', 'Infosys', 'Tech Mahindra', 'LTIMindtree', 'Adani Group', 'Vedanta', 'Bajaj Finance', 'Mahindra Group', 'HDFC Bank', 'Cipla Ltd', 'Godrej Industries', 'Larsen & Toubro', 'Bharti Airtel', 'ITC Limited', 'Sun Pharma', 'Kotak Mahindra'];
+  const subjects = ['Monthly Subscription Invoice', 'Project Milestone Achieved', 'New Quotation Received', 'Account Security Warning', 'Newsletter: ERP Updates', 'Performance Report May 2026', 'Meeting Summary: Q3 Planning', 'Contract Renewal Notice', 'Compliance Audit Request', 'System Downtime Notification', 'Payment Receipt Confirmation', 'Quarterly Business Review', 'Service Level Agreement Update', 'Data Migration Status', 'API Integration Report', 'License Renewal Reminder', 'Onboarding Confirmation', 'Support Ticket Resolution', 'Inventory Restock Order', 'Employee Training Schedule', 'Budget Approval Request', 'Vendor Payment Processing', 'Annual Audit Summary', 'Customer Feedback Report', 'Server Health Dashboard'];
+  const statuses = ['Delivered', 'Opened', 'Delivered', 'Delivered', 'Bounced', 'Read'];
+  const depts = ['Billing Department', 'HR Operations', 'IT Support', 'Sales Team', 'Finance Division', 'Procurement', 'Legal & Compliance', 'Customer Success', 'Engineering Team', 'Operations'];
+
+  const emailTemplates = [
+    (client, subject, ref, ts) => `Dear ${client} Team,\n\nWe are writing to inform you about ${subject}.\n\nReference Number: ${ref}\nDate & Time: ${ts}\n\nPlease find the detailed report attached. If you have any questions, please do not hesitate to reach out to our support team at support@amdox.com.\n\nWe value your partnership and look forward to continued collaboration.\n\nBest Regards,\nAmdox Technologies Pvt Ltd`,
+    (client, subject, ref, ts) => `Hello ${client},\n\nThis is to confirm that ${subject} has been processed successfully.\n\nTransaction ID: ${ref}\nProcessed On: ${ts}\nStatus: Completed\n\nA copy of this confirmation has been saved to your Amdox portal dashboard for your records.\n\nThank you for choosing Amdox ERP Suite.\n\nWarm Regards,\nAmdox Billing`,
+    (client, subject, ref, ts) => `Hi Team,\n\nAction Required: ${subject}\n\nRef: ${ref}\nDeadline: Within 48 hours\nPriority: High\n\nPlease review and take necessary action at your earliest convenience. You can access the full details through your ERP dashboard.\n\nFor urgent matters, contact us at +91-1800-AMDOX-00.\n\nRegards,\nAmdox Operations`,
+    (client, subject, ref, ts) => `Dear ${client},\n\nGreetings from Amdox Technologies!\n\nWe would like to bring to your attention: ${subject}.\n\nDetails:\n- Reference: ${ref}\n- Generated: ${ts}\n- Module: Enterprise Resource Planning\n- Impact: Low\n\nNo immediate action is required from your end. This is for your records.\n\nBest,\nAmdox Notifications`,
+    (client, subject, ref, ts) => `To: ${client} Administration\n\nSubject: ${subject}\n\nDear Sir/Madam,\n\nThis automated notification is generated by the Amdox ERP system.\n\nTicket: ${ref}\nTimestamp: ${ts}\n\nSummary: The above referenced item has been updated in your account. Please log in to your portal for complete details.\n\nThis is a system-generated email. Please do not reply directly.\n\nAmdox Technologies Pvt Ltd\nCIN: U72900TG2024PTC123456`,
+    (client, subject, ref, ts) => `Hi ${client},\n\nYour monthly report for ${subject} is now available.\n\nReport ID: ${ref}\nPeriod: May 2026\nGenerated: ${ts}\n\nKey Highlights:\n• Revenue grew by 12% compared to last month\n• 3 new contracts signed\n• Customer satisfaction score: 4.7/5\n\nDownload the full report from your dashboard.\n\nCheers,\nAmdox Analytics Team`,
+    (client, subject, ref, ts) => `Dear ${client} Finance Team,\n\nPayment Reminder: ${subject}\n\nInvoice Ref: ${ref}\nDue Date: ${ts}\nAmount: Rs. ${(Math.floor(Math.random() * 50) + 1) * 25000}\n\nPlease ensure timely payment to avoid any service disruption. You can pay online via our secure payment portal.\n\nPayment Link: https://pay.amdox.com/${ref}\n\nRegards,\nAccounts Receivable\nAmdox Technologies`,
+    (client, subject, ref, ts) => `Hello ${client},\n\nWelcome aboard! ${subject}\n\nYour account has been activated:\n- Account ID: ${ref}\n- Activation Date: ${ts}\n- Plan: Enterprise Premium\n- Users: Unlimited\n\nGetting Started:\n1. Log in at erp.amdox.com\n2. Complete your company profile\n3. Invite your team members\n4. Explore modules\n\nNeed help? Visit docs.amdox.com\n\nBest,\nAmdox Onboarding Team`,
+    (client, subject, ref, ts) => `URGENT: ${subject}\n\nDear ${client},\n\nWe detected unusual activity on your account.\n\nAlert ID: ${ref}\nDetected: ${ts}\nSeverity: Medium\n\nAction Taken: Access temporarily restricted as a precaution.\n\nTo restore full access:\n1. Verify your identity via MFA\n2. Review recent activity log\n3. Update your password\n\nIf this was you, no further action is needed.\n\nSecurity Team\nAmdox Technologies`,
+    (client, subject, ref, ts) => `Dear ${client},\n\n${subject} - Completion Update\n\nProject Ref: ${ref}\nCompleted: ${ts}\nDeliverables: All milestones achieved\n\nProject Summary:\n- Total tasks completed: ${Math.floor(Math.random() * 50) + 20}\n- Team members involved: ${Math.floor(Math.random() * 10) + 5}\n- Client satisfaction: Excellent\n- Budget utilization: 94%\n\nFinal documentation will be shared within 3 business days.\n\nThank you for your trust.\n\nProject Management Office\nAmdox Technologies`,
+    (client, subject, ref, ts) => `Hi ${client},\n\nScheduled Maintenance Notice: ${subject}\n\nMaintenance Window:\n- Start: ${ts}\n- Duration: 2 hours\n- Affected: ERP Portal, API Gateway\n- Ref: ${ref}\n\nDuring this time, read-only access will be available. All data will be preserved.\n\nWe apologize for any inconvenience.\n\nDevOps Team\nAmdox Technologies`,
+    (client, subject, ref, ts) => `Dear ${client} HR Department,\n\n${subject}\n\nEmployee Update Ref: ${ref}\nProcessed On: ${ts}\n\nThe following HR actions have been completed:\n- Payroll processed for current cycle\n- Leave balances updated\n- Attendance records synced\n- Compliance documents verified\n\nPlease review the HR dashboard for detailed reports.\n\nHR Automation\nAmdox ERP Suite`,
+    (client, subject, ref, ts) => `Hello ${client},\n\nInventory Alert: ${subject}\n\nAlert Ref: ${ref}\nGenerated: ${ts}\n\nLow Stock Items:\n- Printer Ink Black (SKU-0033): 5 units remaining\n- A4 Paper Ream (SKU-0089): 12 units remaining\n- USB-C Cables (SKU-0156): 3 units remaining\n\nRecommended Action: Place restock orders immediately.\n\nAuto-purchase orders have been drafted in your Procurement module.\n\nInventory Management\nAmdox ERP`,
+    (client, subject, ref, ts) => `Dear ${client},\n\nCongratulations! ${subject}\n\nAchievement Ref: ${ref}\nDate: ${ts}\n\nYour team has successfully:\n✅ Exceeded quarterly targets by 18%\n✅ Maintained 99.9% system uptime\n✅ Onboarded 15 new team members\n✅ Reduced operational costs by 7%\n\nKeep up the excellent work!\n\nLeadership Team\nAmdox Technologies`,
+    (client, subject, ref, ts) => `To: ${client} Compliance Officer\n\nRe: ${subject}\n\nRef: ${ref}\nDate: ${ts}\n\nDear Compliance Team,\n\nAs part of our quarterly compliance review, please find below the summary:\n\n- GDPR Compliance: ✅ Passed\n- Data Retention Policy: ✅ Current\n- Access Controls: ✅ Verified\n- Audit Trail: ✅ Complete\n- ISO 27001: ✅ Maintained\n\nFull audit report is available in the Legal & Compliance module.\n\nCompliance Automation\nAmdox ERP`,
+    (client, subject, ref, ts) => `Hi ${client},\n\nYour support ticket has been resolved: ${subject}\n\nTicket: ${ref}\nResolved: ${ts}\nResolution Time: ${Math.floor(Math.random() * 24) + 1} hours\n\nResolution Summary:\nOur engineering team identified and fixed the issue. The root cause was a configuration mismatch that has been corrected.\n\nIf you experience any further issues, please reopen this ticket or create a new one.\n\nCustomer Support\nAmdox Technologies`,
+    (client, subject, ref, ts) => `Dear ${client},\n\nTraining Invitation: ${subject}\n\nSession Ref: ${ref}\nScheduled: ${ts}\n\nTraining Details:\n- Topic: Advanced ERP Analytics & Reporting\n- Duration: 2 hours\n- Mode: Virtual (Microsoft Teams)\n- Trainer: Amdox Academy\n\nPrerequisites:\n- Basic ERP knowledge\n- Access to Analytics module\n\nRegister now through the Training portal.\n\nLearning & Development\nAmdox Technologies`,
+    (client, subject, ref, ts) => `Dear ${client} Procurement,\n\nPurchase Order Update: ${subject}\n\nPO Ref: ${ref}\nDate: ${ts}\nStatus: Approved & Dispatched\n\nOrder Details:\n- Vendor: Amdox Supply Chain\n- Items: ${Math.floor(Math.random() * 20) + 5} line items\n- Total Value: Rs. ${((Math.floor(Math.random() * 100) + 10) * 5000).toLocaleString('en-IN')}\n- Expected Delivery: 5-7 business days\n\nTrack your order in the Supply Chain module.\n\nProcurement Team\nAmdox ERP`,
+    (client, subject, ref, ts) => `Hello ${client},\n\nAPI Integration Report: ${subject}\n\nReport ID: ${ref}\nPeriod: Last 24 hours\nGenerated: ${ts}\n\nAPI Performance:\n- Total Requests: ${(Math.floor(Math.random() * 50000) + 10000).toLocaleString()}\n- Success Rate: 99.${Math.floor(Math.random() * 9) + 1}%\n- Avg Response Time: ${Math.floor(Math.random() * 50) + 20}ms\n- Errors: ${Math.floor(Math.random() * 10)}\n\nAll endpoints are operating within SLA parameters.\n\nDevOps Monitoring\nAmdox Technologies`,
+    (client, subject, ref, ts) => `Dear ${client},\n\nContract Update: ${subject}\n\nContract Ref: ${ref}\nEffective: ${ts}\n\nChanges Summary:\n- Service tier upgraded to Premium Plus\n- Additional 50 user licenses added\n- SLA response time improved to 2 hours\n- Annual review scheduled for Q4 2026\n\nPlease sign the updated agreement through DocuSign link sent separately.\n\nLegal Department\nAmdox Technologies Pvt Ltd`
+  ];
+
+  // Generate 2846 Emails (+ 1 seed = 2847 total)
+  for (let i = 0; i < 2846; i++) {
+    const clientId = i % clients.length;
+    const subId = i % subjects.length;
+    const statId = i % (statuses.length - 1);
+    const hours = (i % 720) + 2;
+    const deptId = i % depts.length;
+    const tplId = i % emailTemplates.length;
+    const ref = 'AM-EML-' + (20000 + i);
+    const ts = new Date(Date.now() - hours * 3600000).toLocaleString();
+    
+    base.push({
+      id: 3500 - i,
+      type: 'Email',
+      recipient: clients[clientId].toLowerCase().replace(/[ &]/g, '_') + (100 + i) + '@example.com',
+      subject: subjects[subId] + ' #' + (5000 + i),
+      time: hours < 24 ? `${hours} hours ago` : `${Math.floor(hours / 24)} days ago`,
+      content: emailTemplates[tplId](clients[clientId], subjects[subId], ref, ts),
+      status: statuses[statId]
+    });
+  }
+
+  // Generate ~189 WhatsApp Messages
+  for (let i = 0; i < 188; i++) {
+    const clientId = Math.floor(Math.random() * clients.length);
+    const phone = '+91-98' + Math.floor(10000000 + Math.random() * 90000000);
+    const waSubjects = ['Attendance Alert', 'Leave Approved', 'Payment Reminder', 'Meeting Link', 'Task Assigned'];
+    const subId = Math.floor(Math.random() * waSubjects.length);
+    const hours = Math.floor(Math.random() * 120) + 1;
+
+    base.push({
+      id: 3000 - i,
+      type: 'WhatsApp',
+      recipient: phone,
+      subject: waSubjects[subId],
+      time: `${hours} hours ago`,
+      content: `Hey ${clients[clientId]} Team!\n\n${waSubjects[subId]} for the current cycle. Check your dashboard for more info.\n\n— Amdox Notify`,
+      status: Math.random() > 0.3 ? 'Read' : 'Delivered'
+    });
+  }
+
+  // Add more SMS and Webhooks to feel complete
+  const smsTexts = [
+    'Security Alert: New login detected from Chrome on Windows.',
+    'Your monthly invoice is ready. Please check your email for details.',
+    'OTP for password reset: 554210. Valid for 10 minutes.',
+    'System Maintenance: Database will be offline for 15 mins at midnight.',
+    'Inventory Alert: SKU-0033 stock is below reorder level.',
+    'Employee on-boarding completed for Arjun Mehta.',
+    'Backup successful: 1.2TB processed in 45ms.'
+  ];
+
+  for (let i = 0; i < 455; i++) {
+    base.push({
+      id: 2500 - i,
+      type: 'SMS',
+      recipient: '+91-7000' + (100000 + i),
+      subject: i % 5 === 0 ? 'Billing Alert' : 'System Alert',
+      time: `${Math.floor(i/10) + 1} days ago`,
+      content: smsTexts[i % smsTexts.length],
+      status: 'Delivered'
+    });
+  }
+
+  return base;
+})();
+
 pages.notifications = function(container) {
   container.innerHTML = `
     <div class="module-hero">
@@ -812,63 +974,120 @@ pages.notifications = function(container) {
         </div>
       </div>
       <div class="card">
-        <div class="card-header"><span class="card-title">Recent Notifications</span></div>
-        <div class="activity-list">
-          <div class="activity-item"><div class="activity-dot green"></div><div><div class="activity-text">📧 Invoice #INV-2847 sent to Infosys via Email</div><div class="activity-time">2 min ago · Delivered</div></div></div>
-          <div class="activity-item"><div class="activity-dot blue"></div><div><div class="activity-text">💬 OTP sent to +91-98765xxxxx via SMS</div><div class="activity-time">10 min ago · Delivered</div></div></div>
-          <div class="activity-item"><div class="activity-dot purple"></div><div><div class="activity-text">🔔 Leave approval notification via WhatsApp</div><div class="activity-time">30 min ago · Read</div></div></div>
-          <div class="activity-item"><div class="activity-dot yellow"></div><div><div class="activity-text">⚡ Webhook triggered: inventory.stock.low</div><div class="activity-time">1 hour ago · 200 OK</div></div></div>
+        <div class="card-header">
+          <span class="card-title">Recent Notifications</span>
+          <button class="btn btn-secondary btn-xs" id="notif-view-all-logs" style="padding:4px 10px; font-size:11px;">View All Logs</button>
+        </div>
+        <div class="activity-list" id="notif-recent-list">
+          <div class="activity-item" style="cursor:pointer" onclick="viewNotificationDetail(1124)"><div class="activity-dot green"></div><div><div class="activity-text">📧 Invoice #INV-2847 sent to Infosys via Email</div><div class="activity-time">2 min ago · Delivered</div></div></div>
+          <div class="activity-item" style="cursor:pointer" onclick="viewNotificationDetail(1123)"><div class="activity-dot blue"></div><div><div class="activity-text">💬 OTP sent to +91-98765xxxxx via SMS</div><div class="activity-time">10 min ago · Delivered</div></div></div>
+          <div class="activity-item" style="cursor:pointer" onclick="viewNotificationDetail(1122)"><div class="activity-dot purple"></div><div><div class="activity-text">🔔 Leave approval notification via WhatsApp</div><div class="activity-time">30 min ago · Read</div></div></div>
+          <div class="activity-item" style="cursor:pointer" onclick="viewNotificationDetail(1121)"><div class="activity-dot yellow"></div><div><div class="activity-text">⚡ Webhook triggered: inventory.stock.low</div><div class="activity-time">1 hour ago · 200 OK</div></div></div>
         </div>
       </div>
     </div>`;
 
+  // ── Notification Detail & Log Viewers ──
+  window.viewNotificationDetail = function(id) {
+    const msg = MOCK_SENT_MESSAGES.find(m => m.id === id);
+    if (!msg) return;
+
+    const typeIcons = {
+      Email: '<i class="fas fa-envelope" style="color:var(--info)"></i>',
+      SMS: '<i class="fas fa-comment-sms" style="color:var(--success)"></i>',
+      WhatsApp: '<i class="fab fa-whatsapp" style="color:#25D366"></i>',
+      Webhook: '<i class="fas fa-code" style="color:var(--purple)"></i>'
+    };
+
+    const contentHtml = `
+      <div style="background:rgba(255,255,255,0.02); padding:20px; border-radius:12px; border:1px solid var(--border)">
+        <div style="display:grid; grid-template-columns:100px 1fr; gap:12px; margin-bottom:20px; font-size:14px;">
+          <div style="color:var(--text-muted)">Recipient:</div><div style="font-weight:600; color:var(--accent-light)">${escHtml(msg.recipient)}</div>
+          <div style="color:var(--text-muted)">Subject:</div><div style="font-weight:600">${escHtml(msg.subject)}</div>
+          <div style="color:var(--text-muted)">Sent At:</div><div>${msg.time}</div>
+          <div style="color:var(--text-muted)">Status:</div><div><span class="badge badge-success">${msg.status}</span></div>
+        </div>
+        <div style="border-top:1px solid var(--border); padding-top:15px">
+          <div style="color:var(--text-muted); font-size:12px; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">Message Content</div>
+          <div style="white-space:pre-wrap; font-family:var(--font-mono); font-size:13px; line-height:1.6; color:var(--text-secondary); background:rgba(0,0,0,0.2); padding:15px; border-radius:8px;">${escHtml(msg.content)}</div>
+        </div>
+      </div>
+    `;
+
+    showContentModal({
+      title: `${typeIcons[msg.type] || ''} Message Details: #${msg.id}`,
+      content: contentHtml,
+      maxWidth: '600px'
+    });
+  };
+
+  window.viewNotificationLogs = function(type = 'All') {
+    const logs = type === 'All' ? MOCK_SENT_MESSAGES : MOCK_SENT_MESSAGES.filter(m => m.type === type);
+    
+    const typeIcons = {
+      Email: '<i class="fas fa-envelope"></i>',
+      SMS: '<i class="fas fa-comment-sms"></i>',
+      WhatsApp: '<i class="fab fa-whatsapp"></i>',
+      Webhook: '<i class="fas fa-code"></i>'
+    };
+
+    const tableRows = logs.map(m => `
+      <tr style="cursor:pointer" onclick="viewNotificationDetail(${m.id})">
+        <td>${typeIcons[m.type] || ''} ${m.type}</td>
+        <td style="font-weight:600">${escHtml(m.recipient)}</td>
+        <td>${escHtml(m.subject)}</td>
+        <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; color:var(--text-secondary)">${escHtml(m.content)}</td>
+        <td>${m.time}</td>
+        <td><span class="badge badge-success" style="font-size:10px">${m.status}</span></td>
+        <td><button class="btn btn-secondary btn-xs" style="padding:2px 6px">View</button></td>
+      </tr>
+    `).join('');
+
+    const contentHtml = `
+      <div class="table-container" style="max-height:500px; overflow-y:auto">
+        <table style="width:100%">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Recipient</th>
+              <th>Subject</th>
+              <th>Message</th>
+              <th>Time</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:15px; font-size:12px; color:var(--text-muted); font-style:italic;">
+        Showing all ${logs.length} sent ${type === 'All' ? 'notifications' : type + 's'}.
+      </div>
+    `;
+
+    showContentModal({
+      title: `<i class="fas fa-list-ul" style="color:var(--info)"></i> Sent ${type} Logs`,
+      content: contentHtml,
+      maxWidth: '950px'
+    });
+  };
+
+  document.getElementById('notif-view-all-logs')?.addEventListener('click', () => viewNotificationLogs('All'));
+
+
   // ── Stat card click handlers ──
   document.getElementById('notif-stat-email')?.addEventListener('click', () => {
-    showModal({
-      title: '<i class="fas fa-envelope" style="color:var(--info)"></i> Email Analytics',
-      submitLabel: 'Send Test Email',
-      fields: [
-        { name: 'to', label: 'Recipient Email', required: true, placeholder: 'e.g. user@amdox.com' },
-        { name: 'subject', label: 'Subject', required: true, placeholder: 'e.g. Monthly Report' },
-        { name: 'template', label: 'Template', type: 'select', options: ['Invoice Notification','Welcome Email','Password Reset','Leave Approval','System Alert'], default: 'Invoice Notification' }
-      ],
-      onSubmit(data, close) {
-        showToast('📧 Test email sent to ' + data.to + ' with template "' + data.template + '"!', 'success');
-        close();
-      }
-    });
+    viewNotificationLogs('Email');
   });
 
   document.getElementById('notif-stat-sms')?.addEventListener('click', () => {
-    showModal({
-      title: '<i class="fas fa-comment-sms" style="color:var(--success)"></i> SMS Analytics',
-      submitLabel: 'Send Test SMS',
-      fields: [
-        { name: 'phone', label: 'Phone Number', required: true, placeholder: 'e.g. +91-9876543210' },
-        { name: 'message', label: 'Message', required: true, placeholder: 'e.g. Your OTP is 482910' },
-        { name: 'priority', label: 'Priority', type: 'select', options: ['Normal','High','Critical'], default: 'Normal' }
-      ],
-      onSubmit(data, close) {
-        showToast('💬 Test SMS sent to ' + data.phone + '!', 'success');
-        close();
-      }
-    });
+    viewNotificationLogs('SMS');
   });
 
   document.getElementById('notif-stat-whatsapp')?.addEventListener('click', () => {
-    showModal({
-      title: '<i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp Analytics',
-      submitLabel: 'Send Test Message',
-      fields: [
-        { name: 'phone', label: 'WhatsApp Number', required: true, placeholder: 'e.g. +91-9876543210' },
-        { name: 'template', label: 'Message Template', type: 'select', options: ['Order Confirmation','Payment Receipt','Leave Status','Shipment Update','Custom Message'], default: 'Order Confirmation' },
-        { name: 'message', label: 'Custom Text (optional)', placeholder: 'Additional message text...' }
-      ],
-      onSubmit(data, close) {
-        showToast('📱 WhatsApp message sent to ' + data.phone + '!', 'success');
-        close();
-      }
-    });
+    viewNotificationLogs('WhatsApp');
   });
 
   document.getElementById('notif-stat-webhooks')?.addEventListener('click', () => {
