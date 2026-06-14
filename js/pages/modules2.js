@@ -1,5 +1,5 @@
 /* CRM Page */
-pages.crm = function(container) {
+pages.crm = function (container) {
   container.innerHTML = `
     <div class="module-hero">
       <h2><i class="fas fa-handshake" style="color:var(--pink)"></i> Customer Relationship Management</h2>
@@ -76,7 +76,7 @@ pages.crm = function(container) {
     try { return JSON.parse(localStorage.getItem(LS_LEADS_KEY)) || SEED_LEADS; } catch { return SEED_LEADS; }
   }
   function saveLeads(list) {
-    try { localStorage.setItem(LS_LEADS_KEY, JSON.stringify(list)); } catch {}
+    try { localStorage.setItem(LS_LEADS_KEY, JSON.stringify(list)); } catch { }
   }
 
   let cachedLeads = [];
@@ -106,7 +106,7 @@ pages.crm = function(container) {
           const stageCount = matchingLeads.length;
           const stageValue = matchingLeads.reduce((sum, l) => sum + (parseFloat(l.value) || 0), 0);
           const stageClass = stageCount > 0 ? 'pipeline-stage active' : 'pipeline-stage';
-          
+
           // Find the first lead in this stage to show on click
           const leadId = matchingLeads.length > 0 ? matchingLeads[0].id : null;
           const clickAttr = leadId ? `onclick="window._crmShowLeadDetails(${leadId})"` : '';
@@ -148,7 +148,7 @@ pages.crm = function(container) {
             <div style="display:flex;gap:6px" onclick="event.stopPropagation()">
               <button class="btn btn-secondary btn-sm" title="Quick View" onclick="window._crmShowLeadDetails(${l.id})"><i class="fas fa-eye"></i></button>
               <button class="btn btn-secondary btn-sm" onclick="crmEditLead(${l.id})"><i class="fas fa-pen"></i></button>
-              <button class="btn btn-secondary btn-sm" style="color:var(--danger)" onclick="crmDeleteLead(${l.id},'${l.company.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+              <button class="btn btn-secondary btn-sm" style="color:var(--danger)" onclick="crmDeleteLead(${l.id},'${l.company.replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i></button>
             </div>
           </td>
         </tr>`).join('');
@@ -189,7 +189,7 @@ pages.crm = function(container) {
     try { return JSON.parse(localStorage.getItem(LS_TICKETS_KEY)) || SEED_TICKETS; } catch { return SEED_TICKETS; }
   }
   function saveTickets(list) {
-    try { localStorage.setItem(LS_TICKETS_KEY, JSON.stringify(list)); } catch {}
+    try { localStorage.setItem(LS_TICKETS_KEY, JSON.stringify(list)); } catch { }
   }
 
   let cachedTickets = [];
@@ -241,7 +241,7 @@ pages.crm = function(container) {
           <div style="display:flex;gap:6px">
             <button class="btn btn-secondary btn-sm" onclick="crmViewTicket(${t.id})"><i class="fas fa-eye"></i></button>
             <button class="btn btn-secondary btn-sm" onclick="crmEditTicket(${t.id})"><i class="fas fa-pen"></i></button>
-            <button class="btn btn-secondary btn-sm" style="color:var(--danger)" onclick="crmDeleteTicket(${t.id},'${t.subject.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+            <button class="btn btn-secondary btn-sm" style="color:var(--danger)" onclick="crmDeleteTicket(${t.id},'${t.subject.replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i></button>
           </div>
         </td>
       </tr>`).join('');
@@ -264,10 +264,10 @@ pages.crm = function(container) {
         const list = getTickets();
         const nextId = list.length > 0 ? Math.max(...list.map(t => t.id)) + 1 : 1;
         const ticketNum = 1024 + nextId; // Just to make it look like #TKT-10xx
-        const newTicket = { 
-          id: nextId, 
+        const newTicket = {
+          id: nextId,
           ticketId: `#TKT-${ticketNum}`,
-          ...data 
+          ...data
         };
         list.unshift(newTicket);
         saveTickets(list);
@@ -278,7 +278,7 @@ pages.crm = function(container) {
     });
   });
 
-  window.crmViewTicket = function(id) {
+  window.crmViewTicket = function (id) {
     const ticket = cachedTickets.find(t => t.id === id);
     if (!ticket) return;
     showModal({
@@ -296,7 +296,7 @@ pages.crm = function(container) {
     });
   };
 
-  window.crmEditTicket = function(id) {
+  window.crmEditTicket = function (id) {
     const ticket = cachedTickets.find(t => t.id === id);
     if (!ticket) return;
     showModal({
@@ -323,7 +323,7 @@ pages.crm = function(container) {
     });
   };
 
-  window.crmDeleteTicket = function(id, subject) {
+  window.crmDeleteTicket = function (id, subject) {
     showConfirm(`Do you want to delete ticket: <strong>${subject}</strong>?`, () => {
       const list = getTickets().filter(t => t.id !== id);
       saveTickets(list);
@@ -369,7 +369,7 @@ pages.crm = function(container) {
     });
   });
 
-  window.crmEditLead = async function(id) {
+  window.crmEditLead = async function (id) {
     let lead = cachedLeads.find(l => l.id === id);
     if (!lead) {
       showToast('Lead not found', 'error');
@@ -414,7 +414,7 @@ pages.crm = function(container) {
     });
   };
 
-  window.crmDeleteLead = function(id, company) {
+  window.crmDeleteLead = function (id, company) {
     showConfirm(`Do you want to delete lead for <strong>${company}</strong>?`, async () => {
       try {
         const res = await Promise.race([
@@ -480,7 +480,7 @@ pages.crm = function(container) {
     const statusBadge = { Completed: 'badge-success', Sent: 'badge-info', Running: 'badge-warning', Draft: 'badge-secondary' };
 
     // ── View a specific campaign detail ──
-    window._crmViewCampaign = function(idx) {
+    window._crmViewCampaign = function (idx) {
       const c = MOCK_CAMPAIGNS[idx];
       const openRate = c.sentTo > 0 ? Math.round((c.opened / c.sentTo) * 100) : 0;
       const ctr = c.sentTo > 0 ? Math.round((c.clicks / c.sentTo) * 100) : 0;
@@ -499,11 +499,11 @@ pages.crm = function(container) {
 
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
             ${[
-              { label:'Sent To', val: c.sentTo.toLocaleString(), color:'var(--text-primary)', icon:'fa-paper-plane' },
-              { label:'Opened', val: c.opened.toLocaleString() + ' (' + openRate + '%)', color:'var(--info)', icon:'fa-envelope-open' },
-              { label:'Clicked', val: c.clicks.toLocaleString() + ' (' + ctr + '%)', color:'var(--success)', icon:'fa-arrow-pointer' },
-              { label:'Unsubscribed', val: c.unsubscribed, color: c.unsubscribed > 10 ? 'var(--danger)' : 'var(--text-muted)', icon:'fa-user-minus' }
-            ].map(s => `
+          { label: 'Sent To', val: c.sentTo.toLocaleString(), color: 'var(--text-primary)', icon: 'fa-paper-plane' },
+          { label: 'Opened', val: c.opened.toLocaleString() + ' (' + openRate + '%)', color: 'var(--info)', icon: 'fa-envelope-open' },
+          { label: 'Clicked', val: c.clicks.toLocaleString() + ' (' + ctr + '%)', color: 'var(--success)', icon: 'fa-arrow-pointer' },
+          { label: 'Unsubscribed', val: c.unsubscribed, color: c.unsubscribed > 10 ? 'var(--danger)' : 'var(--text-muted)', icon: 'fa-user-minus' }
+        ].map(s => `
               <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
                 <i class="fas ${s.icon}" style="color:${s.color};font-size:16px;margin-bottom:6px"></i>
                 <div style="font-size:18px;font-weight:800;color:${s.color}">${s.val}</div>
@@ -540,7 +540,7 @@ pages.crm = function(container) {
     };
 
     // ── Create new campaign form ──
-    window._crmCreateCampaign = function() {
+    window._crmCreateCampaign = function () {
       showModal({
         title: '<i class="fas fa-bullhorn" style="color:var(--pink)"></i> Create New Campaign',
         submitLabel: 'Launch Campaign',
@@ -599,10 +599,10 @@ pages.crm = function(container) {
       <div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
           ${[
-            { label:'Total Campaigns', val: MOCK_CAMPAIGNS.length, color:'var(--accent)', icon:'fa-bullhorn' },
-            { label:'Total Recipients', val: totalSent.toLocaleString(), color:'var(--info)', icon:'fa-users' },
-            { label:'Avg Open Rate', val: avgOpen + '%', color:'var(--success)', icon:'fa-envelope-open' }
-          ].map(s => `
+        { label: 'Total Campaigns', val: MOCK_CAMPAIGNS.length, color: 'var(--accent)', icon: 'fa-bullhorn' },
+        { label: 'Total Recipients', val: totalSent.toLocaleString(), color: 'var(--info)', icon: 'fa-users' },
+        { label: 'Avg Open Rate', val: avgOpen + '%', color: 'var(--success)', icon: 'fa-envelope-open' }
+      ].map(s => `
             <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px">
               <i class="fas ${s.icon}" style="color:${s.color};font-size:20px"></i>
               <div>
@@ -747,7 +747,7 @@ pages.crm = function(container) {
     if (body && LEAD_DETAILS[lid]) {
       body.innerHTML = buildLeadDetailHTML(LEAD_DETAILS[lid]);
     }
-    
+
     // 2. Update the tab styling
     const tabsContainer = document.getElementById('crm-lead-tabs');
     if (tabsContainer) {
@@ -756,7 +756,7 @@ pages.crm = function(container) {
         const tabLid = parseInt(t.dataset.lid);
         const isActive = tabLid === lid;
         const d = LEAD_DETAILS[tabLid];
-        
+
         t.style.borderBottom = isActive ? '2px solid var(--accent)' : '2px solid transparent';
         t.style.background = isActive ? 'rgba(99,102,241,0.08)' : 'transparent';
         t.style.color = isActive ? 'var(--text-primary)' : 'var(--text-muted)';
@@ -826,7 +826,7 @@ pages.crm = function(container) {
           <button class="btn btn-primary" onclick="alert('Generating full wins report...')">Download Wins Report</button>
         </div>
       </div>`;
-    
+
     showContentModal({
       title: '<i class="fas fa-award" style="color:var(--success)"></i> Sales Victory Log — June 2026',
       content: html,
@@ -854,10 +854,10 @@ pages.crm = function(container) {
         </div>
         <div style="font-size:14px;font-weight:700;margin-bottom:12px">Pipeline Distribution</div>
         ${[
-          { stage: 'Qualified', val: '₹45.0L', percent: 37, color: 'var(--purple)' },
-          { stage: 'Proposal', val: '₹32.0L', percent: 26, color: 'var(--warning)' },
-          { stage: 'Negotiation', val: '₹43.0L', percent: 37, color: 'var(--success)' }
-        ].map(s => `
+        { stage: 'Qualified', val: '₹45.0L', percent: 37, color: 'var(--purple)' },
+        { stage: 'Proposal', val: '₹32.0L', percent: 26, color: 'var(--warning)' },
+        { stage: 'Negotiation', val: '₹43.0L', percent: 37, color: 'var(--success)' }
+      ].map(s => `
           <div style="margin-bottom:12px">
             <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
               <span>${s.stage}</span>
@@ -915,7 +915,7 @@ pages.crm = function(container) {
 };
 
 /* Projects Page */
-pages.projects = function(container) {
+pages.projects = function (container) {
   container.innerHTML = `
     <div class="module-hero">
       <h2><i class="fas fa-diagram-project" style="color:var(--accent-light)"></i> Project Management</h2>
@@ -1006,11 +1006,11 @@ pages.projects = function(container) {
             <div class="card-header"><span class="card-title">Active Sprint Backlog</span></div>
             <div class="activity-list">
               ${[
-                { id: "S-102", task: "Implement OAuth2.0 Flow", story: 8, owner: "RS", status: "In Progress" },
-                { id: "S-105", task: "Database Schema Migration", story: 5, owner: "VK", status: "In Progress" },
-                { id: "S-108", task: "Landing Page SEO Audit", story: 3, owner: "AP", status: "Done" },
-                { id: "S-112", task: "Bug #847: Login redirect", story: 2, owner: "RS", status: "Review" }
-              ].map(s => `
+      { id: "S-102", task: "Implement OAuth2.0 Flow", story: 8, owner: "RS", status: "In Progress" },
+      { id: "S-105", task: "Database Schema Migration", story: 5, owner: "VK", status: "In Progress" },
+      { id: "S-108", task: "Landing Page SEO Audit", story: 3, owner: "AP", status: "Done" },
+      { id: "S-112", task: "Bug #847: Login redirect", story: 2, owner: "RS", status: "Review" }
+    ].map(s => `
                 <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border);">
                   <div style="width:40px; height:40px; border-radius:10px; background:rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--accent)">${s.id}</div>
                   <div style="flex:1;">
@@ -1032,11 +1032,11 @@ pages.projects = function(container) {
           <div style="padding:20px 0;">
             <div style="position:relative; padding-left:40px; border-left:2px solid var(--border); margin-left:20px;">
               ${[
-                { month: "June", title: "ERP v3.2 Release", desc: "Full migration to cloud-native architecture.", icon: "fa-rocket", color: "var(--accent)" },
-                { month: "July", title: "AI Integration Phase 1", desc: "Beta launch of AI-driven demand forecasting.", icon: "fa-brain", color: "var(--purple)" },
-                { month: "August", title: "Mobile App 2.0", desc: "Complete overhaul of iOS/Android user experience.", icon: "fa-mobile-screen", color: "var(--info)" },
-                { month: "October", title: "Global Expansion", desc: "Support for multi-region data centers and localization.", icon: "fa-earth-americas", color: "var(--success)" }
-              ].map(item => `
+      { month: "June", title: "ERP v3.2 Release", desc: "Full migration to cloud-native architecture.", icon: "fa-rocket", color: "var(--accent)" },
+      { month: "July", title: "AI Integration Phase 1", desc: "Beta launch of AI-driven demand forecasting.", icon: "fa-brain", color: "var(--purple)" },
+      { month: "August", title: "Mobile App 2.0", desc: "Complete overhaul of iOS/Android user experience.", icon: "fa-mobile-screen", color: "var(--info)" },
+      { month: "October", title: "Global Expansion", desc: "Support for multi-region data centers and localization.", icon: "fa-earth-americas", color: "var(--success)" }
+    ].map(item => `
                 <div class="roadmap-item" style="position:relative; margin-bottom:35px; cursor:pointer;" data-title="${item.title}" data-desc="${item.desc}" data-month="${item.month}">
                   <div style="position:absolute; left:-55px; top:0; width:30px; height:30px; border-radius:50%; background:${item.color}; border:4px solid var(--bg-card); display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; z-index:2;">
                     <i class="fas ${item.icon}"></i>
@@ -1065,7 +1065,7 @@ pages.projects = function(container) {
     try { return JSON.parse(localStorage.getItem(LS_PROJ_KEY)) || SEED_PROJ; } catch { return SEED_PROJ; }
   }
   function saveProjects(list) {
-    try { localStorage.setItem(LS_PROJ_KEY, JSON.stringify(list)); } catch {}
+    try { localStorage.setItem(LS_PROJ_KEY, JSON.stringify(list)); } catch { }
   }
 
   let cachedProjects = [];
@@ -1117,7 +1117,7 @@ pages.projects = function(container) {
           <div class="kanban-card" style="border-left: 3px solid var(--accent-light); position:relative;">
             <div style="position:absolute; top:8px; right:8px; display:flex; gap:4px">
               <button style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:11px" onclick="projectEdit(${p.id})"><i class="fas fa-pen"></i></button>
-              <button style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:11px" onclick="projectDelete(${p.id}, '${p.name.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+              <button style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:11px" onclick="projectDelete(${p.id}, '${p.name.replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i></button>
             </div>
             <div class="kanban-card-title" style="margin-right:25px">${escHtml(p.name)}</div>
             <div style="font-size:11.5px; color:var(--text-secondary); margin-bottom:10px">${escHtml(p.description || '')}</div>
@@ -1197,7 +1197,7 @@ pages.projects = function(container) {
     });
   });
 
-  window.projectEdit = function(id) {
+  window.projectEdit = function (id) {
     const proj = cachedProjects.find(p => p.id === id);
     if (!proj) {
       showToast('Project not found', 'error');
@@ -1243,7 +1243,7 @@ pages.projects = function(container) {
     });
   };
 
-  window.projectDelete = function(id, name) {
+  window.projectDelete = function (id, name) {
     showConfirm(`Do you want to delete project <strong>${name}</strong>?`, async () => {
       try {
         const res = await Promise.race([
@@ -1268,7 +1268,7 @@ pages.projects = function(container) {
   });
 
   // ── Tab Switching Logic ──
-  window.projectTabSwitch = function(tabEl, viewId) {
+  window.projectTabSwitch = function (tabEl, viewId) {
     // 1. Update UI classes for tabs
     const tabs = tabEl.parentElement.querySelectorAll('.tab');
     tabs.forEach(t => t.classList.remove('active'));
@@ -1302,21 +1302,21 @@ pages.projects = function(container) {
       progress: 64,
       tasks_total: 87, tasks_done: 56, tasks_inprogress: 18, tasks_todo: 13,
       tasks: [
-        { id:'T-001', title:'Setup Kubernetes Cluster', status:'Done', assignee:'Rahul Singh', due:'Feb 10'},
-        { id:'T-002', title:'Migrate Auth Service', status:'Done', assignee:'Deepak Nair', due:'Feb 20'},
-        { id:'T-003', title:'Inventory Microservice', status:'Done', assignee:'Sneha Iyer', due:'Mar 5'},
-        { id:'T-004', title:'Finance API Gateway', status:'Done', assignee:'Rahul Singh', due:'Mar 15'},
-        { id:'T-005', title:'HR Module Refactor', status:'Done', assignee:'Aravind Raj', due:'Mar 25'},
-        { id:'T-006', title:'Database Sharding', status:'In Progress', assignee:'Deepak Nair', due:'Jun 20'},
-        { id:'T-007', title:'CI/CD Pipeline v2', status:'In Progress', assignee:'Sneha Iyer', due:'Jun 25'},
-        { id:'T-008', title:'Load Balancer Config', status:'To Do', assignee:'Rahul Singh', due:'Jul 10'},
-        { id:'T-009', title:'Performance Benchmarking', status:'To Do', assignee:'Aravind Raj', due:'Jul 20'}
+        { id: 'T-001', title: 'Setup Kubernetes Cluster', status: 'Done', assignee: 'Rahul Singh', due: 'Feb 10' },
+        { id: 'T-002', title: 'Migrate Auth Service', status: 'Done', assignee: 'Deepak Nair', due: 'Feb 20' },
+        { id: 'T-003', title: 'Inventory Microservice', status: 'Done', assignee: 'Sneha Iyer', due: 'Mar 5' },
+        { id: 'T-004', title: 'Finance API Gateway', status: 'Done', assignee: 'Rahul Singh', due: 'Mar 15' },
+        { id: 'T-005', title: 'HR Module Refactor', status: 'Done', assignee: 'Aravind Raj', due: 'Mar 25' },
+        { id: 'T-006', title: 'Database Sharding', status: 'In Progress', assignee: 'Deepak Nair', due: 'Jun 20' },
+        { id: 'T-007', title: 'CI/CD Pipeline v2', status: 'In Progress', assignee: 'Sneha Iyer', due: 'Jun 25' },
+        { id: 'T-008', title: 'Load Balancer Config', status: 'To Do', assignee: 'Rahul Singh', due: 'Jul 10' },
+        { id: 'T-009', title: 'Performance Benchmarking', status: 'To Do', assignee: 'Aravind Raj', due: 'Jul 20' }
       ],
       milestones: [
-        { title:'Infrastructure Setup', date:'Feb 2026', done:true },
-        { title:'Core Services Migrated', date:'Apr 2026', done:true },
-        { title:'Integration Testing', date:'Jun 2026', done:false },
-        { title:'Production Rollout', date:'Jul 2026', done:false }
+        { title: 'Infrastructure Setup', date: 'Feb 2026', done: true },
+        { title: 'Core Services Migrated', date: 'Apr 2026', done: true },
+        { title: 'Integration Testing', date: 'Jun 2026', done: false },
+        { title: 'Production Rollout', date: 'Jul 2026', done: false }
       ]
     },
     2: {
@@ -1328,21 +1328,21 @@ pages.projects = function(container) {
       progress: 48,
       tasks_total: 62, tasks_done: 30, tasks_inprogress: 14, tasks_todo: 18,
       tasks: [
-        { id:'T-020', title:'Figma UI/UX Designs', status:'Done', assignee:'Priya Sharma', due:'Mar 1'},
-        { id:'T-021', title:'React Native Boilerplate', status:'Done', assignee:'Kiran Bose', due:'Mar 10'},
-        { id:'T-022', title:'Authentication Module', status:'Done', assignee:'Priya Sharma', due:'Mar 20'},
-        { id:'T-023', title:'Dashboard Widgets', status:'Done', assignee:'Meera Nair', due:'Apr 5'},
-        { id:'T-024', title:'Biometric Login', status:'Done', assignee:'Kiran Bose', due:'Apr 15'},
-        { id:'T-025', title:'Push Notifications', status:'In Progress', assignee:'Priya Sharma', due:'Jun 30'},
-        { id:'T-026', title:'Offline Sync Engine', status:'In Progress', assignee:'Kiran Bose', due:'Jul 10'},
-        { id:'T-027', title:'iOS App Store Submission', status:'To Do', assignee:'Priya Sharma', due:'Aug 5'},
-        { id:'T-028', title:'Android Play Store Upload', status:'To Do', assignee:'Meera Nair', due:'Aug 10'}
+        { id: 'T-020', title: 'Figma UI/UX Designs', status: 'Done', assignee: 'Priya Sharma', due: 'Mar 1' },
+        { id: 'T-021', title: 'React Native Boilerplate', status: 'Done', assignee: 'Kiran Bose', due: 'Mar 10' },
+        { id: 'T-022', title: 'Authentication Module', status: 'Done', assignee: 'Priya Sharma', due: 'Mar 20' },
+        { id: 'T-023', title: 'Dashboard Widgets', status: 'Done', assignee: 'Meera Nair', due: 'Apr 5' },
+        { id: 'T-024', title: 'Biometric Login', status: 'Done', assignee: 'Kiran Bose', due: 'Apr 15' },
+        { id: 'T-025', title: 'Push Notifications', status: 'In Progress', assignee: 'Priya Sharma', due: 'Jun 30' },
+        { id: 'T-026', title: 'Offline Sync Engine', status: 'In Progress', assignee: 'Kiran Bose', due: 'Jul 10' },
+        { id: 'T-027', title: 'iOS App Store Submission', status: 'To Do', assignee: 'Priya Sharma', due: 'Aug 5' },
+        { id: 'T-028', title: 'Android Play Store Upload', status: 'To Do', assignee: 'Meera Nair', due: 'Aug 10' }
       ],
       milestones: [
-        { title:'Design Complete', date:'Mar 2026', done:true },
-        { title:'Beta Build Ready', date:'May 2026', done:true },
-        { title:'Feature Complete', date:'Jul 2026', done:false },
-        { title:'App Store Launch', date:'Aug 2026', done:false }
+        { title: 'Design Complete', date: 'Mar 2026', done: true },
+        { title: 'Beta Build Ready', date: 'May 2026', done: true },
+        { title: 'Feature Complete', date: 'Jul 2026', done: false },
+        { title: 'App Store Launch', date: 'Aug 2026', done: false }
       ]
     },
     3: {
@@ -1354,20 +1354,20 @@ pages.projects = function(container) {
       progress: 12,
       tasks_total: 95, tasks_done: 11, tasks_inprogress: 3, tasks_todo: 81,
       tasks: [
-        { id:'T-040', title:'ML Framework Selection', status:'Done', assignee:'Vikram Kumar', due:'May 1'},
-        { id:'T-041', title:'Data Pipeline Setup', status:'Done', assignee:'Ananya Sinha', due:'May 10'},
-        { id:'T-042', title:'Demand Forecast Prototype', status:'Done', assignee:'Vikram Kumar', due:'May 25'},
-        { id:'T-043', title:'Anomaly Detection Model', status:'In Progress', assignee:'Ananya Sinha', due:'Jun 30'},
-        { id:'T-044', title:'HR Scheduling Algorithm', status:'To Do', assignee:'Vikram Kumar', due:'Aug 15'},
-        { id:'T-045', title:'ERP Integration Layer', status:'To Do', assignee:'Ananya Sinha', due:'Sep 20'},
-        { id:'T-046', title:'Model Training Pipeline', status:'To Do', assignee:'Vikram Kumar', due:'Oct 10'},
-        { id:'T-047', title:'A/B Testing Framework', status:'To Do', assignee:'Ananya Sinha', due:'Nov 1'}
+        { id: 'T-040', title: 'ML Framework Selection', status: 'Done', assignee: 'Vikram Kumar', due: 'May 1' },
+        { id: 'T-041', title: 'Data Pipeline Setup', status: 'Done', assignee: 'Ananya Sinha', due: 'May 10' },
+        { id: 'T-042', title: 'Demand Forecast Prototype', status: 'Done', assignee: 'Vikram Kumar', due: 'May 25' },
+        { id: 'T-043', title: 'Anomaly Detection Model', status: 'In Progress', assignee: 'Ananya Sinha', due: 'Jun 30' },
+        { id: 'T-044', title: 'HR Scheduling Algorithm', status: 'To Do', assignee: 'Vikram Kumar', due: 'Aug 15' },
+        { id: 'T-045', title: 'ERP Integration Layer', status: 'To Do', assignee: 'Ananya Sinha', due: 'Sep 20' },
+        { id: 'T-046', title: 'Model Training Pipeline', status: 'To Do', assignee: 'Vikram Kumar', due: 'Oct 10' },
+        { id: 'T-047', title: 'A/B Testing Framework', status: 'To Do', assignee: 'Ananya Sinha', due: 'Nov 1' }
       ],
       milestones: [
-        { title:'Research & POC', date:'May 2026', done:true },
-        { title:'Core Models Built', date:'Aug 2026', done:false },
-        { title:'ERP Integration', date:'Oct 2026', done:false },
-        { title:'Production Deploy', date:'Nov 2026', done:false }
+        { title: 'Research & POC', date: 'May 2026', done: true },
+        { title: 'Core Models Built', date: 'Aug 2026', done: false },
+        { title: 'ERP Integration', date: 'Oct 2026', done: false },
+        { title: 'Production Deploy', date: 'Nov 2026', done: false }
       ]
     },
     4: {
@@ -1379,42 +1379,42 @@ pages.projects = function(container) {
       progress: 88,
       tasks_total: 48, tasks_done: 42, tasks_inprogress: 4, tasks_todo: 2,
       tasks: [
-        { id:'T-060', title:'Lead Pipeline UI', status:'Done', assignee:'Anita Patel', due:'Apr 1'},
-        { id:'T-061', title:'Contact Management', status:'Done', assignee:'Suresh Raj', due:'Apr 10'},
-        { id:'T-062', title:'Deal Tracking', status:'Done', assignee:'Divya Menon', due:'Apr 20'},
-        { id:'T-063', title:'Support Ticket System', status:'Done', assignee:'Anita Patel', due:'May 1'},
-        { id:'T-064', title:'WhatsApp Integration', status:'Done', assignee:'Suresh Raj', due:'May 15'},
-        { id:'T-065', title:'Customer 360° View', status:'Done', assignee:'Divya Menon', due:'May 25'},
-        { id:'T-066', title:'Email Campaign Builder', status:'In Progress', assignee:'Anita Patel', due:'Jun 20'},
-        { id:'T-067', title:'Analytics Dashboard', status:'In Progress', assignee:'Suresh Raj', due:'Jun 25'},
-        { id:'T-068', title:'UAT & Sign-off', status:'To Do', assignee:'Divya Menon', due:'Jun 28'}
+        { id: 'T-060', title: 'Lead Pipeline UI', status: 'Done', assignee: 'Anita Patel', due: 'Apr 1' },
+        { id: 'T-061', title: 'Contact Management', status: 'Done', assignee: 'Suresh Raj', due: 'Apr 10' },
+        { id: 'T-062', title: 'Deal Tracking', status: 'Done', assignee: 'Divya Menon', due: 'Apr 20' },
+        { id: 'T-063', title: 'Support Ticket System', status: 'Done', assignee: 'Anita Patel', due: 'May 1' },
+        { id: 'T-064', title: 'WhatsApp Integration', status: 'Done', assignee: 'Suresh Raj', due: 'May 15' },
+        { id: 'T-065', title: 'Customer 360° View', status: 'Done', assignee: 'Divya Menon', due: 'May 25' },
+        { id: 'T-066', title: 'Email Campaign Builder', status: 'In Progress', assignee: 'Anita Patel', due: 'Jun 20' },
+        { id: 'T-067', title: 'Analytics Dashboard', status: 'In Progress', assignee: 'Suresh Raj', due: 'Jun 25' },
+        { id: 'T-068', title: 'UAT & Sign-off', status: 'To Do', assignee: 'Divya Menon', due: 'Jun 28' }
       ],
       milestones: [
-        { title:'Core CRM Features', date:'Apr 2026', done:true },
-        { title:'Integrations Complete', date:'May 2026', done:true },
-        { title:'User Acceptance Testing', date:'Jun 2026', done:false },
-        { title:'Go-Live', date:'Jun 30, 2026', done:false }
+        { title: 'Core CRM Features', date: 'Apr 2026', done: true },
+        { title: 'Integrations Complete', date: 'May 2026', done: true },
+        { title: 'User Acceptance Testing', date: 'Jun 2026', done: false },
+        { title: 'Go-Live', date: 'Jun 30, 2026', done: false }
       ]
     }
   };
 
   // ── All 201 Completed Tasks Pool ──
-  const ALL_COMPLETED_TASKS = (function() {
+  const ALL_COMPLETED_TASKS = (function () {
     const pool = [];
     const projects = [
-      { name:'ERP v3.2', count:56, assignees:['Rahul Singh','Deepak Nair','Sneha Iyer','Aravind Raj'], color:'var(--accent)' },
-      { name:'Mobile App 2.0', count:30, assignees:['Priya Sharma','Kiran Bose','Meera Nair'], color:'var(--info)' },
-      { name:'AI Prediction Module', count:11, assignees:['Vikram Kumar','Ananya Sinha'], color:'var(--purple)' },
-      { name:'CRM Revamp', count:42, assignees:['Anita Patel','Suresh Raj','Divya Menon'], color:'var(--warning)' },
-      { name:'Payment Gateway', count:62, assignees:['Anita Patel','Kiran Bose','Deepak Nair'], color:'var(--success)' }
+      { name: 'ERP v3.2', count: 56, assignees: ['Rahul Singh', 'Deepak Nair', 'Sneha Iyer', 'Aravind Raj'], color: 'var(--accent)' },
+      { name: 'Mobile App 2.0', count: 30, assignees: ['Priya Sharma', 'Kiran Bose', 'Meera Nair'], color: 'var(--info)' },
+      { name: 'AI Prediction Module', count: 11, assignees: ['Vikram Kumar', 'Ananya Sinha'], color: 'var(--purple)' },
+      { name: 'CRM Revamp', count: 42, assignees: ['Anita Patel', 'Suresh Raj', 'Divya Menon'], color: 'var(--warning)' },
+      { name: 'Payment Gateway', count: 62, assignees: ['Anita Patel', 'Kiran Bose', 'Deepak Nair'], color: 'var(--success)' }
     ];
     const taskTypes = [
-      'Backend API development','Frontend component build','Unit testing & coverage','Code review & merge','Database migration','UI/UX implementation',
-      'Integration testing','Performance optimization','Documentation update','Bug fix & hotfix','Security audit','API endpoint testing',
-      'Data model design','Authentication flow','Third-party integration','Deployment configuration','Environment setup','Feature flagging',
-      'Load testing','User acceptance testing','Accessibility review','Analytics tracking','Error handling','Logging & monitoring','Cache optimization'
+      'Backend API development', 'Frontend component build', 'Unit testing & coverage', 'Code review & merge', 'Database migration', 'UI/UX implementation',
+      'Integration testing', 'Performance optimization', 'Documentation update', 'Bug fix & hotfix', 'Security audit', 'API endpoint testing',
+      'Data model design', 'Authentication flow', 'Third-party integration', 'Deployment configuration', 'Environment setup', 'Feature flagging',
+      'Load testing', 'User acceptance testing', 'Accessibility review', 'Analytics tracking', 'Error handling', 'Logging & monitoring', 'Cache optimization'
     ];
-    const months = ['Jan','Feb','Mar','Apr','May','Jun'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
     let taskId = 1;
     projects.forEach(proj => {
       for (let i = 0; i < proj.count; i++) {
@@ -1423,13 +1423,13 @@ pages.projects = function(container) {
         const month = months[Math.floor(i / Math.max(1, Math.floor(proj.count / 6))) % 6];
         const day = (i % 28) + 1;
         pool.push({
-          id: 'TSK-' + String(taskId).padStart(4,'0'),
+          id: 'TSK-' + String(taskId).padStart(4, '0'),
           title: tType + ' — ' + proj.name,
           project: proj.name,
           projectColor: proj.color,
           assignee,
-          completedOn: `${day < 10 ? '0'+day : day} ${month} 2026`,
-          storyPts: [1,2,3,5,8][taskId % 5]
+          completedOn: `${day < 10 ? '0' + day : day} ${month} 2026`,
+          storyPts: [1, 2, 3, 5, 8][taskId % 5]
         });
         taskId++;
       }
@@ -1557,7 +1557,7 @@ pages.projects = function(container) {
           const bd = PROJECT_DETAILS[bpid];
           b.style.background = bpid === pid ? bd.color + '22' : 'transparent';
           b.style.color = bpid === pid ? bd.color : 'var(--text-muted)';
-          b.style.border = `1px solid ${bpid === pid ? bd.color : 'var(--border)'}` ;
+          b.style.border = `1px solid ${bpid === pid ? bd.color : 'var(--border)'}`;
           b.style.fontWeight = bpid === pid ? '700' : '500';
         });
         const body = document.getElementById('proj-detail-body');
@@ -1605,7 +1605,7 @@ pages.projects = function(container) {
           <div>
             <div style="font-size:16px;font-weight:700">Tasks Completed</div>
             <div style="font-size:12px;color:var(--text-muted);margin-top:3px">Across all projects • May 2026 Sprint</div>
-            <div style="font-size:12px;color:var(--success);margin-top:4px">✅ Total Story Points: ${tasks.reduce((s,t)=>s+t.storyPts,0)}</div>
+            <div style="font-size:12px;color:var(--success);margin-top:4px">✅ Total Story Points: ${tasks.reduce((s, t) => s + t.storyPts, 0)}</div>
           </div>
         </div>
         <div style="font-size:13px;font-weight:600;margin-bottom:10px">Breakdown by Project</div>
@@ -1666,14 +1666,14 @@ pages.projects = function(container) {
           </div>
         </div>
         ${[
-          { id:'T-006', title:'Database Sharding', project:'ERP v3.2', assignee:'Deepak Nair', due:'Jun 20', overdue:'3 days', priority:'High' },
-          { id:'T-025', title:'Push Notifications', project:'Mobile App 2.0', assignee:'Priya Sharma', due:'Jun 30', overdue:'1 day', priority:'High' },
-          { id:'T-044', title:'HR Scheduling Algorithm', project:'AI Module', assignee:'Vikram Kumar', due:'Aug 15', overdue:'Delayed start', priority:'Medium' },
-          { id:'T-066', title:'Email Campaign Builder', project:'CRM Revamp', assignee:'Anita Patel', due:'Jun 20', overdue:'3 days', priority:'Medium' },
-          { id:'T-067', title:'Analytics Dashboard', project:'CRM Revamp', assignee:'Suresh Raj', due:'Jun 25', overdue:'1 day', priority:'Medium' },
-          { id:'T-043', title:'Anomaly Detection Model', project:'AI Module', assignee:'Ananya Sinha', due:'Jun 30', overdue:'Blocked', priority:'High' },
-          { id:'T-027', title:'iOS App Store Submission', project:'Mobile App 2.0', assignee:'Priya Sharma', due:'Aug 5', overdue:'At risk', priority:'High' }
-        ].map(t => `
+        { id: 'T-006', title: 'Database Sharding', project: 'ERP v3.2', assignee: 'Deepak Nair', due: 'Jun 20', overdue: '3 days', priority: 'High' },
+        { id: 'T-025', title: 'Push Notifications', project: 'Mobile App 2.0', assignee: 'Priya Sharma', due: 'Jun 30', overdue: '1 day', priority: 'High' },
+        { id: 'T-044', title: 'HR Scheduling Algorithm', project: 'AI Module', assignee: 'Vikram Kumar', due: 'Aug 15', overdue: 'Delayed start', priority: 'Medium' },
+        { id: 'T-066', title: 'Email Campaign Builder', project: 'CRM Revamp', assignee: 'Anita Patel', due: 'Jun 20', overdue: '3 days', priority: 'Medium' },
+        { id: 'T-067', title: 'Analytics Dashboard', project: 'CRM Revamp', assignee: 'Suresh Raj', due: 'Jun 25', overdue: '1 day', priority: 'Medium' },
+        { id: 'T-043', title: 'Anomaly Detection Model', project: 'AI Module', assignee: 'Ananya Sinha', due: 'Jun 30', overdue: 'Blocked', priority: 'High' },
+        { id: 'T-027', title: 'iOS App Store Submission', project: 'Mobile App 2.0', assignee: 'Priya Sharma', due: 'Aug 5', overdue: 'At risk', priority: 'High' }
+      ].map(t => `
           <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
             <div style="flex:1">
               <div style="font-size:13px;font-weight:600">${t.title}</div>
@@ -1705,11 +1705,11 @@ pages.projects = function(container) {
     }
 
     const rows = [
-      { name: "ERP v3.2 Core", start: mode==='day'?10:0, end: mode==='day'?90:70, color: "var(--accent)" },
-      { name: "Mobile UI Kit", start: mode==='day'?30:15, end: mode==='day'?60:40, color: "var(--info)" },
-      { name: "API Security", start: mode==='day'?40:30, end: mode==='day'?80:60, color: "var(--purple)" },
-      { name: "AI Engine Beta", start: mode==='day'?50:50, end: mode==='day'?100:90, color: "var(--pink)" },
-      { name: "QA & Testing", start: mode==='day'?80:70, end: mode==='day'?120:100, color: "var(--success)" }
+      { name: "ERP v3.2 Core", start: mode === 'day' ? 10 : 0, end: mode === 'day' ? 90 : 70, color: "var(--accent)" },
+      { name: "Mobile UI Kit", start: mode === 'day' ? 30 : 15, end: mode === 'day' ? 60 : 40, color: "var(--info)" },
+      { name: "API Security", start: mode === 'day' ? 40 : 30, end: mode === 'day' ? 80 : 60, color: "var(--purple)" },
+      { name: "AI Engine Beta", start: mode === 'day' ? 50 : 50, end: mode === 'day' ? 100 : 90, color: "var(--pink)" },
+      { name: "QA & Testing", start: mode === 'day' ? 80 : 70, end: mode === 'day' ? 120 : 100, color: "var(--success)" }
     ];
 
     ganttBox.innerHTML = `
@@ -1737,7 +1737,7 @@ pages.projects = function(container) {
   document.getElementById('gantt-granularity-toggles')?.addEventListener('click', (e) => {
     const btn = e.target.closest('button');
     if (!btn) return;
-    
+
     // Update active state classes
     const buttons = e.currentTarget.querySelectorAll('button');
     buttons.forEach(b => {
@@ -1746,7 +1746,7 @@ pages.projects = function(container) {
     });
     btn.classList.remove('btn-secondary');
     btn.classList.add('btn-primary');
-    
+
     const mode = btn.getAttribute('data-gantt');
     renderGantt(mode);
   });
@@ -1778,7 +1778,7 @@ pages.projects = function(container) {
 };
 
 /* AI Command Center */
-pages['ai-center'] = function(container) {
+pages['ai-center'] = function (container) {
   const getAIState = () => {
     try {
       return JSON.parse(localStorage.getItem('amdox_ai_state')) || {
@@ -1800,7 +1800,7 @@ pages['ai-center'] = function(container) {
   const saveAIState = (state) => {
     try {
       localStorage.setItem('amdox_ai_state', JSON.stringify(state));
-    } catch {}
+    } catch { }
   };
 
   const state = getAIState();
@@ -1847,7 +1847,7 @@ pages['ai-center'] = function(container) {
 
   const renderAIStateOnPage = () => {
     const currentState = getAIState();
-    
+
     // Update anomalies count badge on page
     const statValEl = document.getElementById('ai-anomalies-stat');
     if (statValEl) {
@@ -1936,9 +1936,9 @@ pages['ai-center'] = function(container) {
                         <div style="font-size:12.5px;color:var(--text-secondary)">
                           ⚠️ <strong>Marketing Dept:</strong> Expenses deviate 23% from baseline pattern.
                         </div>
-                        ${currentState.anomalyResolved 
-                          ? '<span style="color:var(--success);font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0"><i class="fas fa-circle-check"></i> Resolved</span>' 
-                          : '<button class="btn btn-danger btn-xs" id="btn-fix-anomaly" style="padding:4px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">Resolve</button>'}
+                        ${currentState.anomalyResolved
+                ? '<span style="color:var(--success);font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0"><i class="fas fa-circle-check"></i> Resolved</span>'
+                : '<button class="btn btn-danger btn-xs" id="btn-fix-anomaly" style="padding:4px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">Resolve</button>'}
                       </div>
                     </div>
                   </div>
@@ -1950,24 +1950,24 @@ pages['ai-center'] = function(container) {
                           📦 <strong>Inventory SKU-0089:</strong> Dell Monitor stockout predicted in 3 days.
                         </div>
                         ${currentState.skuOrdered
-                          ? '<span style="color:var(--success);font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0"><i class="fas fa-circle-check"></i> Ordered</span>'
-                          : '<button class="btn btn-primary btn-xs" id="btn-action-reorder" style="padding:4px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">Auto-Reorder</button>'}
+                ? '<span style="color:var(--success);font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0"><i class="fas fa-circle-check"></i> Ordered</span>'
+                : '<button class="btn btn-primary btn-xs" id="btn-action-reorder" style="padding:4px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">Auto-Reorder</button>'}
                       </div>
                       <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:4px;padding:8px 10px;gap:10px">
                         <div style="font-size:12.5px;color:var(--text-secondary)">
                           👥 <strong>Resource Allocation:</strong> Shift 2 developers from Project A to B.
                         </div>
                         ${currentState.resourceOptimized
-                          ? '<span style="color:var(--success);font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0"><i class="fas fa-circle-check"></i> Applied</span>'
-                          : '<button class="btn btn-primary btn-xs" id="btn-action-optimize" style="padding:4px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">Optimize</button>'}
+                ? '<span style="color:var(--success);font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0"><i class="fas fa-circle-check"></i> Applied</span>'
+                : '<button class="btn btn-primary btn-xs" id="btn-action-optimize" style="padding:4px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">Optimize</button>'}
                       </div>
                       <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:4px;padding:8px 10px;gap:10px">
                         <div style="font-size:12.5px;color:var(--text-secondary)">
                           📄 <strong>Acme Corp Contract:</strong> Renewal deadline approaching.
                         </div>
                         ${currentState.contractReviewed
-                          ? '<span style="color:var(--success);font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0"><i class="fas fa-circle-check"></i> Reviewed</span>'
-                          : '<button class="btn btn-secondary btn-xs" id="btn-action-review" style="padding:4px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">Review</button>'}
+                ? '<span style="color:var(--success);font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0"><i class="fas fa-circle-check"></i> Reviewed</span>'
+                : '<button class="btn btn-secondary btn-xs" id="btn-action-review" style="padding:4px 8px;font-size:11px;white-space:nowrap;flex-shrink:0">Review</button>'}
                       </div>
                     </div>
                   </div>
@@ -1985,7 +1985,7 @@ pages['ai-center'] = function(container) {
                 const btn = e.target;
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resolving...';
-                
+
                 setTimeout(() => {
                   const resolvedBadge = document.createElement('span');
                   resolvedBadge.style.color = 'var(--success)';
@@ -1993,12 +1993,12 @@ pages['ai-center'] = function(container) {
                   resolvedBadge.style.fontWeight = '600';
                   resolvedBadge.innerHTML = '<i class="fas fa-circle-check"></i> Resolved';
                   btn.replaceWith(resolvedBadge);
-                  
+
                   // Save state
                   const latestState = getAIState();
                   latestState.anomalyResolved = true;
                   saveAIState(latestState);
-                  
+
                   renderAIStateOnPage();
                   showToast('Anomaly resolved: Marketing department budget aligned with baseline guidelines.', 'success');
                 }, 1200);
@@ -2012,7 +2012,7 @@ pages['ai-center'] = function(container) {
                 const btn = e.target;
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                
+
                 setTimeout(() => {
                   const completedBadge = document.createElement('span');
                   completedBadge.style.color = 'var(--success)';
@@ -2039,7 +2039,7 @@ pages['ai-center'] = function(container) {
                 const btn = e.target;
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Optimizing...';
-                
+
                 setTimeout(() => {
                   const completedBadge = document.createElement('span');
                   completedBadge.style.color = 'var(--success)';
@@ -2066,7 +2066,7 @@ pages['ai-center'] = function(container) {
                 const btn = e.target;
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-                
+
                 setTimeout(() => {
                   const completedBadge = document.createElement('span');
                   completedBadge.style.color = 'var(--success)';
@@ -2087,7 +2087,7 @@ pages['ai-center'] = function(container) {
             }
 
             overlay.querySelector('#ai-analysis-done').addEventListener('click', closeModal);
-            
+
             overlay.querySelector('#ai-analysis-export').addEventListener('click', () => {
               if (!window.jspdf) {
                 showToast('PDF library is loading. Please try again in a few seconds.', 'error');
@@ -2097,14 +2097,14 @@ pages['ai-center'] = function(container) {
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
                 const now = new Date();
-                const dateStr = now.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
-                const timeStr = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+                const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+                const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
                 const finalState = getAIState();
 
                 // Header block
                 doc.setFillColor(30, 27, 75); // Dark deep blue background
                 doc.rect(0, 0, 210, 35, 'F');
-                
+
                 doc.setTextColor(255, 255, 255);
                 doc.setFontSize(20);
                 doc.setFont('helvetica', 'bold');
@@ -2112,9 +2112,9 @@ pages['ai-center'] = function(container) {
                 doc.setFontSize(11);
                 doc.setFont('helvetica', 'normal');
                 doc.text('AI Command Center — Analysis Report', 14, 25);
-                
+
                 doc.setFontSize(9);
-                doc.text('Generated: ' + dateStr + ' at ' + timeStr, 196, 25, { align:'right' });
+                doc.text('Generated: ' + dateStr + ' at ' + timeStr, 196, 25, { align: 'right' });
 
                 // Content title
                 doc.setTextColor(40, 40, 40);
@@ -2132,7 +2132,7 @@ pages['ai-center'] = function(container) {
                 doc.setFont('helvetica', 'bold');
                 doc.setTextColor(34, 197, 94); // success color (green)
                 doc.text('1. Revenue Forecast (High Confidence - 94%)', 14, 68);
-                
+
                 doc.setTextColor(80, 80, 80);
                 doc.setFontSize(10);
                 doc.setFont('helvetica', 'normal');
@@ -2143,12 +2143,12 @@ pages['ai-center'] = function(container) {
                 doc.setFont('helvetica', 'bold');
                 doc.setTextColor(245, 158, 11); // warning color (amber/yellow)
                 doc.text('2. Anomalies Detected (AI Confidence - 87%)', 14, 88);
-                
+
                 doc.setTextColor(80, 80, 80);
                 doc.setFontSize(10);
                 doc.setFont('helvetica', 'normal');
-                const anomalyText = finalState.anomalyResolved 
-                  ? '0 active anomalies (1 anomaly resolved: Marketing department budget successfully aligned).' 
+                const anomalyText = finalState.anomalyResolved
+                  ? '0 active anomalies (1 anomaly resolved: Marketing department budget successfully aligned).'
                   : '1 active anomaly: Marketing department expenses deviate by 23% from baseline pattern.';
                 doc.text(anomalyText, 14, 95);
 
@@ -2157,7 +2157,7 @@ pages['ai-center'] = function(container) {
                 doc.setFont('helvetica', 'bold');
                 doc.setTextColor(99, 102, 241); // accent-light (purple/indigo)
                 doc.text('3. AI Recommended Actions', 14, 112);
-                
+
                 doc.setTextColor(80, 80, 80);
                 doc.setFontSize(10);
                 doc.setFont('helvetica', 'normal');
@@ -2177,10 +2177,10 @@ pages['ai-center'] = function(container) {
                 doc.line(14, 275, 196, 275);
                 doc.setFontSize(8);
                 doc.setTextColor(150);
-                doc.text('Amdox AI Command Center — Confidential Report | Page 1 of 1', 105, 282, { align:'center' });
+                doc.text('Amdox AI Command Center — Confidential Report | Page 1 of 1', 105, 282, { align: 'center' });
 
                 // Save PDF
-                doc.save('Amdox_AI_Analysis_Report_' + dateStr.replace(/ /g,'_') + '.pdf');
+                doc.save('Amdox_AI_Analysis_Report_' + dateStr.replace(/ /g, '_') + '.pdf');
                 showToast('AI Analysis report downloaded successfully!', 'success');
                 closeModal();
               } catch (err) {

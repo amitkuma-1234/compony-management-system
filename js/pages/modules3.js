@@ -1,5 +1,5 @@
 /* Analytics & BI Page */
-pages.analytics = function(container) {
+pages.analytics = function (container) {
   container.innerHTML = `
     <div class="module-hero">
       <h2><i class="fas fa-chart-line" style="color:var(--info)"></i> Analytics & Business Intelligence</h2>
@@ -60,7 +60,7 @@ pages.analytics = function(container) {
     try { return JSON.parse(localStorage.getItem(LS_DASH_KEY)) || []; } catch { return []; }
   }
   function saveDashboards(list) {
-    try { localStorage.setItem(LS_DASH_KEY, JSON.stringify(list)); } catch {}
+    try { localStorage.setItem(LS_DASH_KEY, JSON.stringify(list)); } catch { }
   }
 
   // Update dashboard count
@@ -73,10 +73,10 @@ pages.analytics = function(container) {
       title: '<i class="fas fa-chart-pie" style="color:var(--info)"></i> Create New Dashboard',
       submitLabel: 'Create Dashboard',
       fields: [
-        { name: 'name',     label: 'Dashboard Name',  required: true, placeholder: 'e.g. Sales Overview Q3' },
-        { name: 'type',     label: 'Dashboard Type',   type: 'select', options: ['KPI Dashboard','Revenue Analytics','HR Insights','Inventory Tracker','Custom Report'], default: 'KPI Dashboard' },
-        { name: 'refresh',  label: 'Auto-Refresh',     type: 'select', options: ['Real-time','Every 5 min','Every 15 min','Hourly','Manual'], default: 'Every 15 min' },
-        { name: 'sharing',  label: 'Share With',       type: 'select', options: ['Only Me','My Team','All Managers','Organization'], default: 'Only Me' }
+        { name: 'name', label: 'Dashboard Name', required: true, placeholder: 'e.g. Sales Overview Q3' },
+        { name: 'type', label: 'Dashboard Type', type: 'select', options: ['KPI Dashboard', 'Revenue Analytics', 'HR Insights', 'Inventory Tracker', 'Custom Report'], default: 'KPI Dashboard' },
+        { name: 'refresh', label: 'Auto-Refresh', type: 'select', options: ['Real-time', 'Every 5 min', 'Every 15 min', 'Hourly', 'Manual'], default: 'Every 15 min' },
+        { name: 'sharing', label: 'Share With', type: 'select', options: ['Only Me', 'My Team', 'All Managers', 'Organization'], default: 'Only Me' }
       ],
       onSubmit(data, close) {
         const dashboards = getDashboards();
@@ -97,31 +97,31 @@ pages.analytics = function(container) {
 
   // ── Helper: read live data from localStorage ──
   const SEED_EMP = [
-    { id:1, name:'Arjun Mehta', email:'arjun@amdox.com', department:'Engineering', role:'Software Engineer', status:'Active', joined:'Jan 2024' },
-    { id:2, name:'Priya Sharma', email:'priya@amdox.com', department:'HR & Admin', role:'HR Manager', status:'Active', joined:'Mar 2023' },
-    { id:3, name:'Rahul Desai', email:'rahul@amdox.com', department:'Sales & Marketing', role:'Sales Executive', status:'Probation', joined:'May 2026' }
+    { id: 1, name: 'Arjun Mehta', email: 'arjun@amdox.com', department: 'Engineering', role: 'Software Engineer', status: 'Active', joined: 'Jan 2024' },
+    { id: 2, name: 'Priya Sharma', email: 'priya@amdox.com', department: 'HR & Admin', role: 'HR Manager', status: 'Active', joined: 'Mar 2023' },
+    { id: 3, name: 'Rahul Desai', email: 'rahul@amdox.com', department: 'Sales & Marketing', role: 'Sales Executive', status: 'Probation', joined: 'May 2026' }
   ];
   const SEED_INV = [
-    { id:1, invoice_no:'INV-2847', client:'Infosys Ltd', amount:875000, due_date:'May 25, 2026', status:'Pending' },
-    { id:2, invoice_no:'INV-2846', client:'Reliance Industries', amount:1240000, due_date:'May 20, 2026', status:'Sent' },
-    { id:3, invoice_no:'INV-2845', client:'Tata Motors', amount:450000, due_date:'May 15, 2026', status:'Paid' },
-    { id:4, invoice_no:'INV-2844', client:'HCL Technologies', amount:680000, due_date:'May 10, 2026', status:'Paid' }
+    { id: 1, invoice_no: 'INV-2847', client: 'Infosys Ltd', amount: 875000, due_date: 'May 25, 2026', status: 'Pending' },
+    { id: 2, invoice_no: 'INV-2846', client: 'Reliance Industries', amount: 1240000, due_date: 'May 20, 2026', status: 'Sent' },
+    { id: 3, invoice_no: 'INV-2845', client: 'Tata Motors', amount: 450000, due_date: 'May 15, 2026', status: 'Paid' },
+    { id: 4, invoice_no: 'INV-2844', client: 'HCL Technologies', amount: 680000, due_date: 'May 10, 2026', status: 'Paid' }
   ];
   const SEED_PROD = [
-    { id:1, sku:'SKU-0010', name:'MacBook Pro 16"', category:'Electronics', stock:12, reorder_level:10, warehouse:'Warehouse A' },
-    { id:2, sku:'SKU-0021', name:'Ergonomic Chair', category:'Furniture', stock:45, reorder_level:20, warehouse:'Warehouse B' },
-    { id:3, sku:'SKU-0033', name:'Printer Ink Black', category:'Supplies', stock:5, reorder_level:15, warehouse:'Warehouse A' },
-    { id:4, sku:'SKU-0045', name:'Logitech MX Master 3', category:'Accessories', stock:30, reorder_level:15, warehouse:'Warehouse C' }
+    { id: 1, sku: 'SKU-0010', name: 'MacBook Pro 16"', category: 'Electronics', stock: 12, reorder_level: 10, warehouse: 'Warehouse A' },
+    { id: 2, sku: 'SKU-0021', name: 'Ergonomic Chair', category: 'Furniture', stock: 45, reorder_level: 20, warehouse: 'Warehouse B' },
+    { id: 3, sku: 'SKU-0033', name: 'Printer Ink Black', category: 'Supplies', stock: 5, reorder_level: 15, warehouse: 'Warehouse A' },
+    { id: 4, sku: 'SKU-0045', name: 'Logitech MX Master 3', category: 'Accessories', stock: 30, reorder_level: 15, warehouse: 'Warehouse C' }
   ];
 
   function getLiveData() {
     let employees, invoices, expenses, products;
     try { employees = JSON.parse(localStorage.getItem('amdox_employees')) || SEED_EMP; } catch { employees = SEED_EMP; }
-    try { invoices  = JSON.parse(localStorage.getItem('amdox_invoices'))  || SEED_INV; } catch { invoices = SEED_INV; }
+    try { invoices = JSON.parse(localStorage.getItem('amdox_invoices')) || SEED_INV; } catch { invoices = SEED_INV; }
     try {
       const raw = JSON.parse(localStorage.getItem('amdox_expenses'));
-      expenses = raw ? raw.map(item => typeof item === 'number' ? { amount:item, vendor:'Expense', category:'General', date:'-' } : item) : [{ amount:5820000, vendor:'Base Historical', category:'General', date:'Prior' }];
-    } catch { expenses = [{ amount:5820000, vendor:'Base Historical', category:'General', date:'Prior' }]; }
+      expenses = raw ? raw.map(item => typeof item === 'number' ? { amount: item, vendor: 'Expense', category: 'General', date: '-' } : item) : [{ amount: 5820000, vendor: 'Base Historical', category: 'General', date: 'Prior' }];
+    } catch { expenses = [{ amount: 5820000, vendor: 'Base Historical', category: 'General', date: 'Prior' }]; }
     try { products = JSON.parse(localStorage.getItem('amdox_products')) || SEED_PROD; } catch { products = SEED_PROD; }
     return { employees, invoices, expenses, products };
   }
@@ -140,8 +140,8 @@ pages.analytics = function(container) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       const now = new Date();
-      const dateStr = now.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
-      const timeStr = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+      const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
       const data = getLiveData();
 
       // ── Page 1: Header ──
@@ -155,7 +155,7 @@ pages.analytics = function(container) {
       doc.setFont('helvetica', 'normal');
       doc.text('ERP System - Complete Report', 14, 28);
       doc.setFontSize(9);
-      doc.text('Generated: ' + dateStr + ' at ' + timeStr, 196, 28, { align:'right' });
+      doc.text('Generated: ' + dateStr + ' at ' + timeStr, 196, 28, { align: 'right' });
 
       // ── Summary ──
       doc.setTextColor(40, 40, 40);
@@ -163,8 +163,8 @@ pages.analytics = function(container) {
       doc.setFont('helvetica', 'bold');
       doc.text('Organization Summary', 14, 50);
 
-      const totalRev = data.invoices.filter(i => i.status === 'Paid').reduce((s,i) => s + (parseFloat(i.amount)||0), 0);
-      const totalExp = data.expenses.reduce((s,i) => s + (i.amount||0), 0);
+      const totalRev = data.invoices.filter(i => i.status === 'Paid').reduce((s, i) => s + (parseFloat(i.amount) || 0), 0);
+      const totalExp = data.expenses.reduce((s, i) => s + (i.amount || 0), 0);
       doc.autoTable({
         startY: 55,
         head: [['Metric', 'Value']],
@@ -180,16 +180,16 @@ pages.analytics = function(container) {
           ['Low Stock Items', String(data.products.filter(p => p.stock < p.reorder_level).length)]
         ],
         theme: 'grid',
-        headStyles: { fillColor:[99,102,241], textColor:255, fontStyle:'bold' },
-        styles: { fontSize:10, cellPadding:4 },
-        alternateRowStyles: { fillColor:[245,245,255] }
+        headStyles: { fillColor: [99, 102, 241], textColor: 255, fontStyle: 'bold' },
+        styles: { fontSize: 10, cellPadding: 4 },
+        alternateRowStyles: { fillColor: [245, 245, 255] }
       });
 
       // ── Page 2: Employee Directory ──
       doc.addPage();
       doc.setFillColor(30, 27, 75);
       doc.rect(0, 0, 210, 20, 'F');
-      doc.setTextColor(255,255,255);
+      doc.setTextColor(255, 255, 255);
       doc.setFontSize(13);
       doc.setFont('helvetica', 'bold');
       doc.text('Employee Directory (' + data.employees.length + ' employees)', 14, 14);
@@ -199,16 +199,16 @@ pages.analytics = function(container) {
         head: [['Name', 'Email', 'Department', 'Role', 'Status', 'Joined']],
         body: data.employees.map(e => [e.name, e.email, e.department, e.role, e.status, e.joined]),
         theme: 'striped',
-        headStyles: { fillColor:[99,102,241], textColor:255, fontStyle:'bold' },
-        styles: { fontSize:8, cellPadding:3 },
-        columnStyles: { 0:{cellWidth:30}, 1:{cellWidth:38}, 2:{cellWidth:28}, 3:{cellWidth:30}, 4:{cellWidth:18}, 5:{cellWidth:20} }
+        headStyles: { fillColor: [99, 102, 241], textColor: 255, fontStyle: 'bold' },
+        styles: { fontSize: 8, cellPadding: 3 },
+        columnStyles: { 0: { cellWidth: 30 }, 1: { cellWidth: 38 }, 2: { cellWidth: 28 }, 3: { cellWidth: 30 }, 4: { cellWidth: 18 }, 5: { cellWidth: 20 } }
       });
 
       // ── Page 3: Invoices ──
       doc.addPage();
       doc.setFillColor(30, 27, 75);
       doc.rect(0, 0, 210, 20, 'F');
-      doc.setTextColor(255,255,255);
+      doc.setTextColor(255, 255, 255);
       doc.setFontSize(13);
       doc.text('Finance - Invoices (' + data.invoices.length + ' invoices)', 14, 14);
 
@@ -217,18 +217,18 @@ pages.analytics = function(container) {
         head: [['Invoice No', 'Client', 'Amount', 'Due Date', 'Status']],
         body: data.invoices.map(i => [i.invoice_no, i.client, fmtAmt(i.amount), i.due_date, i.status]),
         theme: 'striped',
-        headStyles: { fillColor:[34,197,94], textColor:255, fontStyle:'bold' },
-        styles: { fontSize:9, cellPadding:4 }
+        headStyles: { fillColor: [34, 197, 94], textColor: 255, fontStyle: 'bold' },
+        styles: { fontSize: 9, cellPadding: 4 }
       });
 
       // Invoice totals
       let invY = doc.lastAutoTable.finalY + 10;
-      doc.setTextColor(40,40,40);
+      doc.setTextColor(40, 40, 40);
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
-      doc.text('Paid: ' + fmtAmt(data.invoices.filter(i=>i.status==='Paid').reduce((s,i)=>s+(parseFloat(i.amount)||0),0)), 14, invY);
-      doc.text('Pending: ' + fmtAmt(data.invoices.filter(i=>i.status==='Pending').reduce((s,i)=>s+(parseFloat(i.amount)||0),0)), 80, invY);
-      doc.text('Total: ' + fmtAmt(data.invoices.reduce((s,i)=>s+(parseFloat(i.amount)||0),0)), 150, invY);
+      doc.text('Paid: ' + fmtAmt(data.invoices.filter(i => i.status === 'Paid').reduce((s, i) => s + (parseFloat(i.amount) || 0), 0)), 14, invY);
+      doc.text('Pending: ' + fmtAmt(data.invoices.filter(i => i.status === 'Pending').reduce((s, i) => s + (parseFloat(i.amount) || 0), 0)), 80, invY);
+      doc.text('Total: ' + fmtAmt(data.invoices.reduce((s, i) => s + (parseFloat(i.amount) || 0), 0)), 150, invY);
 
       // ── Expenses ──
       if (data.expenses.length > 0) {
@@ -240,8 +240,8 @@ pages.analytics = function(container) {
           head: [['Vendor / Payee', 'Category', 'Amount', 'Date']],
           body: data.expenses.map(e => [e.vendor || '-', e.category || '-', fmtAmt(e.amount), e.date || '-']),
           theme: 'striped',
-          headStyles: { fillColor:[239,68,68], textColor:255, fontStyle:'bold' },
-          styles: { fontSize:9, cellPadding:4 }
+          headStyles: { fillColor: [239, 68, 68], textColor: 255, fontStyle: 'bold' },
+          styles: { fontSize: 9, cellPadding: 4 }
         });
         let expY = doc.lastAutoTable.finalY + 8;
         doc.setFontSize(10);
@@ -252,7 +252,7 @@ pages.analytics = function(container) {
       doc.addPage();
       doc.setFillColor(30, 27, 75);
       doc.rect(0, 0, 210, 20, 'F');
-      doc.setTextColor(255,255,255);
+      doc.setTextColor(255, 255, 255);
       doc.setFontSize(13);
       doc.text('Inventory - Products (' + data.products.length + ' items)', 14, 14);
 
@@ -261,9 +261,9 @@ pages.analytics = function(container) {
         head: [['SKU', 'Product Name', 'Category', 'Stock', 'Reorder Level', 'Warehouse']],
         body: data.products.map(p => [p.sku, p.name, p.category, String(p.stock), String(p.reorder_level), p.warehouse]),
         theme: 'striped',
-        headStyles: { fillColor:[168,85,247], textColor:255, fontStyle:'bold' },
-        styles: { fontSize:9, cellPadding:4 },
-        didParseCell: function(hookData) {
+        headStyles: { fillColor: [168, 85, 247], textColor: 255, fontStyle: 'bold' },
+        styles: { fontSize: 9, cellPadding: 4 },
+        didParseCell: function (hookData) {
           // Highlight low stock rows in red
           if (hookData.section === 'body') {
             const rowData = hookData.row.raw;
@@ -291,10 +291,10 @@ pages.analytics = function(container) {
         doc.setPage(i);
         doc.setFontSize(8);
         doc.setTextColor(150);
-        doc.text('Amdox ERP - Confidential | Page ' + i + ' of ' + pageCount + ' | ' + dateStr, 105, 290, { align:'center' });
+        doc.text('Amdox ERP - Confidential | Page ' + i + ' of ' + pageCount + ' | ' + dateStr, 105, 290, { align: 'center' });
       }
 
-      doc.save('Amdox_ERP_Report_' + dateStr.replace(/ /g,'_') + '.pdf');
+      doc.save('Amdox_ERP_Report_' + dateStr.replace(/ /g, '_') + '.pdf');
       showToast('PDF report exported with all module data!', 'success');
     } catch (err) {
       console.error('PDF export error:', err);
@@ -313,8 +313,8 @@ pages.analytics = function(container) {
       const data = getLiveData();
 
       // Sheet 1: Summary
-      const totalRev = data.invoices.filter(i => i.status === 'Paid').reduce((s,i) => s + (parseFloat(i.amount)||0), 0);
-      const totalExp = data.expenses.reduce((s,i) => s + (i.amount||0), 0);
+      const totalRev = data.invoices.filter(i => i.status === 'Paid').reduce((s, i) => s + (parseFloat(i.amount) || 0), 0);
+      const totalExp = data.expenses.reduce((s, i) => s + (i.amount || 0), 0);
       const summaryRows = [
         ['Amdox Technologies Pvt Ltd - ERP Report'],
         ['Generated', new Date().toLocaleString('en-IN')],
@@ -331,41 +331,41 @@ pages.analytics = function(container) {
         ['Low Stock Items', data.products.filter(p => p.stock < p.reorder_level).length]
       ];
       const ws1 = XLSX.utils.aoa_to_sheet(summaryRows);
-      ws1['!cols'] = [{ wch:28 }, { wch:22 }];
+      ws1['!cols'] = [{ wch: 28 }, { wch: 22 }];
       XLSX.utils.book_append_sheet(wb, ws1, 'Summary');
 
       // Sheet 2: Employees
       const empRows = [['ID', 'Name', 'Email', 'Department', 'Role', 'Status', 'Joined']];
       data.employees.forEach(e => empRows.push([e.id, e.name, e.email, e.department, e.role, e.status, e.joined]));
       const ws2 = XLSX.utils.aoa_to_sheet(empRows);
-      ws2['!cols'] = [{ wch:5 }, { wch:20 }, { wch:25 }, { wch:18 }, { wch:22 }, { wch:10 }, { wch:12 }];
+      ws2['!cols'] = [{ wch: 5 }, { wch: 20 }, { wch: 25 }, { wch: 18 }, { wch: 22 }, { wch: 10 }, { wch: 12 }];
       XLSX.utils.book_append_sheet(wb, ws2, 'Employees');
 
       // Sheet 3: Invoices
       const invRows = [['Invoice No', 'Client', 'Amount (Rs.)', 'Due Date', 'Status']];
       data.invoices.forEach(i => invRows.push([i.invoice_no, i.client, parseFloat(i.amount), i.due_date, i.status]));
       invRows.push([]);
-      invRows.push(['', 'TOTAL', data.invoices.reduce((s,i) => s+(parseFloat(i.amount)||0), 0), '', '']);
-      invRows.push(['', 'Paid Total', data.invoices.filter(i=>i.status==='Paid').reduce((s,i) => s+(parseFloat(i.amount)||0), 0), '', '']);
-      invRows.push(['', 'Pending Total', data.invoices.filter(i=>i.status==='Pending').reduce((s,i) => s+(parseFloat(i.amount)||0), 0), '', '']);
+      invRows.push(['', 'TOTAL', data.invoices.reduce((s, i) => s + (parseFloat(i.amount) || 0), 0), '', '']);
+      invRows.push(['', 'Paid Total', data.invoices.filter(i => i.status === 'Paid').reduce((s, i) => s + (parseFloat(i.amount) || 0), 0), '', '']);
+      invRows.push(['', 'Pending Total', data.invoices.filter(i => i.status === 'Pending').reduce((s, i) => s + (parseFloat(i.amount) || 0), 0), '', '']);
       const ws3 = XLSX.utils.aoa_to_sheet(invRows);
-      ws3['!cols'] = [{ wch:12 }, { wch:22 }, { wch:15 }, { wch:18 }, { wch:10 }];
+      ws3['!cols'] = [{ wch: 12 }, { wch: 22 }, { wch: 15 }, { wch: 18 }, { wch: 10 }];
       XLSX.utils.book_append_sheet(wb, ws3, 'Invoices');
 
       // Sheet 4: Expenses
       const expRows = [['Vendor / Payee', 'Category', 'Amount (Rs.)', 'Date']];
       data.expenses.forEach(e => expRows.push([e.vendor || '-', e.category || '-', e.amount, e.date || '-']));
       expRows.push([]);
-      expRows.push(['TOTAL', '', data.expenses.reduce((s,i) => s+(i.amount||0), 0), '']);
+      expRows.push(['TOTAL', '', data.expenses.reduce((s, i) => s + (i.amount || 0), 0), '']);
       const ws4 = XLSX.utils.aoa_to_sheet(expRows);
-      ws4['!cols'] = [{ wch:28 }, { wch:18 }, { wch:15 }, { wch:16 }];
+      ws4['!cols'] = [{ wch: 28 }, { wch: 18 }, { wch: 15 }, { wch: 16 }];
       XLSX.utils.book_append_sheet(wb, ws4, 'Expenses');
 
       // Sheet 5: Products / Inventory
       const prodRows = [['SKU', 'Product Name', 'Category', 'Stock', 'Reorder Level', 'Warehouse', 'Stock Status']];
       data.products.forEach(p => prodRows.push([p.sku, p.name, p.category, p.stock, p.reorder_level, p.warehouse, p.stock < p.reorder_level ? 'LOW STOCK' : 'OK']));
       const ws5 = XLSX.utils.aoa_to_sheet(prodRows);
-      ws5['!cols'] = [{ wch:12 }, { wch:22 }, { wch:14 }, { wch:8 }, { wch:14 }, { wch:14 }, { wch:12 }];
+      ws5['!cols'] = [{ wch: 12 }, { wch: 22 }, { wch: 14 }, { wch: 8 }, { wch: 14 }, { wch: 14 }, { wch: 12 }];
       XLSX.utils.book_append_sheet(wb, ws5, 'Inventory');
 
       // Sheet 6: Custom Dashboards
@@ -374,11 +374,11 @@ pages.analytics = function(container) {
         const dashRows = [['Dashboard Name', 'Type', 'Auto-Refresh', 'Shared With', 'Created']];
         customDash.forEach(d => dashRows.push([d.name, d.type, d.refresh, d.sharing, d.created]));
         const ws6 = XLSX.utils.aoa_to_sheet(dashRows);
-        ws6['!cols'] = [{ wch:25 }, { wch:20 }, { wch:15 }, { wch:18 }, { wch:12 }];
+        ws6['!cols'] = [{ wch: 25 }, { wch: 20 }, { wch: 15 }, { wch: 18 }, { wch: 12 }];
         XLSX.utils.book_append_sheet(wb, ws6, 'Dashboards');
       }
 
-      const dateStr = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }).replace(/ /g, '_');
+      const dateStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '_');
       XLSX.writeFile(wb, 'Amdox_ERP_Report_' + dateStr + '.xlsx');
       showToast('Excel report exported with all module data!', 'success');
     } catch (err) {
@@ -472,10 +472,10 @@ pages.analytics = function(container) {
       title: '<i class="fas fa-pen" style="color:var(--info)"></i> Edit Dashboard',
       submitLabel: 'Update Dashboard',
       fields: [
-        { name: 'name',     label: 'Dashboard Name',  required: true, default: d.name },
-        { name: 'type',     label: 'Dashboard Type',   type: 'select', options: ['KPI Dashboard','Revenue Analytics','HR Insights','Inventory Tracker','Custom Report'], default: d.type },
-        { name: 'refresh',  label: 'Auto-Refresh',     type: 'select', options: ['Real-time','Every 5 min','Every 15 min','Hourly','Manual'], default: d.refresh },
-        { name: 'sharing',  label: 'Share With',       type: 'select', options: ['Only Me','My Team','All Managers','Organization'], default: d.sharing }
+        { name: 'name', label: 'Dashboard Name', required: true, default: d.name },
+        { name: 'type', label: 'Dashboard Type', type: 'select', options: ['KPI Dashboard', 'Revenue Analytics', 'HR Insights', 'Inventory Tracker', 'Custom Report'], default: d.type },
+        { name: 'refresh', label: 'Auto-Refresh', type: 'select', options: ['Real-time', 'Every 5 min', 'Every 15 min', 'Hourly', 'Manual'], default: d.refresh },
+        { name: 'sharing', label: 'Share With', type: 'select', options: ['Only Me', 'My Team', 'All Managers', 'Organization'], default: d.sharing }
       ],
       onSubmit(data, close) {
         const dashboards = getDashboards();
@@ -589,11 +589,11 @@ pages.analytics = function(container) {
 
 /* Auth & Security Page */
 /* Auth & Security Page */
-pages.auth = function(container) {
+pages.auth = function (container) {
   const getMFAState = () => {
     return localStorage.getItem('amdox_mfa_enabled') !== 'false';
   };
-  
+
   const toggleMFA = () => {
     const current = getMFAState();
     localStorage.setItem('amdox_mfa_enabled', !current);
@@ -604,7 +604,7 @@ pages.auth = function(container) {
   const generateApiKey = () => {
     const key = 'amdox_key_' + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
     showToast(`🔑 New API Key generated: ${key.substring(0, 15)}... (copied to clipboard)`, 'success');
-    navigator.clipboard.writeText(key).catch(() => {});
+    navigator.clipboard.writeText(key).catch(() => { });
   };
 
   const renderAuthPage = () => {
@@ -612,7 +612,7 @@ pages.auth = function(container) {
     const userJson = localStorage.getItem('amdox_auth_user');
     let currentUser = { name: 'Amit Kumar', email: 'amit@amdox.com', role: 'Super Admin' };
     if (userJson) {
-      try { currentUser = JSON.parse(userJson); } catch (e) {}
+      try { currentUser = JSON.parse(userJson); } catch (e) { }
     }
 
     // Extract simple browser name
@@ -705,10 +705,10 @@ pages.auth = function(container) {
     });
 
     document.getElementById('sec-stat-users')?.addEventListener('click', () => {
-      const names = ['Arjun Mehta','Priya Sharma','Rahul Desai','Anita Patel','Sneha Reddy','Karan Mehta','Rajesh Gupta','Deepak Verma','Sonia Gill','Vikram Singh','Meera Iyer','Amit Kumar','Pooja Hegde','Suresh Raina','Ishani Bose'];
-      const depts = ['Engineering','HR','Sales','Finance','Marketing','Legal','Operations'];
-      const roles = ['Software Engineer','Manager','Lead Designer','Analyst','Executive','Director','Super Admin'];
-      
+      const names = ['Arjun Mehta', 'Priya Sharma', 'Rahul Desai', 'Anita Patel', 'Sneha Reddy', 'Karan Mehta', 'Rajesh Gupta', 'Deepak Verma', 'Sonia Gill', 'Vikram Singh', 'Meera Iyer', 'Amit Kumar', 'Pooja Hegde', 'Suresh Raina', 'Ishani Bose'];
+      const depts = ['Engineering', 'HR', 'Sales', 'Finance', 'Marketing', 'Legal', 'Operations'];
+      const roles = ['Software Engineer', 'Manager', 'Lead Designer', 'Analyst', 'Executive', 'Director', 'Super Admin'];
+
       const users = [];
       for (let i = 1; i <= 162; i++) {
         const name = names[i % names.length] + ' ' + (i > 15 ? '#' + i : '');
@@ -726,7 +726,7 @@ pages.auth = function(container) {
       const buildRows = (list) => {
         return list.map(u => `
           <tr style="border-bottom:1px solid var(--border)">
-            <td style="padding:12px 10px"><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">${u.name.substring(0,2).toUpperCase()}</div><div style="font-weight:600">${u.name}</div></div></td>
+            <td style="padding:12px 10px"><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">${u.name.substring(0, 2).toUpperCase()}</div><div style="font-weight:600">${u.name}</div></div></td>
             <td><span class="badge badge-purple">${u.role}</span></td>
             <td><span class="badge ${u.status === 'Active' ? 'badge-success' : 'badge-warning'}">${u.status}</span></td>
             <td style="font-size:12px;color:var(--text-muted)">${u.lastLogin}</td>
@@ -814,12 +814,12 @@ pages.auth = function(container) {
           else if (log.action === 'UPDATE') dotColor = 'blue';
           else if (log.action === 'CREATE') dotColor = 'green';
           else if (log.action === 'LOGIN') dotColor = 'purple';
-          
+
           let dateStr = log.created_at;
           try {
             const date = new Date(log.created_at);
             dateStr = date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + ' · ' + date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
-          } catch(e) {}
+          } catch (e) { }
 
           return `
             <div class="activity-item">
@@ -847,7 +847,7 @@ pages.auth = function(container) {
 
 /* Notifications Page */
 /* Notifications Page */
-const MOCK_SENT_MESSAGES = (function() {
+const MOCK_SENT_MESSAGES = (function () {
   const base = [
     { id: 4000, type: 'Email', recipient: 'infosys_accounts@example.com', subject: 'Invoice #INV-2847', time: '2 min ago', content: 'Dear Infosys Accounts Team,\n\nPlease find the attached invoice #INV-2847 for the professional services rendered in May 2026. The total amount due is Rs. 8,75,000.\n\nPayment Link: https://pay.amdox.com/inv-2847\nDue Date: 25th May 2026.\n\nThank you for your business.\n\nBest Regards,\nBilling Department\nAmdox Technologies', status: 'Delivered' },
     { id: 3999, type: 'SMS', recipient: '+91-9876543210', subject: 'OTP Verification', time: '10 min ago', content: 'Your Amdox ERP secure login OTP is 482910. This code is valid for 5 minutes. Please do not share it with anyone.', status: 'Delivered' },
@@ -893,7 +893,7 @@ const MOCK_SENT_MESSAGES = (function() {
     const tplId = i % emailTemplates.length;
     const ref = 'AM-EML-' + (20000 + i);
     const ts = new Date(Date.now() - hours * 3600000).toLocaleString();
-    
+
     base.push({
       id: 3500 - i,
       type: 'Email',
@@ -941,7 +941,7 @@ const MOCK_SENT_MESSAGES = (function() {
       type: 'SMS',
       recipient: '+91-7000' + (100000 + i),
       subject: i % 5 === 0 ? 'Billing Alert' : 'System Alert',
-      time: `${Math.floor(i/10) + 1} days ago`,
+      time: `${Math.floor(i / 10) + 1} days ago`,
       content: smsTexts[i % smsTexts.length],
       status: 'Delivered'
     });
@@ -950,7 +950,7 @@ const MOCK_SENT_MESSAGES = (function() {
   return base;
 })();
 
-pages.notifications = function(container) {
+pages.notifications = function (container) {
   container.innerHTML = `
     <div class="module-hero">
       <h2><i class="fas fa-bell" style="color:var(--warning)"></i> Notification & Event Engine</h2>
@@ -988,7 +988,7 @@ pages.notifications = function(container) {
     </div>`;
 
   // ── Notification Detail & Log Viewers ──
-  window.viewNotificationDetail = function(id) {
+  window.viewNotificationDetail = function (id) {
     const msg = MOCK_SENT_MESSAGES.find(m => m.id === id);
     if (!msg) return;
 
@@ -1021,9 +1021,9 @@ pages.notifications = function(container) {
     });
   };
 
-  window.viewNotificationLogs = function(type = 'All') {
+  window.viewNotificationLogs = function (type = 'All') {
     const logs = type === 'All' ? MOCK_SENT_MESSAGES : MOCK_SENT_MESSAGES.filter(m => m.type === type);
-    
+
     const typeIcons = {
       Email: '<i class="fas fa-envelope"></i>',
       SMS: '<i class="fas fa-comment-sms"></i>',
@@ -1096,7 +1096,7 @@ pages.notifications = function(container) {
       submitLabel: 'Register Webhook',
       fields: [
         { name: 'url', label: 'Endpoint URL', required: true, placeholder: 'https://api.example.com/webhook' },
-        { name: 'event', label: 'Trigger Event', type: 'select', options: ['invoice.created','invoice.paid','employee.onboarded','inventory.stock.low','order.placed','leave.approved'], default: 'invoice.created' },
+        { name: 'event', label: 'Trigger Event', type: 'select', options: ['invoice.created', 'invoice.paid', 'employee.onboarded', 'inventory.stock.low', 'order.placed', 'leave.approved'], default: 'invoice.created' },
         { name: 'secret', label: 'Signing Secret', placeholder: 'Auto-generated if empty' }
       ],
       onSubmit(data, close) {
@@ -1114,7 +1114,7 @@ pages.notifications = function(container) {
       title: '<i class="fas fa-envelope" style="color:var(--info)"></i> Email (SMTP) Configuration',
       submitLabel: 'Save Settings',
       fields: [
-        { name: 'provider', label: 'SMTP Provider', type: 'select', options: ['SendGrid','Mailgun','Amazon SES','Custom SMTP'], default: 'SendGrid' },
+        { name: 'provider', label: 'SMTP Provider', type: 'select', options: ['SendGrid', 'Mailgun', 'Amazon SES', 'Custom SMTP'], default: 'SendGrid' },
         { name: 'from_email', label: 'From Email', required: true, default: 'noreply@amdox.com' },
         { name: 'from_name', label: 'From Name', default: 'Amdox ERP Suite' },
         { name: 'daily_limit', label: 'Daily Send Limit', default: '5000' }
@@ -1131,10 +1131,10 @@ pages.notifications = function(container) {
       title: '<i class="fas fa-comment-sms" style="color:var(--success)"></i> SMS Gateway Configuration',
       submitLabel: 'Save Settings',
       fields: [
-        { name: 'provider', label: 'SMS Provider', type: 'select', options: ['Twilio','MSG91','Vonage','AWS SNS'], default: 'Twilio' },
+        { name: 'provider', label: 'SMS Provider', type: 'select', options: ['Twilio', 'MSG91', 'Vonage', 'AWS SNS'], default: 'Twilio' },
         { name: 'sender_id', label: 'Sender ID', required: true, default: 'AMDOX' },
         { name: 'api_key', label: 'API Key', placeholder: '••••••••••••' },
-        { name: 'otp_length', label: 'OTP Length', type: 'select', options: ['4','6','8'], default: '6' }
+        { name: 'otp_length', label: 'OTP Length', type: 'select', options: ['4', '6', '8'], default: '6' }
       ],
       onSubmit(data, close) {
         showToast('💬 SMS Gateway updated — Provider: ' + data.provider + ', Sender: ' + data.sender_id, 'success');
@@ -1150,8 +1150,8 @@ pages.notifications = function(container) {
       fields: [
         { name: 'business_id', label: 'Business Account ID', required: true, placeholder: 'e.g. 1234567890' },
         { name: 'phone_number', label: 'Business Phone Number', required: true, default: '+91-9876543210' },
-        { name: 'api_version', label: 'API Version', type: 'select', options: ['v18.0','v17.0','v16.0'], default: 'v18.0' },
-        { name: 'template_status', label: 'Template Status', type: 'select', options: ['Approved','Pending Review','Rejected'], default: 'Approved' }
+        { name: 'api_version', label: 'API Version', type: 'select', options: ['v18.0', 'v17.0', 'v16.0'], default: 'v18.0' },
+        { name: 'template_status', label: 'Template Status', type: 'select', options: ['Approved', 'Pending Review', 'Rejected'], default: 'Approved' }
       ],
       onSubmit(data, close) {
         showToast('📱 WhatsApp Business settings updated for ' + data.phone_number, 'success');
@@ -1168,7 +1168,7 @@ pages.notifications = function(container) {
         { name: 'workspace', label: 'Workspace Name', required: true, default: 'Amdox Technologies' },
         { name: 'channel', label: 'Default Channel', required: true, default: '#erp-alerts' },
         { name: 'webhook_url', label: 'Incoming Webhook URL', placeholder: 'https://hooks.slack.com/services/...' },
-        { name: 'notify_on', label: 'Notify On', type: 'select', options: ['All Events','Critical Only','Invoices & Payments','HR Updates','Inventory Alerts'], default: 'All Events' }
+        { name: 'notify_on', label: 'Notify On', type: 'select', options: ['All Events', 'Critical Only', 'Invoices & Payments', 'HR Updates', 'Inventory Alerts'], default: 'All Events' }
       ],
       onSubmit(data, close) {
         showToast('🔔 Slack integration updated — Channel: ' + data.channel, 'success');
@@ -1198,22 +1198,22 @@ pages.notifications = function(container) {
 };
 
 /* Asset Management Page */
-pages.assets = function(container) {
+pages.assets = function (container) {
 
   // ── localStorage helpers ──
   const LS_KEY = 'amdox_assets';
   const SEED_ASSETS = [
-    { id: 'AST-001', name: 'MacBook Pro 16" M3', category: 'Laptop',       assignedTo: 'Rahul Singh',        status: 'In Use',      value: 249900 },
-    { id: 'AST-002', name: 'Dell UltraSharp 32"', category: 'Monitor',     assignedTo: 'Anita Patel',        status: 'In Use',      value: 52000 },
-    { id: 'AST-003', name: 'Herman Miller Aeron',  category: 'Furniture',   assignedTo: 'Conference Room B',  status: 'In Use',      value: 125000 },
-    { id: 'AST-004', name: 'Epson Projector',       category: 'AV Equipment', assignedTo: '',                  status: 'Maintenance', value: 85000 }
+    { id: 'AST-001', name: 'MacBook Pro 16" M3', category: 'Laptop', assignedTo: 'Rahul Singh', status: 'In Use', value: 249900 },
+    { id: 'AST-002', name: 'Dell UltraSharp 32"', category: 'Monitor', assignedTo: 'Anita Patel', status: 'In Use', value: 52000 },
+    { id: 'AST-003', name: 'Herman Miller Aeron', category: 'Furniture', assignedTo: 'Conference Room B', status: 'In Use', value: 125000 },
+    { id: 'AST-004', name: 'Epson Projector', category: 'AV Equipment', assignedTo: '', status: 'Maintenance', value: 85000 }
   ];
 
   function getAssets() {
     try { return JSON.parse(localStorage.getItem(LS_KEY)) || SEED_ASSETS; } catch { return SEED_ASSETS; }
   }
   function saveAssets(list) {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {}
+    try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch { }
   }
   function nextId(list) {
     const nums = list.map(a => parseInt(a.id.replace('AST-', '')) || 0);
@@ -1229,11 +1229,11 @@ pages.assets = function(container) {
   // ── Status badge class helper (no bracket notation) ──
   function statusClass(s) {
     switch (s) {
-      case 'In Use':      return 'badge-success';
+      case 'In Use': return 'badge-success';
       case 'Maintenance': return 'badge-warning';
-      case 'Retired':     return 'badge-danger';
-      case 'Available':   return 'badge-info';
-      default:            return 'badge-info';
+      case 'Retired': return 'badge-danger';
+      case 'Available': return 'badge-info';
+      default: return 'badge-info';
     }
   }
 
@@ -1304,11 +1304,11 @@ pages.assets = function(container) {
       title: '<i class="fas fa-pen" style="color:var(--accent-light)"></i> Edit Asset',
       submitLabel: 'Update Asset',
       fields: [
-        { name: 'name',       label: 'Asset Name',    required: true, default: asset.name },
-        { name: 'category',   label: 'Category',      type: 'select', options: ['Laptop','Monitor','Furniture','AV Equipment','Networking','Printer','Phone','Tablet','Server','Other'], default: asset.category },
-        { name: 'assignedTo', label: 'Assigned To',    default: asset.assignedTo },
-        { name: 'status',     label: 'Status',         type: 'select', options: ['In Use','Available','Maintenance','Retired'], default: asset.status },
-        { name: 'value',      label: 'Value (₹)',      required: true, type: 'number', default: String(asset.value) }
+        { name: 'name', label: 'Asset Name', required: true, default: asset.name },
+        { name: 'category', label: 'Category', type: 'select', options: ['Laptop', 'Monitor', 'Furniture', 'AV Equipment', 'Networking', 'Printer', 'Phone', 'Tablet', 'Server', 'Other'], default: asset.category },
+        { name: 'assignedTo', label: 'Assigned To', default: asset.assignedTo },
+        { name: 'status', label: 'Status', type: 'select', options: ['In Use', 'Available', 'Maintenance', 'Retired'], default: asset.status },
+        { name: 'value', label: 'Value (₹)', required: true, type: 'number', default: String(asset.value) }
       ],
       onSubmit(data, close) {
         const list = getAssets();
@@ -1396,20 +1396,20 @@ pages.assets = function(container) {
     function renderRows() {
       const q = (document.getElementById('asset-search')?.value || '').toLowerCase().trim();
       const statusFilter = document.getElementById('asset-status-filter')?.value || '';
-      
+
       const tbody = document.getElementById('asset-tbody');
       if (!tbody) return;
       tbody.innerHTML = '';
-      
+
       const filtered = assets.filter(a => {
         const matchesQuery = q === '' ||
           a.id.toLowerCase().includes(q) ||
           a.name.toLowerCase().includes(q) ||
           a.category.toLowerCase().includes(q) ||
           (a.assignedTo || '').toLowerCase().includes(q);
-        
+
         const matchesStatus = statusFilter === '' || a.status === statusFilter;
-        
+
         return matchesQuery && matchesStatus;
       });
 
@@ -1424,7 +1424,7 @@ pages.assets = function(container) {
           feedbackDiv.style.display = 'flex';
           if (filteredCountEl) filteredCountEl.textContent = filtered.length;
           if (totalCountEl) totalCountEl.textContent = total;
-          
+
           if (summaryEl) {
             let summaryText = '';
             if (q !== '') summaryText += `"${q}"`;
@@ -1472,21 +1472,21 @@ pages.assets = function(container) {
         title: '<i class="fas fa-laptop" style="color:var(--cyan)"></i> Add New Asset',
         submitLabel: 'Add Asset',
         fields: [
-          { name: 'name',       label: 'Asset Name',    required: true, placeholder: 'e.g. MacBook Pro 14"' },
-          { name: 'category',   label: 'Category',      type: 'select', options: ['Laptop','Monitor','Furniture','AV Equipment','Networking','Printer','Phone','Tablet','Server','Other'], default: 'Laptop' },
-          { name: 'assignedTo', label: 'Assigned To',    placeholder: 'Employee name or location' },
-          { name: 'status',     label: 'Status',         type: 'select', options: ['In Use','Available','Maintenance','Retired'], default: 'In Use' },
-          { name: 'value',      label: 'Value (₹)',      required: true, type: 'number', placeholder: 'e.g. 75000' }
+          { name: 'name', label: 'Asset Name', required: true, placeholder: 'e.g. MacBook Pro 14"' },
+          { name: 'category', label: 'Category', type: 'select', options: ['Laptop', 'Monitor', 'Furniture', 'AV Equipment', 'Networking', 'Printer', 'Phone', 'Tablet', 'Server', 'Other'], default: 'Laptop' },
+          { name: 'assignedTo', label: 'Assigned To', placeholder: 'Employee name or location' },
+          { name: 'status', label: 'Status', type: 'select', options: ['In Use', 'Available', 'Maintenance', 'Retired'], default: 'In Use' },
+          { name: 'value', label: 'Value (₹)', required: true, type: 'number', placeholder: 'e.g. 75000' }
         ],
         onSubmit(data, close) {
           const assets = getAssets();
           assets.push({
-            id:         nextId(assets),
-            name:       data.name,
-            category:   data.category,
+            id: nextId(assets),
+            name: data.name,
+            category: data.category,
             assignedTo: data.assignedTo || '',
-            status:     data.status,
-            value:      parseFloat(data.value) || 0
+            status: data.status,
+            value: parseFloat(data.value) || 0
           });
           saveAssets(assets);
           showToast('Asset added successfully!', 'success');
@@ -1534,7 +1534,7 @@ pages.assets = function(container) {
         submitLabel: 'Filter In-Use',
         fields: [
           { label: 'Currently In Use', default: inUseVal, readonly: true },
-          { label: 'Utilization Rate', default: ((parseInt(inUseVal)/assets.length)*100).toFixed(1) + '%', readonly: true },
+          { label: 'Utilization Rate', default: ((parseInt(inUseVal) / assets.length) * 100).toFixed(1) + '%', readonly: true },
           { label: 'Avg Unit Age', default: '1.4 Years', readonly: true }
         ],
         onSubmit(data, close) {
@@ -1587,7 +1587,7 @@ pages.assets = function(container) {
 };
 
 /* Legal & Compliance */
-pages.legal = function(container) {
+pages.legal = function (container) {
 
   // ── localStorage helpers ──
   const LS_KEY = 'amdox_contracts';
@@ -1601,7 +1601,7 @@ pages.legal = function(container) {
     try { return JSON.parse(localStorage.getItem(LS_KEY)) || SEED_CONTRACTS; } catch { return SEED_CONTRACTS; }
   }
   function saveContracts(list) {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {}
+    try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch { }
   }
   function nextId(list) {
     return list.length ? Math.max(...list.map(c => c.id)) + 1 : 1;
@@ -1615,11 +1615,11 @@ pages.legal = function(container) {
   // ── Status badge class helper ──
   function statusClass(s) {
     switch (s) {
-      case 'Active':           return 'badge-success';
-      case 'Expiring':         return 'badge-danger';
-      case 'Terminated':       return 'badge-warning';
+      case 'Active': return 'badge-success';
+      case 'Expiring': return 'badge-danger';
+      case 'Terminated': return 'badge-warning';
       case 'Pending Approval': return 'badge-info';
-      default:                 return 'badge-info';
+      default: return 'badge-info';
     }
   }
 
@@ -1633,7 +1633,7 @@ pages.legal = function(container) {
     tdName.style.alignItems = 'center';
     tdName.style.gap = '8px';
     tdName.textContent = c.name;
-    
+
     if (c.gdpr !== 'No') {
       const gBadge = document.createElement('span');
       gBadge.className = 'badge badge-success';
@@ -1641,7 +1641,7 @@ pages.legal = function(container) {
       gBadge.innerHTML = '<i class="fas fa-shield-halved"></i> GDPR';
       tdName.appendChild(gBadge);
     }
-    
+
     tr.appendChild(tdName);
 
     const tdParty = document.createElement('td');
@@ -1702,13 +1702,13 @@ pages.legal = function(container) {
       title: '<i class="fas fa-pen" style="color:var(--accent-light)"></i> Edit Contract',
       submitLabel: 'Save Changes',
       fields: [
-        { name: 'name',      label: 'Contract Name',   required: true, default: contract.name },
-        { name: 'party',     label: 'Counterparty',    required: true, default: contract.party },
-        { name: 'type',      label: 'Contract Type',   type: 'select', options: ['Service','NDA','Vendor','Employment','SaaS','Lease','Partnership','Other'], default: contract.type },
-        { name: 'startDate', label: 'Start Date',      required: true, default: contract.startDate },
-        { name: 'endDate',   label: 'End Date',        required: true, default: contract.endDate },
-        { name: 'status',    label: 'Status',          type: 'select', options: ['Active','Expiring','Terminated','Pending Approval'], default: contract.status },
-        { name: 'gdpr',      label: 'GDPR Compliant',  type: 'select', options: [{value:'Yes', label:'✅ Yes'}, {value:'No', label:'❌ No'}], default: contract.gdpr || 'Yes' }
+        { name: 'name', label: 'Contract Name', required: true, default: contract.name },
+        { name: 'party', label: 'Counterparty', required: true, default: contract.party },
+        { name: 'type', label: 'Contract Type', type: 'select', options: ['Service', 'NDA', 'Vendor', 'Employment', 'SaaS', 'Lease', 'Partnership', 'Other'], default: contract.type },
+        { name: 'startDate', label: 'Start Date', required: true, default: contract.startDate },
+        { name: 'endDate', label: 'End Date', required: true, default: contract.endDate },
+        { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Expiring', 'Terminated', 'Pending Approval'], default: contract.status },
+        { name: 'gdpr', label: 'GDPR Compliant', type: 'select', options: [{ value: 'Yes', label: '✅ Yes' }, { value: 'No', label: '❌ No' }], default: contract.gdpr || 'Yes' }
       ],
       onSubmit(data, close) {
         const currentList = getContracts();
@@ -1799,11 +1799,11 @@ pages.legal = function(container) {
     function renderRows() {
       const q = (document.getElementById('contract-search')?.value || '').toLowerCase().trim();
       const statusFilter = document.getElementById('contract-status-filter')?.value || '';
-      
+
       const tbody = document.getElementById('contract-tbody');
       if (!tbody) return;
       tbody.innerHTML = '';
-      
+
       const filtered = contracts.filter(c => {
         const matchesQuery = q === '' ||
           c.name.toLowerCase().includes(q) ||
@@ -1811,9 +1811,9 @@ pages.legal = function(container) {
           c.type.toLowerCase().includes(q) ||
           c.startDate.toLowerCase().includes(q) ||
           c.endDate.toLowerCase().includes(q);
-        
+
         const matchesStatus = statusFilter === '' || c.status === statusFilter;
-        
+
         return matchesQuery && matchesStatus;
       });
 
@@ -1828,7 +1828,7 @@ pages.legal = function(container) {
           feedbackDiv.style.display = 'flex';
           if (filteredCountEl) filteredCountEl.textContent = filtered.length;
           if (totalCountEl) totalCountEl.textContent = total;
-          
+
           if (summaryEl) {
             let summaryText = '';
             if (q !== '') summaryText += `"${q}"`;
@@ -1876,25 +1876,25 @@ pages.legal = function(container) {
         title: '<i class="fas fa-file-contract" style="color:var(--warning)"></i> Create New Contract',
         submitLabel: 'Create Contract',
         fields: [
-          { name: 'name',      label: 'Contract Name',   required: true, placeholder: 'e.g. Master Service Agreement' },
-          { name: 'party',     label: 'Counterparty',    required: true, placeholder: 'e.g. Infosys Ltd' },
-          { name: 'type',      label: 'Contract Type',   type: 'select', options: ['Service','NDA','Vendor','Employment','SaaS','Lease','Partnership','Other'], default: 'Service' },
-          { name: 'startDate', label: 'Start Date',      required: true, placeholder: 'e.g. Jan 2025' },
-          { name: 'endDate',   label: 'End Date',        required: true, placeholder: 'e.g. Dec 2026' },
-          { name: 'status',    label: 'Status',          type: 'select', options: ['Active','Expiring','Terminated','Pending Approval'], default: 'Active' },
-          { name: 'gdpr',      label: 'GDPR Compliant',  type: 'select', options: [{value:'Yes', label:'✅ Yes'}, {value:'No', label:'❌ No'}], default: 'Yes' }
+          { name: 'name', label: 'Contract Name', required: true, placeholder: 'e.g. Master Service Agreement' },
+          { name: 'party', label: 'Counterparty', required: true, placeholder: 'e.g. Infosys Ltd' },
+          { name: 'type', label: 'Contract Type', type: 'select', options: ['Service', 'NDA', 'Vendor', 'Employment', 'SaaS', 'Lease', 'Partnership', 'Other'], default: 'Service' },
+          { name: 'startDate', label: 'Start Date', required: true, placeholder: 'e.g. Jan 2025' },
+          { name: 'endDate', label: 'End Date', required: true, placeholder: 'e.g. Dec 2026' },
+          { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Expiring', 'Terminated', 'Pending Approval'], default: 'Active' },
+          { name: 'gdpr', label: 'GDPR Compliant', type: 'select', options: [{ value: 'Yes', label: '✅ Yes' }, { value: 'No', label: '❌ No' }], default: 'Yes' }
         ],
         onSubmit(data, close) {
           const list = getContracts();
           list.push({
-            id:        nextId(list),
-            name:       data.name,
-            party:      data.party,
-            type:       data.type,
-            startDate:  data.startDate,
-            endDate:    data.endDate,
-            status:     data.status,
-            gdpr:       data.gdpr
+            id: nextId(list),
+            name: data.name,
+            party: data.party,
+            type: data.type,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            status: data.status,
+            gdpr: data.gdpr
           });
           saveContracts(list);
           showToast(`Contract for "${data.party}" added successfully!`, 'success');
