@@ -19,6 +19,20 @@ async function seed() {
     console.log('👤 Admin user created: admin@amdox.com / admin123');
   }
 
+  // 1b. Create Test User for Gmail verification
+  const testEmail = 'devyanibpatil3132@gmail.com';
+  const existingTestUser = db.prepare('SELECT id FROM users WHERE email = ?').get(testEmail);
+  if (!existingTestUser) {
+    const hashedPassword = await bcrypt.hash('password123', 10);
+    db.prepare('INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)').run(
+      testEmail,
+      hashedPassword,
+      'Devyani Patil',
+      'employee'
+    );
+    console.log('👤 Test user created: devyanibpatil3132@gmail.com / password123');
+  }
+
   // 2. Clear and Seed Employees if empty
   const empCount = db.prepare('SELECT COUNT(*) as count FROM employees').get().count;
   if (empCount === 0) {

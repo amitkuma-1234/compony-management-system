@@ -1,0 +1,20 @@
+# ── Secrets & Encryption Keys ──────────────────────────
+.email_key
+.email_cred
+.oauth_cred
+.jwt_cred
+
+# ── Dependencies ───────────────────────────────────────
+node_modules/
+server/node_modules/
+
+# ── Database ───────────────────────────────────────────
+*.sqlite
+
+# ── OS Files ───────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Python ─────────────────────────────────────────────
+__pycache__/
+*.pyc
