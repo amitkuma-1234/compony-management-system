@@ -131,21 +131,4 @@
 .profile-dropdown i { width:16px; text-align:center; font-size:14px; color:var(--text-muted); }
 .dropdown-divider { height:1px; background:var(--border-color); margin:6px 0; }
 
-/* Responsive */
-@media(max-width:1200px) { .grid-4 { grid-template-columns:repeat(2,1fr); } }
-@media(max-width:900px) {
-  .sidebar { position:fixed; left:-100%; z-index:200; transition:left var(--transition); }
-  .sidebar.mobile-open { left:0; }
-  .mobile-menu-btn { display:flex; }
-  .grid-2,.grid-3 { grid-template-columns:1fr; }
-  .topbar-center { display:none; }
-  .profile-name { display:none; }
-  .kanban-board { flex-direction:column; }
-  .pipeline { flex-direction:column; }
-}
-@media(max-width:600px) {
-  .page-content { padding:16px; }
-  .stats-grid { grid-template-columns:1fr; }
-  .grid-4 { grid-template-columns:1fr; }
-  .page-header { flex-direction:column; }
-}
+/* Responsive rules moved to responsive.css */

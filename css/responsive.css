@@ -1,0 +1,587 @@
+/* ============================================================
+   AMDOX ERP — Responsive Design System
+   Breakpoints:
+     • Desktop       : 1400px+   (default, no query needed)
+     • Laptop        : 1024–1400px
+     • Tablet Land.  : 768–1024px
+     • Tablet Port.  : 600–768px
+     • Mobile        : < 600px
+   ============================================================ */
+
+/* ── Shared mobile-first helpers ─────────────────────────── */
+img { max-width: 100%; height: auto; }
+* { -webkit-tap-highlight-color: transparent; }
+
+/* Ensure the viewport meta is respected */
+html {
+  overflow-x: hidden;
+}
+
+/* ── Sidebar overlay (mobile) ───────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 199;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.sidebar-overlay.active {
+  opacity: 1;
+}
+
+/* ── 1. Laptop (1024px – 1400px) ────────────────────────── */
+@media (max-width: 1400px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .module-hero h2 {
+    font-size: 24px;
+  }
+}
+
+/* ── 2. Tablet Landscape (768px – 1024px) ───────────────── */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 260px;
+    --topbar-height: 58px;
+  }
+
+  /* Sidebar becomes a slide-in drawer */
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    top: 0;
+    height: 100vh;
+    z-index: 200;
+    transition: left var(--transition), width var(--transition);
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.4);
+  }
+  .sidebar.mobile-open {
+    left: 0;
+  }
+  .sidebar.collapsed {
+    width: var(--sidebar-width); /* don't collapse on mobile */
+  }
+
+  /* Show hamburger button */
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+
+  /* Main content fills full width */
+  .main-content {
+    width: 100%;
+    flex: 1;
+  }
+
+  /* Hide desktop search in topbar */
+  .topbar-center {
+    display: none;
+  }
+
+  /* Show sidebar overlay */
+  .sidebar-overlay {
+    display: block;
+  }
+
+  /* Grid adjustments */
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Stats grid: 2 columns on tablet */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Charts */
+  .chart-container {
+    height: 220px;
+  }
+
+  /* AI + Notification panels full width */
+  .ai-chat-panel {
+    width: 100%;
+    right: -100%;
+  }
+  .notification-panel {
+    width: 100%;
+    right: -100%;
+  }
+
+  /* Kanban */
+  .kanban-board {
+    overflow-x: auto;
+  }
+
+  /* Pipeline */
+  .pipeline {
+    flex-wrap: wrap;
+  }
+  .pipeline-stage {
+    flex: 1 1 48%;
+  }
+
+  /* Profile name still visible */
+  .profile-name {
+    display: none;
+  }
+
+  /* Page content padding */
+  .page-content {
+    padding: 20px;
+  }
+
+  /* Module hero smaller */
+  .module-hero {
+    padding: 24px;
+  }
+  .module-hero h2 {
+    font-size: 22px;
+  }
+}
+
+/* ── 3. Tablet Portrait (600px – 768px) ─────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --topbar-height: 54px;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Topbar */
+  .topbar {
+    padding: 0 16px;
+    gap: 10px;
+  }
+  .topbar-right {
+    gap: 6px;
+  }
+  .topbar-actions {
+    gap: 2px;
+  }
+  .topbar-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+  }
+
+  /* Page content */
+  .page-content {
+    padding: 16px;
+  }
+
+  /* Page header stacks vertically */
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .page-header h2 {
+    font-size: 20px;
+  }
+  .page-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  /* Stats grid: 2 columns */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .stat-value {
+    font-size: 22px;
+  }
+
+  /* All grids → 1 column */
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Cards */
+  .card {
+    padding: 16px;
+  }
+
+  /* Charts */
+  .chart-container {
+    height: 200px;
+  }
+
+  /* Tables — horizontal scroll */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table {
+    min-width: 560px;
+  }
+
+  /* Pipeline vertical */
+  .pipeline {
+    flex-direction: column;
+  }
+  .pipeline-stage {
+    flex: none;
+    width: 100%;
+  }
+
+  /* Kanban */
+  .kanban-board {
+    flex-direction: column;
+  }
+  .kanban-column {
+    min-width: 100%;
+  }
+
+  /* Modal */
+  .modal-box {
+    max-width: 100%;
+    border-radius: var(--radius-md);
+  }
+  .modal-overlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+  .modal-box {
+    border-radius: 16px 16px 0 0;
+    max-height: 85vh;
+  }
+
+  /* Tabs — scrollable */
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+  }
+  .tab {
+    white-space: nowrap;
+    padding: 10px 14px;
+  }
+
+  /* Module hero */
+  .module-hero {
+    padding: 20px;
+  }
+  .module-hero h2 {
+    font-size: 20px;
+  }
+  .module-hero p {
+    font-size: 13px;
+  }
+
+  /* Gantt labels narrower */
+  .gantt-label {
+    width: 100px;
+    font-size: 12px;
+  }
+
+  /* Toast full-width on mobile */
+  .toast-container {
+    right: 12px;
+    left: 12px;
+    bottom: 16px;
+  }
+  .toast {
+    max-width: 100%;
+    min-width: unset;
+  }
+
+  /* Command palette */
+  .command-palette-modal {
+    width: calc(100% - 32px);
+    margin: 10vh auto;
+  }
+}
+
+/* ── 4. Mobile (< 600px) ─────────────────────────────────── */
+@media (max-width: 599px) {
+  :root {
+    --topbar-height: 52px;
+  }
+
+  /* Topbar compact */
+  .topbar {
+    padding: 0 12px;
+  }
+  /* Hide low-priority topbar icons on smallest screens */
+  .topbar-btn.hide-xs {
+    display: none;
+  }
+
+  /* Page content */
+  .page-content {
+    padding: 12px;
+  }
+
+  /* Stats: 1 column on very small phones */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .stat-card {
+    padding: 16px;
+  }
+  .stat-value {
+    font-size: 26px;
+  }
+
+  /* Page header */
+  .page-header h2 {
+    font-size: 18px;
+  }
+  .page-header p {
+    font-size: 13px;
+  }
+
+  /* Buttons smaller */
+  .btn {
+    padding: 9px 16px;
+    font-size: 12px;
+  }
+  .btn-sm {
+    padding: 5px 12px;
+    font-size: 11px;
+  }
+  .page-actions .btn span {
+    display: none; /* icon-only on mobile */
+  }
+
+  /* Cards */
+  .card {
+    padding: 14px;
+    border-radius: var(--radius-sm);
+  }
+  .card-title {
+    font-size: 14px;
+  }
+
+  /* Charts shorter */
+  .chart-container {
+    height: 180px;
+  }
+
+  /* Activity list */
+  .activity-item {
+    padding: 8px;
+  }
+  .activity-text {
+    font-size: 12px;
+  }
+
+  /* List items */
+  .list-title {
+    font-size: 13px;
+  }
+  .list-subtitle {
+    font-size: 11px;
+  }
+
+  /* Modal bottom sheet */
+  .modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+  .modal-box {
+    border-radius: 20px 20px 0 0;
+    max-height: 92vh;
+    max-width: 100%;
+  }
+  .modal-header {
+    padding: 16px 18px 12px;
+  }
+  .modal-body {
+    padding: 16px 18px;
+  }
+  .modal-footer {
+    padding: 12px 18px 20px;
+    flex-direction: column;
+  }
+  .modal-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Notification / AI panels full-screen on mobile */
+  .ai-chat-panel,
+  .notification-panel {
+    width: 100%;
+    right: -100%;
+    top: 0;
+    height: 100vh;
+  }
+
+  /* Kanban */
+  .kanban-column {
+    min-width: 100%;
+  }
+
+  /* Profile dropdown */
+  .profile-dropdown {
+    right: 8px;
+    width: calc(100vw - 16px);
+  }
+
+  /* Breadcrumb hide on tiny screens */
+  .breadcrumb {
+    display: none;
+  }
+
+  /* Logo text in sidebar */
+  .logo-text h1 {
+    font-size: 15px;
+  }
+  .logo-text span {
+    font-size: 10px;
+  }
+
+  /* Preloader logo smaller */
+  .logo-icon-large img {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  .preloader-inner h2 {
+    font-size: 20px;
+  }
+}
+
+/* ── 5. Very small phones (< 380px) ─────────────────────── */
+@media (max-width: 380px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .demo-roles-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .sso-buttons {
+    flex-direction: column;
+  }
+  .topbar-actions .topbar-btn:nth-child(n+3) {
+    display: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   LOGIN PAGE — Responsive
+   ══════════════════════════════════════════════════════════ */
+
+/* Tablet — hide brand panel */
+@media (max-width: 900px) {
+  .login-brand {
+    display: none !important;
+  }
+  .login-form-side {
+    width: 100% !important;
+    border-left: none !important;
+    padding: 32px 24px !important;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  .login-form-container {
+    max-width: 440px;
+  }
+}
+
+/* Mobile login */
+@media (max-width: 600px) {
+  .login-form-side {
+    padding: 24px 20px !important;
+    align-items: flex-start !important;
+    padding-top: 40px !important;
+  }
+  .login-form-container {
+    max-width: 100%;
+  }
+  .login-header h2 {
+    font-size: 22px;
+  }
+  .sso-buttons {
+    gap: 8px;
+  }
+  .sso-btn {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+  .demo-roles-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Small mobile login */
+@media (max-width: 380px) {
+  .login-form-side {
+    padding: 20px 16px !important;
+  }
+  .sso-buttons {
+    flex-direction: column;
+  }
+  .sso-btn {
+    width: 100%;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   UTILITY — Touch / Hover improvements
+   ══════════════════════════════════════════════════════════ */
+@media (hover: none) {
+  /* Remove hover transforms on touch devices to prevent sticky states */
+  .stat-card:hover {
+    transform: none;
+  }
+  .btn-primary:hover {
+    transform: none;
+  }
+  .brand-feature:hover {
+    transform: none;
+  }
+  .kanban-card:hover {
+    transform: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PRINT — Clean layout for printing
+   ══════════════════════════════════════════════════════════ */
+@media print {
+  .sidebar,
+  .topbar,
+  .ai-chat-panel,
+  .notification-panel,
+  .toast-container,
+  .topbar-actions,
+  .page-actions {
+    display: none !important;
+  }
+  .main-content {
+    width: 100%;
+  }
+  .page-content {
+    padding: 0;
+  }
+  .card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+}

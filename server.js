@@ -3,11 +3,44 @@
    ============================================================ */
 
 const express = require('express');
-const cors    = require('cors');
-const path    = require('path');
-const db      = require('./database');
+const cors = require('cors');
+const path = require('path');
+const db = require('./database');
+const multer = require('multer');
+const fs = require('fs');
 
-const app  = express();
+const app = express();
+
+// ── Multer Storage Configuration for ZIP Uploads ────────────────
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (ext === '.zip') {
+    cb(null, true);
+  } else {
+    cb(new Error('Only ZIP files are allowed!'), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 50 * 1024 * 1024 } // 50MB Limit
+});
 const PORT = process.env.PORT || 3000;
 
 // ── Middleware ────────────────────────────────────────────
@@ -19,7 +52,7 @@ app.use(express.static(path.join(__dirname)));  // serve frontend files
 function logActivity(module, action, description) {
   try {
     db.prepare('INSERT INTO activity_log (module, action, description) VALUES (?, ?, ?)').run(module, action, description);
-  } catch(e) { /* non-critical */ }
+  } catch (e) { /* non-critical */ }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -32,29 +65,36 @@ app.post('/api/auth/login', (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ success: false, error: 'Email and password are required.' });
     }
-    
+
     let user = null;
+    let correctPassword = null;
+
     if (email === 'amit@amdox.com') {
       user = { name: 'Amit Kumar', email: 'amit@amdox.com', role: 'Super Admin', status: 'Active' };
+      correctPassword = 'admin123';
+    } else if (email === 'karan@amdox.com') {
+      user = { name: 'Karan Mehta', email: 'karan@amdox.com', role: 'Manager', status: 'Active' };
+      correctPassword = 'karan123';
     } else {
       const emp = db.prepare('SELECT * FROM employees WHERE email = ?').get(email);
       if (emp) {
         user = { name: emp.name, email: emp.email, role: emp.role, status: emp.status };
+        correctPassword = emp.password;
       }
     }
-    
+
     if (!user || user.status === 'Inactive') {
       return res.status(401).json({ success: false, error: 'User not found or account is inactive.' });
     }
-    
-    if (password !== 'password123') {
-      return res.status(401).json({ success: false, error: 'Invalid password. Use "password123"' });
+
+    if (password !== correctPassword) {
+      return res.status(401).json({ success: false, error: 'Invalid password. Please try again.' });
     }
-    
-    const token = Buffer.from(JSON.stringify({ email: user.email, exp: Date.now() + 24*60*60*1000 })).toString('base64');
-    
+
+    const token = Buffer.from(JSON.stringify({ email: user.email, exp: Date.now() + 24 * 60 * 60 * 1000 })).toString('base64');
+
     logActivity('Auth', 'LOGIN', `User logged in: ${user.name} (${user.email})`);
-    
+
     res.json({
       success: true,
       token,
@@ -416,31 +456,57 @@ app.get('/api/activity-log', (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════════════
+// ZIP FILE UPLOAD
+// ═══════════════════════════════════════════════════════════
+
+app.post('/api/upload-zip', upload.single('zipFile'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Please select a ZIP file to upload.' });
+    }
+
+    logActivity('DevOps', 'UPLOAD', `Uploaded ZIP file: ${req.file.originalname}`);
+
+    res.json({
+      success: true,
+      message: 'ZIP file uploaded successfully!',
+      fileInfo: {
+        originalName: req.file.originalname,
+        savedName: req.file.filename,
+        size: req.file.size
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
 // DASHBOARD STATS
 // ═══════════════════════════════════════════════════════════
 
 app.get('/api/stats', (req, res) => {
   try {
-    const employees    = db.prepare("SELECT COUNT(*) as count FROM employees WHERE status='Active'").get();
+    const employees = db.prepare("SELECT COUNT(*) as count FROM employees WHERE status='Active'").get();
     const allEmployees = db.prepare("SELECT COUNT(*) as count FROM employees").get();
-    const invoices     = db.prepare("SELECT COUNT(*) as count FROM invoices WHERE status='Pending'").get();
-    const revenue      = db.prepare("SELECT COALESCE(SUM(amount),0) as total FROM invoices WHERE status='Paid'").get();
-    const products     = db.prepare("SELECT COUNT(*) as count FROM products").get();
-    const lowStock     = db.prepare("SELECT COUNT(*) as count FROM products WHERE stock <= reorder_level").get();
-    const leads        = db.prepare("SELECT COUNT(*) as count FROM leads").get();
-    const projects     = db.prepare("SELECT COUNT(*) as count FROM projects WHERE status='In Progress'").get();
+    const invoices = db.prepare("SELECT COUNT(*) as count FROM invoices WHERE status='Pending'").get();
+    const revenue = db.prepare("SELECT COALESCE(SUM(amount),0) as total FROM invoices WHERE status='Paid'").get();
+    const products = db.prepare("SELECT COUNT(*) as count FROM products").get();
+    const lowStock = db.prepare("SELECT COUNT(*) as count FROM products WHERE stock <= reorder_level").get();
+    const leads = db.prepare("SELECT COUNT(*) as count FROM leads").get();
+    const projects = db.prepare("SELECT COUNT(*) as count FROM projects WHERE status='In Progress'").get();
 
     res.json({
       success: true,
       data: {
-        activeEmployees:   employees.count,
-        totalEmployees:    allEmployees.count,
-        pendingInvoices:   invoices.count,
-        totalRevenue:      revenue.total,
-        totalProducts:     products.count,
-        lowStockAlerts:    lowStock.count,
-        totalLeads:        leads.count,
-        activeProjects:    projects.count
+        activeEmployees: employees.count,
+        totalEmployees: allEmployees.count,
+        pendingInvoices: invoices.count,
+        totalRevenue: revenue.total,
+        totalProducts: products.count,
+        lowStockAlerts: lowStock.count,
+        totalLeads: leads.count,
+        activeProjects: projects.count
       }
     });
   } catch (err) {
