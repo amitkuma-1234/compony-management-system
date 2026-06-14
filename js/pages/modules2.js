@@ -1,3 +1,5 @@
+window.pages = window.pages || {};
+var pages = window.pages;
 /* CRM Page — reads from db */
 pages.crm = function(container) {
   const s = db.table('crmStats').getAll()[0];
@@ -20,27 +22,6 @@ pages.crm = function(container) {
   }).join('');
 
   container.innerHTML = `
-<<<<<<< HEAD
-    <div class="module-hero"><h2><i class="fas fa-handshake" style="color:var(--pink)"></i> Customer Relationship Management</h2><p>Lead management, sales pipeline, customer analytics, support ticketing, and WhatsApp/email marketing integration.</p><div class="page-actions" style="margin-top:16px"><button id="btn-new-lead" class="btn btn-primary btn-sm"><i class="fas fa-user-plus"></i> New Lead</button><button id="btn-new-campaign" class="btn btn-secondary btn-sm"><i class="fas fa-bullhorn"></i> Campaign</button></div></div>
-    <div class="stats-grid">
-      <div class="stat-card" onclick="window.viewStatDetail('CRM', 'Total Leads')" style="cursor:pointer"><div class="stat-card-header"><div class="stat-icon blue"><i class="fas fa-users"></i></div><span class="stat-trend up"><i class="fas fa-arrow-up"></i> ${s.leadsGrowth}</span></div><div class="stat-value">${s.totalLeads}</div><div class="stat-label">Total Leads</div></div>
-      <div class="stat-card" onclick="window.viewStatDetail('CRM', 'Won Cases')" style="cursor:pointer"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-trophy"></i></div></div><div class="stat-value">${s.wonThisMonth}</div><div class="stat-label">Won This Month</div></div>
-      <div class="stat-card" onclick="window.viewStatDetail('CRM', 'Pipeline Value')" style="cursor:pointer"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-indian-rupee-sign"></i></div></div><div class="stat-value">${s.pipelineValue}</div><div class="stat-label">Pipeline Value</div></div>
-      <div class="stat-card" onclick="window.viewStatDetail('CRM', 'Win Rate')" style="cursor:pointer"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-percent"></i></div></div><div class="stat-value">${s.winRate}</div><div class="stat-label">Win Rate</div></div>
-    </div>
-    <div class="card" style="margin-bottom:24px"><div class="card-header"><span class="card-title">Sales Pipeline</span></div><div class="pipeline">${pipeHTML}</div></div>
-    <div class="grid-2">
-      <div class="card"><div class="card-header"><span class="card-title">Pipeline Analysis</span></div><div class="chart-container"><canvas data-chart="pipeline"></canvas></div></div>
-      <div class="card"><div class="card-header"><span class="card-title">Recent Leads</span></div><div class="activity-list">${leadsHTML}</div></div>
-    </div>
-    <div class="card"><div class="card-header"><span class="card-title">Support Tickets</span><span class="badge badge-warning">${openTicketsCount} open</span></div><div class="table-container" style="max-height:400px;overflow-y:auto"><table><thead><tr><th>Ticket</th><th>Customer</th><th>Subject</th><th>Priority</th><th>Status</th><th>Assigned</th><th>Actions</th></tr></thead><tbody>${
-      tickets.map(t => {
-        const pClass = {High:'badge-danger',Medium:'badge-info'}[t.priority]||'badge-info';
-        const sClass = {'In Progress':'badge-warning',Open:'badge-info',Resolved:'badge-success'}[t.status]||'badge-info';
-        return `<tr><td style="font-family:var(--font-mono);font-size:12px;color:var(--accent-light)">${t.ticketNo}</td><td>${t.customer}</td><td>${t.subject}</td><td><span class="badge ${pClass}">${t.priority}</span></td><td><span class="badge ${sClass}">${t.status}</span></td><td>${t.assigned}</td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon" title="View" onclick="window.viewTicket('${t.id}')"><i class="fas fa-eye"></i></button><button class="btn btn-secondary btn-sm btn-icon" title="Edit" onclick="window.editTicket('${t.id}')"><i class="fas fa-pen"></i></button><button class="btn btn-secondary btn-sm btn-icon" style="color:var(--danger)" title="Delete" onclick="window.deleteTicket('${t.id}')"><i class="fas fa-trash"></i></button></div></td></tr>`;
-      }).join('')
-    }</tbody></table></div></div>`;
-=======
     <div class="module-hero">
       <h2><i class="fas fa-handshake" style="color:var(--pink)"></i> Customer Relationship Management</h2>
       <p>Lead management, sales pipeline, customer analytics, support ticketing, and WhatsApp/email marketing integration.</p>
@@ -311,7 +292,6 @@ pages.crm = function(container) {
   document.getElementById('crm-campaign-btn').addEventListener('click', () => {
     showToast('CRM marketing campaigns simulator active. Check back in a bit!', 'info');
   });
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
 };
 
 
@@ -363,96 +343,12 @@ pages.projects = function(container) {
       <h2><i class="fas fa-diagram-project" style="color:var(--accent-light)"></i> Project Management</h2>
       <p>Agile workflows, Kanban boards, Gantt charts, sprint management, resource allocation, and budget tracking.</p>
       <div class="page-actions" style="margin-top:16px">
-<<<<<<< HEAD
-        <button id="btn-new-project" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> New Project</button>
-        <button id="btn-add-task" class="btn btn-primary btn-sm"><i class="fas fa-list-check"></i> Add Task</button>
-        <button id="btn-my-tasks" class="btn btn-secondary btn-sm"><i class="fas fa-tasks"></i> My Tasks</button>
-=======
         <button class="btn btn-primary btn-sm" id="project-add-btn"><i class="fas fa-plus"></i> New Project</button>
         <button class="btn btn-secondary btn-sm" id="project-tasks-btn"><i class="fas fa-list-check"></i> My Tasks</button>
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
       </div>
     </div>
     
     <div class="stats-grid">
-<<<<<<< HEAD
-      <div class="stat-card" onclick="window.viewStatDetail('Projects', 'Active Projects')" style="cursor:pointer"><div class="stat-card-header"><div class="stat-icon indigo"><i class="fas fa-folder-open"></i></div></div><div class="stat-value">${s.activeProjects}</div><div class="stat-label">Active Projects</div></div>
-      <div class="stat-card" onclick="window.viewStatDetail('Projects', 'Tasks Completed')" style="cursor:pointer"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-check-double"></i></div></div><div class="stat-value">${s.tasksCompleted}</div><div class="stat-label">Tasks Completed</div></div>
-      <div class="stat-card" onclick="window.viewStatDetail('Projects', 'Tasks In Progress')" style="cursor:pointer"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-clock"></i></div></div><div class="stat-value">${s.inProgress}</div><div class="stat-label">In Progress</div></div>
-      <div class="stat-card" onclick="window.viewStatDetail('Projects', 'Overdue Tasks')" style="cursor:pointer"><div class="stat-card-header"><div class="stat-icon red"><i class="fas fa-flag"></i></div></div><div class="stat-value">${s.overdue}</div><div class="stat-label">Overdue</div></div>
-    </div>
-
-    <div class="tabs">
-      <div class="tab active" onclick="switchProjectView('kanban', this)">Kanban Board</div>
-      <div class="tab" onclick="switchProjectView('gantt', this)">Gantt Chart</div>
-      <div class="tab" onclick="switchProjectView('sprint', this)">Sprint</div>
-      <div class="tab" onclick="switchProjectView('timeline', this)">Timeline</div>
-    </div>
-
-    <div id="project-view-content" class="animate-fade">
-      <!-- Kanban View -->
-      <div id="view-kanban" class="project-view">
-        <div class="kanban-board" style="margin-bottom:24px">
-          <div class="kanban-column"><div class="kanban-column-header"><span class="kanban-column-title" style="color:var(--text-muted)">📋 Backlog</span><span class="kanban-count">${kanban.backlog.length}</span></div><div class="kanban-cards">${renderCards(kanban.backlog)}</div></div>
-          <div class="kanban-column"><div class="kanban-column-header"><span class="kanban-column-title" style="color:var(--info)">🔄 In Progress</span><span class="kanban-count">${kanban.inProgress.length}</span></div><div class="kanban-cards">${renderCards(kanban.inProgress,'info')}</div></div>
-          <div class="kanban-column"><div class="kanban-column-header"><span class="kanban-column-title" style="color:var(--warning)">👀 Review</span><span class="kanban-count">${kanban.review.length}</span></div><div class="kanban-cards">${renderCards(kanban.review,'warning')}</div></div>
-          <div class="kanban-column"><div class="kanban-column-header"><span class="kanban-column-title" style="color:var(--success)">✅ Done</span><span class="kanban-count">${kanban.done.length}</span></div><div class="kanban-cards">${renderCards(kanban.done,'success',true)}</div></div>
-        </div>
-      </div>
-
-      <!-- Gantt View -->
-      <div id="view-gantt" class="project-view" style="display:none">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Project Roadmap & Gantt Schedule</span>
-            <span class="badge badge-info">July 2026</span>
-          </div>
-          <div style="padding: 10px 0;">
-            ${ganttHTML}
-          </div>
-        </div>
-      </div>
-
-      <!-- Sprint View -->
-      <div id="view-sprint" class="project-view" style="display:none">
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-header"><span class="card-title">Sprint Burndown — Sprint 14</span></div>
-            <div class="chart-container"><canvas data-chart="sprint"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span class="card-title">Sprint Velocity</span></div>
-            <div class="activity-list" style="padding: 20px;">
-              <div style="text-align:center; margin-bottom: 24px;">
-                <div style="font-size: 32px; font-weight: 800; color: var(--success);">48</div>
-                <div style="font-size: 13px; color: var(--text-muted);">Points Completed this Sprint</div>
-              </div>
-              <div style="height: 1px; background: var(--border-color); margin-bottom: 20px;"></div>
-              <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-                <span style="font-size:13px; color:var(--text-muted);">Planned Points</span>
-                <span style="font-weight:600;">52</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-                <span style="font-size:13px; color:var(--text-muted);">Scope Creep</span>
-                <span style="font-weight:600; color:var(--danger);">+4</span>
-              </div>
-              <div style="display:flex; justify-content:space-between;">
-                <span style="font-size:13px; color:var(--text-muted);">Unfinished Tasks</span>
-                <span style="font-weight:600;">3</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Timeline View -->
-      <div id="view-timeline" class="project-view" style="display:none">
-        <div class="card">
-          <div class="card-header"><span class="card-title">Detailed Project Milestones</span></div>
-          <div class="activity-list" style="padding: 10px 0;">
-            ${timelineHTML}
-          </div>
-=======
       <div class="stat-card"><div class="stat-card-header"><div class="stat-icon indigo"><i class="fas fa-folder-open"></i></div></div><div class="stat-value" id="project-stats-active">—</div><div class="stat-label">Active Projects</div></div>
       <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-check-double"></i></div></div><div class="stat-value" id="project-stats-done">—</div><div class="stat-label">Tasks Completed</div></div>
       <div class="stat-card"><div class="stat-card-header"><div class="stat-icon yellow"><i class="fas fa-clock"></i></div></div><div class="stat-value" id="project-stats-progress">—</div><div class="stat-label">In Progress</div></div>
@@ -489,32 +385,10 @@ pages.projects = function(container) {
           <div class="gantt-row"><div class="gantt-label">AI Module</div><div class="gantt-bar-container"><div class="gantt-bar" style="left:25%;width:45%;background:linear-gradient(90deg,var(--pink),var(--purple))">45%</div></div></div>
           <div class="gantt-row"><div class="gantt-label">CRM Revamp</div><div class="gantt-bar-container"><div class="gantt-bar" style="left:0%;width:80%;background:linear-gradient(90deg,var(--success),var(--cyan))">80%</div></div></div>
           <div class="gantt-row"><div class="gantt-label">DevOps</div><div class="gantt-bar-container"><div class="gantt-bar" style="left:10%;width:90%;background:linear-gradient(90deg,var(--warning),var(--danger))">90%</div></div></div>
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
         </div>
       </div>
     </div>`;
 
-<<<<<<< HEAD
-  // Define local switching logic
-  window.switchProjectView = function(viewId, el) {
-    // UI Tabs
-    el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-
-    // Views
-    document.querySelectorAll('.project-view').forEach(v => v.style.display = 'none');
-    const target = document.getElementById('view-' + viewId);
-    if (target) {
-      target.style.display = 'block';
-      target.classList.add('animate-fade');
-    }
-    
-    // Re-init chart if switching to sprint
-    if (viewId === 'sprint') {
-        setTimeout(() => initChartsOnPage('projects'), 100);
-    }
-  };
-=======
   const LS_PROJ_KEY = 'amdox_projects';
   const SEED_PROJ = [
     { id: 1, name: 'ERP v3.2', description: 'Core platform upgrade', status: 'In Progress', priority: 'High', assigned_to: 'Rahul Singh' },
@@ -729,28 +603,10 @@ pages.projects = function(container) {
   document.getElementById('project-tasks-btn').addEventListener('click', () => {
     showToast('Task manager simulator active. 0 tasks overdue.', 'success');
   });
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
 };
 
 /* AI Command Center — reads from db */
 pages['ai-center'] = function(container) {
-<<<<<<< HEAD
-  const s = db.table('aiStats').getAll()[0];
-  const insights = db.table('aiInsights').getAll();
-  const models = db.table('aiModels').getAll();
-
-  const modelsHTML = models.map(m => `<div class="card" style="border-color:rgba(99,102,241,0.3)"><div style="text-align:center;padding:20px 0"><div style="width:60px;height:60px;border-radius:16px;background:${m.gradient};display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;color:#fff"><i class="fas ${m.icon}"></i></div><h3 style="font-size:16px;margin-bottom:6px">${m.name}</h3><p style="font-size:13px;color:var(--text-secondary)">${m.type}</p><div style="margin-top:16px"><span class="badge badge-success">${m.status}</span></div></div></div>`).join('');
-
-  const insightsHTML = insights.map(i => `<div class="activity-item"><div class="activity-dot ${i.dot}"></div><div><div class="activity-text">${i.icon} <strong>${i.type}:</strong> ${i.msg}</div><div class="activity-time">AI Confidence: ${i.confidence}%</div></div></div>`).join('');
-
-  container.innerHTML = `
-    <div class="module-hero" style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.1))"><h2><i class="fas fa-brain" style="color:var(--purple)"></i> AI Command Center</h2><p>Demand forecasting, anomaly detection, intelligent approvals, predictive analytics, and AI-generated business insights.</p><div class="page-actions" style="margin-top:16px"><button id="btn-run-ai-page" onclick="window.runAnalysis()" class="btn btn-primary btn-sm"><i class="fas fa-wand-magic-sparkles"></i> Run AI Analysis</button><button id="btn-chat-ai-page" onclick="window.openAIPanel('Generate a business intelligence report for Q2')" class="btn btn-secondary btn-sm"><i class="fas fa-robot"></i> Chat with AI</button></div></div>
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon purple"><i class="fas fa-brain"></i></div></div><div class="stat-value">${s.modelsActive}</div><div class="stat-label">AI Models Active</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon green"><i class="fas fa-bullseye"></i></div></div><div class="stat-value">${s.forecastAccuracy}</div><div class="stat-label">Forecast Accuracy</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon cyan"><i class="fas fa-bolt"></i></div></div><div class="stat-value">${s.predictionsToday}</div><div class="stat-label">Predictions Today</div></div>
-      <div class="stat-card"><div class="stat-card-header"><div class="stat-icon pink"><i class="fas fa-shield-halved"></i></div></div><div class="stat-value">${s.anomaliesDetected}</div><div class="stat-label">Anomalies Detected</div></div>
-=======
   const getAIState = () => {
     try {
       return JSON.parse(localStorage.getItem('amdox_ai_state')) || {
@@ -777,6 +633,17 @@ pages['ai-center'] = function(container) {
 
   const state = getAIState();
   const anomaliesCount = state.anomalyResolved ? 22 : 23;
+  const modelsHTML = `
+      <div class="card" style="border-color:rgba(16,185,129,0.3)">
+        <div style="text-align:center;padding:20px 0"><div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#10b981,#047857);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;color:#fff"><i class="fas fa-boxes-stacked"></i></div><h3 style="font-size:16px;margin-bottom:6px">Inventory Optimization</h3><p style="font-size:13px;color:var(--text-secondary)">Predictive restock alerts & stock level balance</p><div style="margin-top:16px"><span class="badge badge-success">Active</span></div></div>
+      </div>
+      <div class="card" style="border-color:rgba(245,158,11,0.3)">
+        <div style="text-align:center;padding:20px 0"><div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#f59e0b,#b45309);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;color:#fff"><i class="fas fa-users-gear"></i></div><h3 style="font-size:16px;margin-bottom:6px">Resource Allocation AI</h3><p style="font-size:13px;color:var(--text-secondary)">Smart team placement based on skills & workload</p><div style="margin-top:16px"><span class="badge badge-success">Active</span></div></div>
+      </div>
+      <div class="card" style="border-color:rgba(99,102,241,0.3)">
+        <div style="text-align:center;padding:20px 0"><div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#6366f1,#4338ca);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;color:#fff"><i class="fas fa-file-contract"></i></div><h3 style="font-size:16px;margin-bottom:6px">Contract Analysis</h3><p style="font-size:13px;color:var(--text-secondary)">NLP-based risk & renewal date extraction</p><div style="margin-top:16px"><span class="badge badge-success">Active</span></div></div>
+      </div>
+  `;
 
   container.innerHTML = `
     <div class="module-hero" style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.1))">
@@ -803,14 +670,9 @@ pages['ai-center'] = function(container) {
       <div class="card" style="border-color:rgba(6,182,212,0.3)">
         <div style="text-align:center;padding:20px 0"><div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,var(--cyan),var(--info));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;color:#fff"><i class="fas fa-robot"></i></div><h3 style="font-size:16px;margin-bottom:6px">AI Assistant</h3><p style="font-size:13px;color:var(--text-secondary)">Natural language business intelligence</p><div style="margin-top:16px"><span class="badge badge-success">Active</span></div></div>
       </div>
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
     </div>
     <div class="grid-3">${modelsHTML}</div>
     <div class="grid-2">
-<<<<<<< HEAD
-      <div class="card"><div class="card-header"><span class="card-title">AI-Generated Insights</span><span class="badge badge-purple">Last 24h</span></div><div class="activity-list">${insightsHTML}</div></div>
-      <div class="card"><div class="card-header"><span class="card-title">Revenue Forecast</span></div><div class="chart-container"><canvas data-chart="revenue"></canvas></div></div>
-=======
       <div class="card">
         <div class="card-header"><span class="card-title">AI-Generated Insights</span><span class="badge badge-purple">Last 24h</span></div>
         <div class="activity-list" id="ai-insights-list">
@@ -821,7 +683,6 @@ pages['ai-center'] = function(container) {
         <div class="card-header"><span class="card-title">Revenue Forecast</span></div>
         <div class="chart-container"><canvas data-chart="revenue"></canvas></div>
       </div>
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
     </div>`;
 
   const renderAIStateOnPage = () => {

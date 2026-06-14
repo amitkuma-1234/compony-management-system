@@ -1,69 +1,10 @@
 /* ============================================================
    AMDOX ERP SUITE — Main Application Controller
    ============================================================ */
+window.pages = {};
+var pages = window.pages;
 
-<<<<<<< HEAD
-// ── Page Renderers ──
-const pages = window.pages;
-
-// ── App Init ──
 function initApp() {
-
-  // Wait 2200ms to allow splash animation to play and scripts to settle
-=======
-// ── API Base URL ──
-const API_BASE = (window.location.protocol === 'file:' || window.location.hostname === '') 
-    ? 'http://localhost:3000/api' 
-    : window.location.origin + '/api';
-
-// ── Profile Syncing & Logout Utilities ──
-function updateSidebarAndProfile() {
-  const userJson = localStorage.getItem('amdox_auth_user');
-  if (userJson) {
-    try {
-      const user = JSON.parse(userJson);
-      const initials = user.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
-      
-      const sidebarAvatar = document.querySelector('.sidebar-user .user-avatar span:first-child');
-      if (sidebarAvatar) sidebarAvatar.textContent = initials;
-      
-      const sidebarName = document.querySelector('.sidebar-user .user-name');
-      if (sidebarName) sidebarName.textContent = user.name;
-      const sidebarRole = document.querySelector('.sidebar-user .user-role');
-      if (sidebarRole) sidebarRole.textContent = user.role;
-      
-      const topbarAvatar = document.querySelector('.topbar-profile .profile-avatar span');
-      if (topbarAvatar) topbarAvatar.textContent = initials;
-      const topbarName = document.querySelector('.topbar-profile .profile-name');
-      if (topbarName) topbarName.textContent = user.name;
-    } catch (e) {
-      console.error('Error updating profile from localStorage:', e);
-    }
-  }
-}
-
-function logoutUser() {
-  localStorage.removeItem('amdox_auth_token');
-  localStorage.removeItem('amdox_auth_user');
-  window.location.href = 'login.html';
-}
-
-// ── Page Renderers (imported below) ──
-const pages = {};
-
-// ── App Init ──
-document.addEventListener('DOMContentLoaded', () => {
-  updateSidebarAndProfile();
-
-  // Intercept all manual logout links
-  document.querySelectorAll('a[href="login.html"]').forEach(a => {
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      logoutUser();
-    });
-  });
-
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
   setTimeout(() => {
     const preloader = document.getElementById('preloader');
     const app = document.getElementById('app');
@@ -155,18 +96,20 @@ function navigateTo(page) {
   // Render page
   container.innerHTML = '';
   container.className = 'page-content animate-fade';
-<<<<<<< HEAD
-  const renderFn = pages[page] || pages.dashboard;
+  
+  const renderFn = window.pages[page];
   if (renderFn) {
     console.log('✅ Found renderer for:', page);
     renderFn(container);
   } else {
     console.error('❌ Missing renderer for:', page, '(and dashboard fallback)');
+    container.innerHTML = `
+      <div style="padding: 40px; text-align: center;">
+          <i class="fas fa-person-digging" style="font-size: 48px; color: var(--text3); margin-bottom: 16px;"></i>
+          <h2 style="font-size: 24px; color: var(--text);">Under Construction</h2>
+          <p style="color: var(--text2); margin-top: 8px;">The <strong>${page}</strong> module is currently being built.</p>
+      </div>`;
   }
-=======
-  const renderFn = Object.hasOwn(pages, safePage) ? pages[safePage] : pages.dashboard;
-  if (renderFn) renderFn(container);
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
   // Init charts after render
   setTimeout(() => initChartsOnPage(page), 100);
 
@@ -195,6 +138,7 @@ function initSidebar() {
   document.getElementById('sidebar-search-input').addEventListener('input', (e) => {
     const q = e.target.value.toLowerCase();
     document.querySelectorAll('.nav-item').forEach(item => {
+      if (item.hasAttribute('data-hidden-by-role')) return;
       const text = item.querySelector('span')?.textContent.toLowerCase() || '';
       item.style.display = text.includes(q) ? '' : 'none';
     });
@@ -209,11 +153,43 @@ function initSidebar() {
     });
   });
 
+  // RBAC logic
+  const userJson = localStorage.getItem('amdox_auth_user');
+  let userRole = 'Super Admin';
+  if (userJson) {
+      try { userRole = JSON.parse(userJson).role || 'Super Admin'; } catch(e){}
+  }
+
+  const rolePermissions = {
+      'HR Manager': ['dashboard', 'analytics', 'hr', 'crm', 'projects', 'notifications', 'communication', 'settings'],
+      'HR Admin': ['dashboard', 'hr', 'notifications', 'communication', 'settings'],
+      'Employee': ['dashboard', 'hr', 'notifications', 'communication', 'settings'],
+      'Manager': ['dashboard', 'analytics', 'projects', 'crm', 'hr', 'notifications', 'communication', 'settings']
+  };
+
+  if (userRole !== 'Super Admin' && rolePermissions[userRole]) {
+      const allowed = rolePermissions[userRole];
+      document.querySelectorAll('.nav-item').forEach(item => {
+          const page = item.dataset.page;
+          if (!allowed.includes(page)) {
+              item.style.display = 'none';
+              item.setAttribute('data-hidden-by-role', 'true');
+          }
+      });
+      // Hide empty sections
+      document.querySelectorAll('.nav-section').forEach(sec => {
+          const visibleItems = Array.from(sec.querySelectorAll('.nav-item')).filter(i => i.style.display !== 'none');
+          if (visibleItems.length === 0) {
+              sec.style.display = 'none';
+          }
+      });
+  }
+
   // User menu button logout link
   const userMenuBtn = document.getElementById('user-menu-btn');
   if (userMenuBtn) {
     userMenuBtn.addEventListener('click', () => {
-      logoutUser();
+      window.logout();
     });
   }
 }
@@ -1937,16 +1913,6 @@ function initGlobalActions() {
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.btn');
     if (btn) {
-<<<<<<< HEAD
-      // Skip if this is handled by a modal or has its own handler
-      if (btn.id === 'quick-action-btn' || btn.closest('.quick-action-modal')) return;
-      if (btn.hasAttribute('onclick')) return;
-      if (btn.tagName === 'A' && btn.hasAttribute('href')) return;
-      
-=======
-      // Skip modal-specific buttons that are handled by their own logic
-      if (btn.closest('.modal-overlay') || btn.dataset.modalTrigger || btn.dataset.apiAction) return;
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
       const text = btn.textContent.trim();
       if (btn.id === 'btn-add-employee' || btn.id === 'btn-add-employee-table') {
         if (typeof window.openAddEmployeeModal === 'function') {
@@ -2097,240 +2063,6 @@ function initGlobalActions() {
   });
 }
 
-<<<<<<< HEAD
-// ── Tab Switching ──
-window.switchHRTab = function(tabId, el) {
-  // Update active tab styling
-  el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  
-  // Show target content, hide others
-  document.querySelectorAll('.hr-tab-content').forEach(c => c.style.display = 'none');
-  const target = document.getElementById('hr-tab-' + tabId);
-  if (target) target.style.display = 'block';
-};
-=======
-// ── Modal Helper ──
-function showModal({ title, fields, onSubmit, submitLabel = 'Save', submitClass = 'btn-primary' }) {
-  // Remove any existing generic modal (but NOT the scan terminal, which manages itself)
-  const existingModal = document.querySelector('.modal-overlay:not(#scan-modal-overlay):not(#profit-modal-overlay)');
-  existingModal?.remove();
-
-  const cleanTitle = title.replace(/<[^>]*>/g, '').replace(/"/g, '&quot;');
-  const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
-
-  const modalBox = document.createElement('div');
-  modalBox.className = 'modal-box';
-  modalBox.setAttribute('role', 'dialog');
-  modalBox.setAttribute('aria-modal', 'true');
-  modalBox.setAttribute('aria-label', cleanTitle);
-
-  const modalHeader = document.createElement('div');
-  modalHeader.className = 'modal-header';
-
-  const modalTitle = document.createElement('h3');
-  modalTitle.className = 'modal-title';
-  modalTitle.textContent = title;
-  modalHeader.appendChild(modalTitle);
-
-  const closeBtn = document.createElement('button');
-  closeBtn.className = 'modal-close';
-  closeBtn.id = 'modal-close-btn';
-  closeBtn.setAttribute('aria-label', 'Close');
-  const closeIcon = document.createElement('i');
-  closeIcon.className = 'fas fa-xmark';
-  closeBtn.appendChild(closeIcon);
-  modalHeader.appendChild(closeBtn);
-
-  const modalForm = document.createElement('form');
-  modalForm.id = 'modal-form';
-  modalForm.className = 'modal-form';
-  modalForm.noValidate = true;
-
-  const modalBody = document.createElement('div');
-  modalBody.className = 'modal-body';
-
-  fields.forEach(f => {
-    const formGroup = document.createElement('div');
-    formGroup.className = 'form-group';
-
-    const label = document.createElement('label');
-    label.className = 'form-label';
-    label.textContent = f.label;
-    if (f.required) {
-      const star = document.createElement('span');
-      star.style.color = 'var(--danger)';
-      star.textContent = ' *';
-      label.appendChild(star);
-    }
-    formGroup.appendChild(label);
-
-    if (f.type === 'select') {
-      const select = document.createElement('select');
-      select.className = 'form-control';
-      select.id = 'modal-field-' + f.name;
-      select.name = f.name;
-      if (f.required) select.required = true;
-
-      if (f.options) {
-        f.options.forEach(o => {
-          const val = o.value !== undefined ? o.value : o;
-          const lbl = o.label !== undefined ? o.label : o;
-          const option = document.createElement('option');
-          option.value = val;
-          option.textContent = lbl;
-          if (f.default === val) option.selected = true;
-          select.appendChild(option);
-        });
-      }
-      formGroup.appendChild(select);
-    } else {
-      const input = document.createElement('input');
-      input.className = 'form-control';
-      input.type = f.type || 'text';
-      input.id = 'modal-field-' + f.name;
-      input.name = f.name;
-      input.placeholder = f.placeholder || '';
-      input.value = f.default || '';
-      if (f.required) input.required = true;
-      formGroup.appendChild(input);
-    }
-
-    modalBody.appendChild(formGroup);
-  });
-
-  const modalFooter = document.createElement('div');
-  modalFooter.className = 'modal-footer';
-
-  const cancelBtn = document.createElement('button');
-  cancelBtn.type = 'button';
-  cancelBtn.className = 'btn btn-secondary';
-  cancelBtn.id = 'modal-cancel-btn';
-  cancelBtn.textContent = 'Cancel';
-
-  const submitBtn = document.createElement('button');
-  submitBtn.type = 'submit';
-  submitBtn.className = 'btn ' + submitClass;
-  submitBtn.id = 'modal-submit-btn';
-  submitBtn.textContent = submitLabel;
-
-  modalFooter.appendChild(cancelBtn);
-  modalFooter.appendChild(submitBtn);
-
-  modalForm.appendChild(modalBody);
-  modalForm.appendChild(modalFooter);
-
-  modalBox.appendChild(modalHeader);
-  modalBox.appendChild(modalForm);
-
-  overlay.appendChild(modalBox);
-  document.body.appendChild(overlay);
-
-  requestAnimationFrame(() => overlay.classList.add('open'));
-
-  // Focus first field
-  setTimeout(() => {
-    const first = overlay.querySelector('input, select');
-    if (first) first.focus();
-  }, 100);
-
-  const closeModal = () => {
-    overlay.classList.remove('open');
-    setTimeout(() => overlay.remove(), 200);
-  };
-
-  overlay.querySelector('#modal-close-btn').addEventListener('click', closeModal);
-  overlay.querySelector('#modal-cancel-btn').addEventListener('click', closeModal);
-  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-
-  overlay.querySelector('#modal-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const currentSubmitBtn = overlay.querySelector('#modal-submit-btn');
-    // Collect form data
-    const data = {};
-    fields.forEach(f => {
-      const el = overlay.querySelector(`[name="${f.name}"]`);
-      if (el && typeof f.name === 'string' && f.name !== '__proto__' && f.name !== 'constructor' && f.name !== 'prototype') {
-        Reflect.set(data, f.name, el.value.trim());
-      }
-    });
-    // Basic required validation
-    const missing = fields.filter(f => f.required && !Reflect.get(data, f.name));
-    if (missing.length) {
-      showToast(`Please fill in: ${missing.map(f => f.label).join(', ')}`, 'error');
-      return;
-    }
-    currentSubmitBtn.disabled = true;
-    currentSubmitBtn.textContent = ' Saving...';
-    const spinner = document.createElement('i');
-    spinner.className = 'fas fa-spinner fa-spin';
-    currentSubmitBtn.prepend(spinner);
-
-    try {
-      await onSubmit(data, closeModal);
-    } finally {
-      currentSubmitBtn.disabled = false;
-      currentSubmitBtn.textContent = submitLabel;
-    }
-  });
-}
-
-// ── Confirm Dialog ──
-function showConfirm(message, onConfirm) {
-  const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay open';
-
-  const modalBox = document.createElement('div');
-  modalBox.className = 'modal-box';
-  modalBox.style.maxWidth = '400px';
-
-  const modalHeader = document.createElement('div');
-  modalHeader.className = 'modal-header';
-
-  const modalTitle = document.createElement('h3');
-  modalTitle.className = 'modal-title';
-
-  const icon = document.createElement('i');
-  icon.className = 'fas fa-triangle-exclamation';
-  icon.style.color = 'var(--warning)';
-  modalTitle.appendChild(icon);
-  modalTitle.appendChild(document.createTextNode(' Confirm Action'));
-  modalHeader.appendChild(modalTitle);
-
-  const modalBody = document.createElement('div');
-  modalBody.className = 'modal-body';
-  const p = document.createElement('p');
-  p.textContent = message;
-  modalBody.appendChild(p);
-
-  const modalFooter = document.createElement('div');
-  modalFooter.className = 'modal-footer';
-
-  const cancelBtn = document.createElement('button');
-  cancelBtn.className = 'btn btn-secondary';
-  cancelBtn.id = 'confirm-cancel';
-  cancelBtn.textContent = 'Cancel';
-
-  const okBtn = document.createElement('button');
-  okBtn.className = 'btn btn-danger';
-  okBtn.id = 'confirm-ok';
-  okBtn.textContent = 'Delete';
-
-  modalFooter.appendChild(cancelBtn);
-  modalFooter.appendChild(okBtn);
-
-  modalBox.appendChild(modalHeader);
-  modalBox.appendChild(modalBody);
-  modalBox.appendChild(modalFooter);
-
-  overlay.appendChild(modalBox);
-  document.body.appendChild(overlay);
-
-  cancelBtn.addEventListener('click', () => overlay.remove());
-  okBtn.addEventListener('click', () => { overlay.remove(); onConfirm(); });
-}
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
 
 // ── Toast ──
 function showToast(message, type = 'info') {
@@ -2342,37 +2074,6 @@ function showToast(message, type = 'info') {
     document.body.appendChild(container);
   }
   const toast = document.createElement('div');
-<<<<<<< HEAD
-  toast.className = `toast ${type}`;
-  const icons = { success:'check-circle', error:'times-circle', info:'info-circle', warning:'exclamation-triangle', danger:'times-circle' };
-  const bgColors = { success:'rgba(34,197,94,0.15)', error:'rgba(239,68,68,0.15)', info:'rgba(99,102,241,0.15)', warning:'rgba(245,158,11,0.15)', danger:'rgba(239,68,68,0.15)' };
-  const borderColors = { success:'rgba(34,197,94,0.4)', error:'rgba(239,68,68,0.4)', info:'rgba(99,102,241,0.4)', warning:'rgba(245,158,11,0.4)', danger:'rgba(239,68,68,0.4)' };
-  const textColors = { success:'#22c55e', error:'#ef4444', info:'#818cf8', warning:'#f59e0b', danger:'#ef4444' };
-  toast.style.cssText = `pointer-events:auto;display:flex;align-items:center;gap:10px;padding:12px 18px;background:${bgColors[type] || bgColors.info};border:1px solid ${borderColors[type] || borderColors.info};border-radius:10px;color:${textColors[type] || textColors.info};font-size:13px;font-weight:500;font-family:'Inter',sans-serif;box-shadow:0 8px 32px rgba(0,0,0,0.3);backdrop-filter:blur(12px);min-width:300px;max-width:450px;animation:slideInRight 0.3s ease;`;
-  toast.innerHTML = `<i class="fas fa-${icons[type] || 'info-circle'}" style="font-size:16px;flex-shrink:0;"></i><span class="toast-message" style="flex:1;">${message}</span><span class="toast-close" onclick="this.parentElement.remove()" style="cursor:pointer;opacity:0.6;font-size:14px;"><i class="fas fa-xmark"></i></span>`;
-=======
-  toast.className = 'toast ' + type;
-
-  const iconName = type === 'success' ? 'check-circle' : (type === 'error' ? 'times-circle' : 'info-circle');
-
-  const icon = document.createElement('i');
-  icon.className = 'fas fa-' + iconName;
-  toast.appendChild(icon);
-
-  const spanMsg = document.createElement('span');
-  spanMsg.className = 'toast-message';
-  spanMsg.textContent = message;
-  toast.appendChild(spanMsg);
-
-  const spanClose = document.createElement('span');
-  spanClose.className = 'toast-close';
-  const closeIcon = document.createElement('i');
-  closeIcon.className = 'fas fa-xmark';
-  spanClose.appendChild(closeIcon);
-  spanClose.addEventListener('click', () => toast.remove());
-  toast.appendChild(spanClose);
-
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
   container.appendChild(toast);
   setTimeout(() => { if (toast.parentElement) toast.remove(); }, 4000);
 }

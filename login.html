@@ -12,7 +12,7 @@
     <style>
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
         :root{--bg:#0a0e1a;--card:#111827;--border:rgba(255,255,255,0.08);--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;--accent:#6366f1;--accent2:#818cf8;--purple:#a855f7;--pink:#ec4899;--success:#22c55e;--glow:rgba(99,102,241,0.3)}
-        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow:hidden}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow-y:auto;overflow-x:hidden}
         
         /* Left Side - Branding */
         .login-brand{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px;position:relative;overflow:hidden}
@@ -31,8 +31,8 @@
         .brand-feature strong{display:block;font-size:14px;color:var(--text);margin-bottom:2px}
         
         /* Right Side - Login Form */
-        .login-form-side{width:520px;display:flex;align-items:center;justify-content:center;padding:40px;background:var(--card);border-left:1px solid var(--border)}
-        .login-form-container{width:100%;max-width:380px}
+        .login-form-side{width:520px;display:flex;flex-direction:column;padding:40px;background:var(--card);border-left:1px solid var(--border);overflow-y:auto}
+        .login-form-container{width:100%;max-width:380px;margin:auto}
         .login-header{margin-bottom:32px}
         .login-header h2{font-size:24px;font-weight:700;margin-bottom:6px}
         .login-header p{color:var(--text3);font-size:14px}
@@ -44,6 +44,30 @@
         .sso-btn img,.sso-btn i{font-size:18px}
         .sso-btn .fa-google{color:#ea4335}
         .sso-btn .fa-microsoft{color:#00a4ef}
+        
+        .demo-role-card {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .demo-role-card:hover {
+            border-color: var(--glow);
+            background: rgba(255,255,255,0.02);
+        }
+        .demo-role-card.active {
+            border-color: var(--accent);
+            background: rgba(99,102,241,0.05);
+        }
+        .demo-role-card.active div {
+            color: var(--text) !important;
+        }
         
         .divider{display:flex;align-items:center;gap:16px;margin-bottom:24px;color:var(--text3);font-size:12px;text-transform:uppercase;letter-spacing:1px}
         .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
@@ -87,8 +111,8 @@
     <!-- Left Branding -->
     <div class="login-brand">
         <div class="brand-content">
-            <div class="brand-logo" style="background: none; box-shadow: none;">
-                <img src="assets/logos/logo_amdox_main_1780462600365.png" alt="Amdox Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 20px; box-shadow: 0 0 40px rgba(168,85,247,0.3);">
+            <div class="brand-logo" style="width: 80px; height: 80px; margin: 0 auto 24px; background: rgba(255,255,255,0.05); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px rgba(168,85,247,0.3);">
+                <i class="fas fa-cube" style="font-size: 40px; color: var(--accent);"></i>
             </div>
             <h1>Amdox ERP Suite</h1>
             <p>AI-Powered Cloud Enterprise Platform for modern businesses. Manage HR, Finance, Inventory, CRM, and more from a single dashboard.</p>
@@ -135,13 +159,32 @@
                 <button class="sso-btn" onclick="handleSSO('Microsoft')"><i class="fab fa-microsoft"></i> Microsoft</button>
             </div>
 
+            <fieldset style="border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:24px; text-align:center;">
+                <legend style="padding:0 10px; font-size:11px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:1px;">Demo Roles Quick Sign-In</legend>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="demo-role-card" onclick="autoLogin('admin@amdox.com', this)">
+                        <i class="fas fa-user-shield" style="color:#f59e0b; font-size:20px; margin-bottom:8px;"></i>
+                        <div style="font-size:13px; font-weight:600; color:var(--text);">Admin</div>
+                    </div>
+                    <div class="demo-role-card" onclick="autoLogin('hrmanager@amdox.com', this)">
+                        <i class="fas fa-users-gear" style="color:#a855f7; font-size:20px; margin-bottom:8px;"></i>
+                        <div style="font-size:13px; font-weight:600; color:var(--text2);">HR Manager</div>
+                    </div>
+                    <div class="demo-role-card" onclick="autoLogin('hradmin@amdox.com', this)">
+                        <i class="fas fa-briefcase" style="color:#06b6d4; font-size:20px; margin-bottom:8px;"></i>
+                        <div style="font-size:13px; font-weight:600; color:var(--text2);">Manager</div>
+                    </div>
+                    <div class="demo-role-card" onclick="autoLogin('employee@amdox.com', this)">
+                        <i class="fas fa-user" style="color:#22c55e; font-size:20px; margin-bottom:8px;"></i>
+                        <div style="font-size:13px; font-weight:600; color:var(--text2);">Employee</div>
+                    </div>
+                </div>
+            </fieldset>
+
             <div class="divider">or sign in with email</div>
 
-<<<<<<< HEAD
-=======
             <div id="error-message" style="display:none; color:#ef4444; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:10px; border-radius:8px; font-size:13px; margin-bottom:16px; text-align:center;"></div>
 
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
             <form id="login-form">
                 <div class="form-group">
                     <label class="form-label" for="email">Email Address</label>
@@ -150,11 +193,7 @@
                 <div class="form-group">
                     <label class="form-label" for="password">Password</label>
                     <div class="password-wrapper">
-<<<<<<< HEAD
                         <input class="form-input" type="password" id="password" placeholder="Enter your password" required>
-=======
-                        <input class="form-input" type="password" id="password" placeholder="Enter your password" value="password123">
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
                         <button type="button" class="toggle-pass" onclick="const i=document.getElementById('password');i.type=i.type==='password'?'text':'password';this.innerHTML=i.type==='password'?'<i class=\'fas fa-eye\'></i>':'<i class=\'fas fa-eye-slash\'></i>'"><i class="fas fa-eye"></i></button>
                     </div>
                 </div>
@@ -163,11 +202,7 @@
                     <label><input type="checkbox" checked> Remember me</label>
                     <a href="#">Forgot password?</a>
                 </div>
-<<<<<<< HEAD
-                <button type="submit" id="login-submit" class="login-btn"><i class="fas fa-right-to-bracket"></i> Sign In</button>
-=======
                 <button type="submit" class="login-btn" id="login-submit-btn"><i class="fas fa-right-to-bracket"></i> Sign In</button>
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
             </form>
 
             <div class="mfa-badge">
@@ -182,26 +217,16 @@
     </div>
 
     <script>
-<<<<<<< HEAD
-        const form = document.getElementById('login-form');
-        const errDiv = document.getElementById('login-error');
-        const submitBtn = document.getElementById('login-submit');
-
-        form.onsubmit = async (e) => {
-            e.preventDefault();
-            errDiv.style.display = 'none';
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                const res = await fetch('http://localhost:4000/api/auth/login', {
-=======
         const API_BASE = (window.location.protocol === 'file:' || window.location.hostname === '') 
             ? 'http://localhost:3000/api' 
             : window.location.origin + '/api';
+
+        window.autoLogin = function(email, el) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = 'password123';
+            document.querySelectorAll('.demo-role-card').forEach(c => c.classList.remove('active'));
+            if(el) el.classList.add('active');
+        };
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -217,27 +242,10 @@
 
             try {
                 const res = await fetch(API_BASE + '/auth/login', {
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
-<<<<<<< HEAD
-
-                const data = await res.json();
-
-                if (res.ok) {
-                    localStorage.setItem('amdox_token', data.token);
-                    localStorage.setItem('amdox_user', JSON.stringify(data.user));
-                    window.location.href = 'index.html';
-                } else {
-                    errDiv.textContent = data.error || 'Login failed. Please try again.';
-                    errDiv.style.display = 'block';
-                }
-            } catch (err) {
-                errDiv.textContent = 'Connection error. Is the server running?';
-                errDiv.style.display = 'block';
-=======
                 const json = await res.json();
                 
                 if (json.success) {
@@ -251,10 +259,16 @@
             } catch (err) {
                 console.error(err);
                 if (email && (email === 'amit@amdox.com' || email.includes('@amdox.com'))) {
+                    let assignedRole = 'Manager';
+                    if(email === 'admin@amdox.com' || email === 'amit@amdox.com') assignedRole = 'Super Admin';
+                    else if(email === 'hrmanager@amdox.com') assignedRole = 'HR Manager';
+                    else if(email === 'hradmin@amdox.com') assignedRole = 'HR Admin';
+                    else if(email === 'employee@amdox.com') assignedRole = 'Employee';
+
                     const mockUser = {
-                        name: email === 'amit@amdox.com' ? 'Amit Kumar' : email.split('@')[0].toUpperCase(),
+                        name: email === 'amit@amdox.com' || email === 'admin@amdox.com' ? 'Amit Kumar' : email.split('@')[0].toUpperCase(),
                         email: email,
-                        role: email === 'amit@amdox.com' ? 'Super Admin' : 'Manager',
+                        role: assignedRole,
                         status: 'Active'
                     };
                     const mockToken = btoa(JSON.stringify({ email, exp: Date.now() + 24*60*60*1000 }));
@@ -265,13 +279,10 @@
                     errDiv.textContent = 'Connection failed. Please ensure the server is running.';
                     errDiv.style.display = 'block';
                 }
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-right-to-bracket"></i> Sign In';
             }
-<<<<<<< HEAD
-=======
         });
 
         window.handleSSO = function(provider) {
@@ -288,7 +299,6 @@
 
         window.handleSSOSuccess = function() {
             window.location.href = 'index.html';
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
         };
     </script>
 </body>
