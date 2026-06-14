@@ -1,3 +1,5 @@
+window.pages = window.pages || {};
+var pages = window.pages;
 /* ============================================================
    Dashboard Page — Reads from db
    ============================================================ */

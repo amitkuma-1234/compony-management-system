@@ -1,3 +1,5 @@
+window.pages = window.pages || {};
+var pages = window.pages;
 /* ============================================================
    E-Commerce Page — Unified Dashboard & Sync Simulator
    ============================================================ */
@@ -476,51 +478,6 @@ pages.devops = function(container) {
   renderDevOps();
 };
 
-<<<<<<< HEAD
-/* Settings Page — reads from db */
-pages.settings = function(container) {
-  const cards = db.table('settingsCards').getAll();
-  const info = db.table('systemInfo').getAll();
-
-  const cardsHTML = cards.map(c => `
-    <div class="card" style="cursor:pointer;transition:all 0.3s ease;border:1px solid var(--border-color)" 
-         onclick="window.openSettingsPanel('${c.name}')" 
-         onmouseover="this.style.borderColor='${c.iconColor}';this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 30px rgba(0,0,0,0.3)'" 
-         onmouseout="this.style.borderColor='var(--border-color)';this.style.transform='translateY(0)';this.style.boxShadow='none'">
-      <div style="text-align:center;padding:20px">
-        <div style="width:52px;height:52px;border-radius:14px;background:${c.iconBg};display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:22px;color:${c.iconColor};transition:transform 0.3s">
-          <i class="fas ${c.icon}"></i>
-        </div>
-        <h3 style="font-size:14px;font-weight:600;margin-bottom:4px">${c.name}</h3>
-        <p style="font-size:12px;color:var(--text-muted);margin-top:4px">${c.desc}</p>
-        <div style="margin-top:12px;font-size:11px;color:${c.iconColor};font-weight:600;text-transform:uppercase;letter-spacing:0.5px">
-          <i class="fas fa-arrow-right" style="margin-right:4px"></i>Configure
-        </div>
-      </div>
-    </div>`).join('');
-
-  const infoRows = info.map(i => `
-    <tr>
-      <td style="font-weight:600;width:200px">${i.label}</td>
-      <td>${i.badge ? `<span class="badge ${i.badge}">${i.value}</span>` : i.value}</td>
-    </tr>`).join('');
-
-  container.innerHTML = `
-    <div class="module-hero">
-      <h2><i class="fas fa-gear" style="color:var(--text-secondary)"></i> Platform Settings</h2>
-      <p>Company configuration, user management, integrations, billing, and system preferences.</p>
-    </div>
-    <div class="grid-3">${cardsHTML}</div>
-    <div id="settings-panel-container" style="margin-bottom:20px;"></div>
-    <div class="card">
-      <div class="card-header"><span class="card-title">System Information</span></div>
-      <div class="table-container">
-        <table>
-          <tbody>${infoRows}</tbody>
-        </table>
-      </div>
-    </div>`;
-=======
 /* ============================================================
    Settings Page — Dynamic Tenant Syncing
    ============================================================ */
@@ -626,7 +583,6 @@ pages.settings = function(container) {
   };
 
   renderSettings();
->>>>>>> 5458a35d98c2361c16bfd993f52fa6b358868e96
 };
 
 window.openSettingsPanel = function(panelName) {
@@ -672,6 +628,12 @@ window.openSettingsPanel = function(panelName) {
                             <td style="padding:10px;">5</td>
                             <td style="padding:10px;"><span class="badge badge-info" style="cursor:pointer;" title="Click to manage" onclick="window.editRolePermissions(this, 'HR Manager')">HR, Payroll</span></td>
                             <td style="padding:10px;text-align:right;"><button class="btn btn-icon" title="Edit Permissions" onclick="window.editRolePermissions(this, 'HR Manager')"><i class="fas fa-edit"></i></button></td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-color);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='none'">
+                            <td style="padding:10px;font-weight:600;">HR Admin</td>
+                            <td style="padding:10px;">8</td>
+                            <td style="padding:10px;"><span class="badge badge-warning" style="cursor:pointer;" title="Click to manage" onclick="window.editRolePermissions(this, 'HR Admin')">HR Only</span></td>
+                            <td style="padding:10px;text-align:right;"><button class="btn btn-icon" title="Edit Permissions" onclick="window.editRolePermissions(this, 'HR Admin')"><i class="fas fa-edit"></i></button></td>
                         </tr>
                         <tr style="transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='none'">
                             <td style="padding:10px;font-weight:600;">Employee</td>
@@ -1083,6 +1045,7 @@ window.editRolePermissions = function(btn, roleName) {
     }
     const isSA = roleName === 'Super Admin';
     const isHR = roleName === 'HR Manager';
+    const isHRAdmin = roleName === 'HR Admin';
     const isEmp = roleName === 'Employee';
 
     const editRow = document.createElement('tr');
@@ -1092,10 +1055,10 @@ window.editRolePermissions = function(btn, roleName) {
             <div style="font-weight:600;margin-bottom:10px;color:var(--accent);">Edit Permissions: ${roleName} ${isSA ? '<span style="color:var(--danger);font-size:10px;margin-left:10px;">(Warning: Root Access)</span>' : ''}</div>
             <div style="display:flex;gap:20px;margin-bottom:15px;font-size:12px;color:var(--text-primary);flex-wrap:wrap;">
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" ${isSA ? 'checked' : ''}> Full System Access</label>
-                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" ${isSA || isHR ? 'checked' : ''}> HR & Payroll</label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" ${isSA || isHR || isHRAdmin ? 'checked' : ''}> HR & Payroll</label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" ${isSA ? 'checked' : ''}> Finance Ledger</label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" ${isSA ? 'checked' : ''}> CRM & Leads</label>
-                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" ${isSA || isEmp || isHR ? 'checked' : ''}> Self Service</label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" ${isSA || isEmp || isHR || isHRAdmin ? 'checked' : ''}> Self Service</label>
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" ${isSA ? 'checked' : ''}> System Logs</label>
             </div>
             <div style="text-align:right;">
