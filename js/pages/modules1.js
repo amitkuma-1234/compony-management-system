@@ -1942,68 +1942,111 @@ pages.inventory = function(container) {
     renderShelf();
   });
 
+  // ── Detail Table Helper ──
+  const viewInventoryDetails = (title, items, type = 'products') => {
+    let tableHtml = '';
+    if (type === 'products') {
+      tableHtml = `
+        <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead style="position: sticky; top: 0; background: var(--bg-card); z-index: 1;">
+              <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
+                <th style="padding: 12px 8px;">SKU</th>
+                <th style="padding: 12px 8px;">Product</th>
+                <th style="padding: 12px 8px;">Stock</th>
+                <th style="padding: 12px 8px;">Warehouse</th>
+                <th style="padding: 12px 8px;">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.length === 0 ? '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted)">No items found.</td></tr>' : items.map(p => {
+                const isLow = p.stock <= p.reorder_level;
+                const isOut = p.stock === 0;
+                const badgeClass = isOut ? 'badge-danger' : isLow ? 'badge-warning' : 'badge-success';
+                const statusLabel = isOut ? 'Out of Stock' : isLow ? 'Low Stock' : 'In Stock';
+                return `
+                  <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 10px 8px; font-family: var(--font-mono); color: var(--accent-light); font-size: 12px;">${p.sku}</td>
+                    <td style="padding: 10px 8px; font-weight: 500; color: var(--text-primary);">${p.name}</td>
+                    <td style="padding: 10px 8px; font-weight: 600;">${p.stock}</td>
+                    <td style="padding: 10px 8px; font-size: 11px; color: var(--text-muted);">${p.warehouse}</td>
+                    <td style="padding: 10px 8px;"><span class="badge ${badgeClass}">${statusLabel}</span></td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    } else {
+        // PO table
+        tableHtml = `
+        <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead style="position: sticky; top: 0; background: var(--bg-card); z-index: 1;">
+              <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
+                <th style="padding: 12px 8px;">PO #</th>
+                <th style="padding: 12px 8px;">Vendor</th>
+                <th style="padding: 12px 8px;">Item</th>
+                <th style="padding: 12px 8px;">Qty</th>
+                <th style="padding: 12px 8px;">ETA</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.length === 0 ? '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted)">No pending orders.</td></tr>' : items.map(po => `
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                  <td style="padding: 10px 8px; font-weight: 600; color: var(--purple);">#PO-${po.id}</td>
+                  <td style="padding: 10px 8px; font-weight: 500; color: var(--text-primary);">${po.vendor}</td>
+                  <td style="padding: 10px 8px; font-size: 11px; color: var(--text-muted);">${po.item}</td>
+                  <td style="padding: 10px 8px; font-weight: 600;">${po.qty}</td>
+                  <td style="padding: 10px 8px; font-size: 11px; color: var(--text-muted);">${po.eta}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    }
+
+    showContentModal({
+      title: title,
+      content: tableHtml,
+      maxWidth: '750px'
+    });
+  };
+
+  const MOCK_POS = [
+    { id: 4920, vendor: 'Foxconn India', item: 'MacBook components', qty: 500, eta: 'Jun 18, 2026' },
+    { id: 4919, vendor: 'Steelcase', item: 'Gesture Chairs', qty: 25, eta: 'Jun 20, 2026' },
+    { id: 4918, vendor: 'HP Supplies', item: 'LaserJet Ink 05A', qty: 100, eta: 'Jun 19, 2026' },
+    { id: 4917, vendor: 'Logitech', item: 'MX Master 3S', qty: 40, eta: 'Jun 22, 2026' },
+    { id: 4916, vendor: 'Samsung Semi', item: '1TB NVMe SSD', qty: 200, eta: 'Jun 15, 2026' },
+    { id: 4915, vendor: 'Dell Global', item: 'Monitor Panels', qty: 150, eta: 'Jun 25, 2026' },
+    { id: 4914, vendor: 'Amazon Whl', item: 'Office Stationery', qty: 1000, eta: 'Jun 16, 2026' },
+    { id: 4913, vendor: 'Cisco Syst', item: 'Network Switches', qty: 10, eta: 'Jun 28, 2026' },
+    { id: 4912, vendor: 'Intel Corp', item: 'Core i9 14th Gen', qty: 30, eta: 'Jun 21, 2026' },
+    { id: 4911, vendor: 'NVIDIA', item: 'RTX 4090 GPU', qty: 5, eta: 'Jul 02, 2026' },
+    { id: 4910, vendor: 'Blue Star', item: 'Server Rack ACs', qty: 4, eta: 'Jun 18, 2026' },
+    { id: 4909, vendor: 'U-Haul Eqp', item: 'Pallet Jacks', qty: 12, eta: 'Jun 24, 2026' },
+    { id: 4908, vendor: 'Generic PC', item: 'USB-C Adapters', qty: 300, eta: 'Jun 17, 2026' },
+    { id: 4907, vendor: 'Eveready', item: 'UPS Batteries', qty: 80, eta: 'Jun 19, 2026' },
+    { id: 4906, vendor: 'Zebra Tech', item: 'Label Printers', qty: 8, eta: 'Jun 23, 2026' }
+  ];
+
   // ── Stat Card Click Handlers ──
   document.getElementById('inv-stat-total')?.addEventListener('click', () => {
-    showModal({
-      title: '<i class="fas fa-boxes-stacked" style="color:var(--cyan)"></i> Inventory Catalog Summary',
-      submitLabel: 'Add New Product',
-      fields: [
-        { label: 'Total Unique SKU', default: String(allProducts.length), readonly: true },
-        { label: 'Total Units', default: String(allProducts.reduce((s,p)=>s+p.stock,0)), readonly: true },
-        { label: 'Warehouse Capacity', default: '68% utilized', readonly: true }
-      ],
-      onSubmit(data, close) {
-        close();
-        document.getElementById('prod-add-btn')?.click();
-      }
-    });
+    viewInventoryDetails('<i class="fas fa-boxes-stacked" style="color:var(--cyan);margin-right:8px"></i> Inventory Catalog Summary', allProducts, 'products');
   });
 
   document.getElementById('inv-stat-instock')?.addEventListener('click', () => {
-    const instock = allProducts.filter(p => p.stock > p.reorder_level).length;
-    showModal({
-      title: '<i class="fas fa-check-circle" style="color:var(--success)"></i> Healthy Stock Levels',
-      submitLabel: 'Close',
-      submitClass: 'btn-secondary',
-      fields: [
-        { label: 'Sufficient Stock', default: instock + ' Products', readonly: true },
-        { label: 'Top Moving', default: 'MacBook Pro 16"', readonly: true },
-        { label: 'Value in Stock', default: '₹14.2L', readonly: true }
-      ],
-      onSubmit(data, close) { close(); }
-    });
+    const instockItems = allProducts.filter(p => p.stock > p.reorder_level);
+    viewInventoryDetails('<i class="fas fa-check-circle" style="color:var(--success);margin-right:8px"></i> Healthy Stock Levels', instockItems, 'products');
   });
 
   document.getElementById('inv-stat-low')?.addEventListener('click', () => {
-    const lowCount = allProducts.filter(p => p.stock <= p.reorder_level).length;
-    showModal({
-      title: '<i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> Replenishment Needed',
-      submitLabel: 'Bulk Reorder',
-      fields: [
-        { label: 'Low Stock SKU', default: String(lowCount), readonly: true },
-        { label: 'Critical (<5 units)', default: '1 Product', readonly: true },
-        { label: 'Auto-Reorder Status', default: 'Ready to Process', readonly: true }
-      ],
-      onSubmit(data, close) {
-        close();
-        document.getElementById('inv-po-btn')?.click();
-      }
-    });
+    const lowStockItems = allProducts.filter(p => p.stock <= p.reorder_level);
+    viewInventoryDetails('<i class="fas fa-exclamation-triangle" style="color:var(--danger);margin-right:8px"></i> Replenishment Needed', lowStockItems, 'products');
   });
 
   document.getElementById('inv-stat-orders')?.addEventListener('click', () => {
-    showModal({
-      title: '<i class="fas fa-truck-fast" style="color:var(--purple)"></i> Logistics & Orders',
-      submitLabel: 'New PO',
-      fields: [
-        { label: 'Pending Shipments', default: String(lsGetPOs()), readonly: true },
-        { label: 'Est. Delivery', default: '2-4 Days', readonly: true },
-        { label: 'In-Transit Value', default: '₹2.85L', readonly: true }
-      ],
-      onSubmit(data, close) {
-        close();
-        document.getElementById('inv-po-btn')?.click();
-      }
-    });
+    viewInventoryDetails('<i class="fas fa-truck-fast" style="color:var(--purple);margin-right:8px"></i> Active Purchase Orders', MOCK_POS, 'orders');
   });
 };

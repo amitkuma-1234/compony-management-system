@@ -1105,6 +1105,10 @@ pages.legal = function(container) {
     editBtn.style.cssText = 'padding:4px 10px;font-size:11px';
     editBtn.title = 'Edit';
     editBtn.innerHTML = '<i class="fas fa-pen"></i>';
+    editBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      handleEditContract(c.id);
+    });
     actWrap.appendChild(editBtn);
 
     const delBtn = document.createElement('button');
@@ -1113,6 +1117,10 @@ pages.legal = function(container) {
     delBtn.style.cssText = 'padding:4px 10px;font-size:11px;color:var(--danger)';
     delBtn.title = 'Delete';
     delBtn.innerHTML = '<i class="fas fa-trash"></i>';
+    delBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      handleDeleteContract(c.id);
+    });
     actWrap.appendChild(delBtn);
 
     tdAct.appendChild(actWrap);
@@ -1332,6 +1340,79 @@ pages.legal = function(container) {
       });
     });
 
+<<<<<<< HEAD
+    // Edit and Delete handlers are now attached directly in buildRow()
+
+    // ── Legal Stat Card Click Handlers ──
+    document.getElementById('legal-card-active')?.addEventListener('click', () => {
+      const activeVal = document.getElementById('contract-stat-active')?.textContent || '0';
+      showModal({
+        title: '<i class="fas fa-file-contract" style="color:var(--warning)"></i> Contract Portfolio Health',
+        submitLabel: 'Export Register',
+        fields: [
+          { label: 'Active Agreements', default: activeVal, readonly: true },
+          { label: 'Risk Rating', default: 'Low (0.4%)', readonly: true },
+          { label: 'Avg Cycle Time', default: '14 Days', readonly: true }
+        ],
+        onSubmit(data, close) {
+          showToast('Full contract register exported to PDF.', 'success');
+          close();
+        }
+      });
+    });
+
+    document.getElementById('legal-card-gdpr')?.addEventListener('click', () => {
+      const gdprVal = document.getElementById('contract-stat-gdpr')?.textContent || '100%';
+      showModal({
+        title: '<i class="fas fa-check-double" style="color:var(--success)"></i> Regulatory Compliance',
+        submitLabel: 'Download Certificate',
+        fields: [
+          { label: 'GDPR Score', default: gdprVal, readonly: true },
+          { label: 'Data Residency', default: 'EU / Mumbai Region', readonly: true },
+          { label: 'Last External Audit', default: 'May 10, 2026', readonly: true }
+        ],
+        onSubmit(data, close) {
+          showToast('Compliance certification downloaded successfully.', 'success');
+          close();
+        }
+      });
+    });
+
+    document.getElementById('legal-card-expiring')?.addEventListener('click', () => {
+      const expiringVal = document.getElementById('contract-stat-expiring')?.textContent || '0';
+      showModal({
+        title: '<i class="fas fa-clock" style="color:var(--danger)"></i> Renewal Alerts',
+        submitLabel: 'Filter Expiring',
+        fields: [
+          { label: 'Agreements Expiring', default: expiringVal, readonly: true },
+          { label: 'Auto-Renew Active', default: '84%', readonly: true },
+          { label: 'Renewal Pipeline', default: '₹12.4L Value', readonly: true }
+        ],
+        onSubmit(data, close) {
+          const filter = document.getElementById('contract-status-filter');
+          if (filter) { filter.value = 'Expiring'; renderRows(); }
+          close();
+        }
+      });
+    });
+
+    document.getElementById('legal-card-pending')?.addEventListener('click', () => {
+      const pendingVal = document.getElementById('contract-stat-pending')?.textContent || '0';
+      showModal({
+        title: '<i class="fas fa-stamp" style="color:var(--purple)"></i> Approval Workflow',
+        submitLabel: 'Filter Pending',
+        fields: [
+          { label: 'Awaiting Signature', default: pendingVal, readonly: true },
+          { label: 'Bottleneck Stage', default: 'Financial Review', readonly: true },
+          { label: 'Est. Completion', default: '2 Business Days', readonly: true }
+        ],
+        onSubmit(data, close) {
+          const filter = document.getElementById('contract-status-filter');
+          if (filter) { filter.value = 'Pending Approval'; renderRows(); }
+          close();
+        }
+      });
+=======
     // ── Bind Edit and Delete actions via Event Delegation ──
     const tbody = document.getElementById('contract-tbody');
     tbody?.addEventListener('click', (e) => {
@@ -1342,6 +1423,7 @@ pages.legal = function(container) {
       } else if (delBtn) {
         handleDeleteContract(parseInt(delBtn.dataset.id));
       }
+>>>>>>> 6ca90351768aa8d89fda6f54cfe9e1012a525d82
     });
   }
 
