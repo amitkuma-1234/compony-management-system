@@ -1677,6 +1677,10 @@ pages.legal = function (container) {
     editBtn.style.cssText = 'padding:4px 10px;font-size:11px';
     editBtn.title = 'Edit';
     editBtn.innerHTML = '<i class="fas fa-pen"></i>';
+    editBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      handleEditContract(c.id);
+    });
     actWrap.appendChild(editBtn);
 
     const delBtn = document.createElement('button');
@@ -1685,6 +1689,10 @@ pages.legal = function (container) {
     delBtn.style.cssText = 'padding:4px 10px;font-size:11px;color:var(--danger)';
     delBtn.title = 'Delete';
     delBtn.innerHTML = '<i class="fas fa-trash"></i>';
+    delBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      handleDeleteContract(c.id);
+    });
     actWrap.appendChild(delBtn);
 
     tdAct.appendChild(actWrap);
@@ -1904,16 +1912,7 @@ pages.legal = function (container) {
       });
     });
 
-    // ── Bind Edit and Delete actions via Event Delegation ──
-    tbody?.addEventListener('click', (e) => {
-      const editBtn = e.target.closest('.contract-edit-btn');
-      const delBtn = e.target.closest('.contract-del-btn');
-      if (editBtn) {
-        handleEditContract(parseInt(editBtn.dataset.id));
-      } else if (delBtn) {
-        handleDeleteContract(parseInt(delBtn.dataset.id));
-      }
-    });
+    // Edit and Delete handlers are now attached directly in buildRow()
 
     // ── Legal Stat Card Click Handlers ──
     document.getElementById('legal-card-active')?.addEventListener('click', () => {
