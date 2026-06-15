@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/responsive.css">
     <style>
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
         :root{--bg:#0a0e1a;--card:#111827;--border:rgba(255,255,255,0.08);--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;--accent:#6366f1;--accent2:#818cf8;--purple:#a855f7;--pink:#ec4899;--success:#22c55e;--glow:rgba(99,102,241,0.3)}
@@ -32,8 +31,8 @@
         .brand-feature strong{display:block;font-size:14px;color:var(--text);margin-bottom:2px}
         
         /* Right Side - Login Form */
-        .login-form-side{width:520px;display:flex;align-items:center;justify-content:center;padding:40px;background:var(--card);border-left:1px solid var(--border);overflow-y:auto;max-height:100vh}
-        .login-form-container{width:100%;max-width:380px}
+        .login-form-side{width:520px;display:flex;flex-direction:column;padding:40px;background:var(--card);border-left:1px solid var(--border);overflow-y:auto}
+        .login-form-container{width:100%;max-width:380px;margin:auto}
         .login-header{margin-bottom:32px}
         .login-header h2{font-size:24px;font-weight:700;margin-bottom:6px}
         .login-header p{color:var(--text3);font-size:14px}
@@ -45,6 +44,30 @@
         .sso-btn img,.sso-btn i{font-size:18px}
         .sso-btn .fa-google{color:#ea4335}
         .sso-btn .fa-microsoft{color:#00a4ef}
+        
+        .demo-role-card {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .demo-role-card:hover {
+            border-color: var(--glow);
+            background: rgba(255,255,255,0.02);
+        }
+        .demo-role-card.active {
+            border-color: var(--accent);
+            background: rgba(99,102,241,0.05);
+        }
+        .demo-role-card.active div {
+            color: var(--text) !important;
+        }
         
         .divider{display:flex;align-items:center;gap:16px;margin-bottom:24px;color:var(--text3);font-size:12px;text-transform:uppercase;letter-spacing:1px}
         .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
@@ -78,91 +101,24 @@
         .tenant-select select{background:transparent;border:none;color:var(--accent2);font-family:inherit;font-size:13px;font-weight:500;outline:none;cursor:pointer;flex:1}
         .tenant-select select option{background:var(--card);color:var(--text)}
         
-        /* Demo Roles Selector Styles */
-        .demo-roles-container {
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px;
-        }
-        .demo-roles-title {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text3);
-            text-transform: uppercase;
-            letter-spacing: 0.75px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .demo-roles-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-        .demo-role-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 10px 4px;
-            background: rgba(255, 255, 255, 0.01);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            text-align: center;
-        }
-        .demo-role-card:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(99, 102, 241, 0.4);
-            transform: translateY(-2px);
-        }
-        .demo-role-card.active {
-            background: rgba(99, 102, 241, 0.08);
-            border-color: var(--accent);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-        }
-        .demo-role-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            flex-shrink: 0;
-            transition: transform 0.2s;
-        }
-        .demo-role-card:hover .demo-role-icon {
-            transform: scale(1.1);
-        }
-        .demo-role-icon.admin {
-            background: rgba(245, 158, 11, 0.12);
-            color: #f59e0b;
-        }
-        .demo-role-icon.hr {
-            background: rgba(168, 85, 247, 0.12);
-            color: #a855f7;
-        }
-        .demo-role-icon.employee {
-            background: rgba(34, 197, 94, 0.12);
-            color: #22c55e;
-        }
-        .demo-role-icon.manager {
-            background: rgba(6, 182, 212, 0.12);
-            color: #06b6d4;
-        }
-        .demo-role-name {
-            font-size: 11.5px;
-            font-weight: 600;
-            color: var(--text2);
-        }
-        .demo-role-card.active .demo-role-name {
-            color: var(--text);
-        }
-
+        /* Password Strength Meter */
+        .password-strength{margin-top:8px}
+        .strength-bars{display:flex;gap:4px;margin-bottom:4px}
+        .strength-bar{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,0.08);transition:background 0.3s}
+        .strength-bar.active.weak{background:#ef4444}
+        .strength-bar.active.fair{background:#f59e0b}
+        .strength-bar.active.good{background:#06b6d4}
+        .strength-bar.active.strong{background:#22c55e}
+        .strength-label{font-size:11px;font-weight:500;letter-spacing:0.5px}
+        .strength-label.weak{color:#ef4444}
+        .strength-label.fair{color:#f59e0b}
+        .strength-label.good{color:#06b6d4}
+        .strength-label.strong{color:#22c55e}
+        
+        /* Registration form row */
+        .form-row-2col{display:flex;gap:12px}
+        .form-row-2col .form-group{flex:1}
+        
         @media(max-width:900px){
             .login-brand{display:none}
             .login-form-side{width:100%;border-left:none}
@@ -173,7 +129,9 @@
     <!-- Left Branding -->
     <div class="login-brand">
         <div class="brand-content">
-            <div class="brand-logo" style="background:none;box-shadow:none;padding:0;overflow:hidden;width:110px;height:110px;border-radius:20px;"><img src="Logo.jpeg" alt="AMDOX Technology" style="width:100%;height:100%;object-fit:contain;border-radius:20px;"></div>
+            <div class="brand-logo" style="width: 80px; height: 80px; margin: 0 auto 24px; background: rgba(255,255,255,0.05); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px rgba(168,85,247,0.3);">
+                <i class="fas fa-cube" style="font-size: 40px; color: var(--accent);"></i>
+            </div>
             <h1>Amdox ERP Suite</h1>
             <p>AI-Powered Cloud Enterprise Platform for modern businesses. Manage HR, Finance, Inventory, CRM, and more from a single dashboard.</p>
             <div class="brand-features">
@@ -200,86 +158,398 @@
     <!-- Right Login Form -->
     <div class="login-form-side">
         <div class="login-form-container">
-            <div class="login-header">
-                <h2>Welcome back 👋</h2>
-                <p>Sign in to access your ERP dashboard</p>
-            </div>
+            <div id="login-view">
+                <div class="login-header">
+                    <h2>Welcome back 👋</h2>
+                    <p>Sign in to access your ERP dashboard</p>
+                </div>
 
-            <div class="tenant-select">
-                <i class="fas fa-building"></i>
-                <select id="tenant-select">
-                    <option>Amdox Technologies Pvt Ltd</option>
-                    <option>Demo Organization</option>
-                    <option>+ Add New Tenant</option>
-                </select>
-            </div>
+                <div class="tenant-select">
+                    <i class="fas fa-building"></i>
+                    <select id="tenant-select">
+                        <option>Amdox Technologies Pvt Ltd</option>
+                        <option>Demo Organization</option>
+                        <option>+ Add New Tenant</option>
+                    </select>
+                </div>
 
-            <div class="sso-buttons">
-                <button class="sso-btn" onclick="handleSSO('Google')"><i class="fab fa-google"></i> Google</button>
-                <button class="sso-btn" onclick="handleSSO('Microsoft')"><i class="fab fa-microsoft"></i> Microsoft</button>
-            </div>
+                <div class="sso-buttons">
+                    <button class="sso-btn" onclick="handleSSO('Google')"><i class="fab fa-google"></i> Google</button>
+                    <button class="sso-btn" onclick="handleSSO('Microsoft')"><i class="fab fa-microsoft"></i> Microsoft</button>
+                </div>
 
-            <!-- Demo Credentials Helper -->
-            <div class="demo-roles-container">
-                <div class="demo-roles-title">Demo Roles Quick Sign-in</div>
-                <div class="demo-roles-grid">
-                    <div class="demo-role-card active" data-email="amit@amdox.com" data-pass="admin123">
-                        <div class="demo-role-icon admin"><i class="fas fa-user-shield"></i></div>
-                        <span class="demo-role-name">Admin</span>
+                <fieldset style="border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:24px; text-align:center;">
+                    <legend style="padding:0 10px; font-size:11px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:1px;">Demo Roles Quick Sign-In</legend>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="demo-role-card" onclick="autoLogin('admin@amdox.com', this)">
+                            <i class="fas fa-user-shield" style="color:#f59e0b; font-size:20px; margin-bottom:8px;"></i>
+                            <div style="font-size:13px; font-weight:600; color:var(--text);">Admin</div>
+                        </div>
+                        <div class="demo-role-card" onclick="autoLogin('hrmanager@amdox.com', this)">
+                            <i class="fas fa-users-gear" style="color:#a855f7; font-size:20px; margin-bottom:8px;"></i>
+                            <div style="font-size:13px; font-weight:600; color:var(--text2);">HR Manager</div>
+                        </div>
+                        <div class="demo-role-card" onclick="autoLogin('hradmin@amdox.com', this)">
+                            <i class="fas fa-briefcase" style="color:#06b6d4; font-size:20px; margin-bottom:8px;"></i>
+                            <div style="font-size:13px; font-weight:600; color:var(--text2);">Manager</div>
+                        </div>
+                        <div class="demo-role-card" onclick="autoLogin('employee@amdox.com', this)">
+                            <i class="fas fa-user" style="color:#22c55e; font-size:20px; margin-bottom:8px;"></i>
+                            <div style="font-size:13px; font-weight:600; color:var(--text2);">Employee</div>
+                        </div>
                     </div>
-                    <div class="demo-role-card" data-email="neha@amdox.com" data-pass="neha123">
-                        <div class="demo-role-icon hr"><i class="fas fa-users-gear"></i></div>
-                        <span class="demo-role-name">HR Manager</span>
+                </fieldset>
+
+                <div class="divider">or sign in with email</div>
+
+                <div id="error-message" style="display:none; color:#ef4444; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:10px; border-radius:8px; font-size:13px; margin-bottom:16px; text-align:center;"></div>
+
+                <form id="login-form">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        <input class="form-input" type="email" id="email" placeholder="admin@amdox.com" required>
                     </div>
-                    <div class="demo-role-card" data-email="karan@amdox.com" data-pass="karan123">
-                        <div class="demo-role-icon manager"><i class="fas fa-briefcase"></i></div>
-                        <span class="demo-role-name">Manager</span>
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <div class="password-wrapper">
+                            <input class="form-input" type="password" id="password" placeholder="Enter your password" required>
+                            <button type="button" class="toggle-pass" onclick="const i=document.getElementById('password');i.type=i.type==='password'?'text':'password';this.innerHTML=i.type==='password'?'<i class=\'fas fa-eye\'></i>':'<i class=\'fas fa-eye-slash\'></i>'"><i class="fas fa-eye"></i></button>
+                        </div>
                     </div>
-                    <div class="demo-role-card" data-email="rahul@amdox.com" data-pass="rahul123">
-                        <div class="demo-role-icon employee"><i class="fas fa-user-tie"></i></div>
-                        <span class="demo-role-name">Employee</span>
+                    <div id="login-error" style="color: #ef4444; font-size: 13px; margin-bottom: 16px; display: none; text-align: center;"></div>
+                    <div class="form-row">
+                        <label><input type="checkbox" checked> Remember me</label>
+                        <a href="#" id="forgot-password-link">Forgot password?</a>
                     </div>
+                    <button type="submit" class="login-btn" id="login-submit-btn"><i class="fas fa-right-to-bracket"></i> Sign In</button>
+                </form>
+
+                <div class="mfa-badge">
+                    <i class="fas fa-shield-check"></i>
+                    Protected with Multi-Factor Authentication (MFA)
+                </div>
+
+                <div class="login-footer">
+                    Don't have an account? <a href="#" id="create-account-link">Create Account</a>
                 </div>
             </div>
 
-            <div class="divider">or sign in with email</div>
-
-            <div id="error-message" style="display:none; color:#ef4444; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:10px; border-radius:8px; font-size:13px; margin-bottom:16px; text-align:center;"></div>
-
-            <form id="login-form">
-                <div class="form-group">
-                    <label class="form-label" for="email">Email Address</label>
-                    <input class="form-input" type="email" id="email" placeholder="amit@amdox.com" value="amit@amdox.com">
+            <!-- Forgot Password Flow Container -->
+            <div id="forgot-view" style="display:none;">
+                <div class="login-header">
+                    <h2>Reset Password 🔒</h2>
+                    <p id="forgot-subtitle">Enter your registered Gmail to receive a 6-digit verification code.</p>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="password">Password</label>
-                    <div class="password-wrapper">
-                        <input class="form-input" type="password" id="password" placeholder="Enter your password" value="admin123">
-                        <button type="button" class="toggle-pass" onclick="const i=document.getElementById('password');i.type=i.type==='password'?'text':'password';this.innerHTML=i.type==='password'?'<i class=\'fas fa-eye\'></i>':'<i class=\'fas fa-eye-slash\'></i>'"><i class="fas fa-eye"></i></button>
+
+                <div id="forgot-error" style="display:none; color:#ef4444; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:10px; border-radius:8px; font-size:13px; margin-bottom:16px; text-align:center;"></div>
+                <div id="forgot-success" style="display:none; color:#22c55e; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); padding:10px; border-radius:8px; font-size:13px; margin-bottom:16px; text-align:center;"></div>
+
+                <!-- Step 1: Request Code -->
+                <form id="forgot-step1-form">
+                    <div class="form-group">
+                        <label class="form-label" for="forgot-email">Gmail Address</label>
+                        <input class="form-input" type="email" id="forgot-email" placeholder="devyanibpatil3132@gmail.com" required>
                     </div>
-                </div>
-                <div class="form-row">
-                    <label><input type="checkbox" checked> Remember me</label>
-                    <a href="#">Forgot password?</a>
-                </div>
-                <button type="submit" class="login-btn" id="login-submit-btn"><i class="fas fa-right-to-bracket"></i> Sign In</button>
-            </form>
+                    <button type="submit" class="login-btn" id="forgot-send-btn"><i class="fas fa-paper-plane"></i> Send Verification Code</button>
+                </form>
 
-            <div class="mfa-badge">
-                <i class="fas fa-shield-check"></i>
-                Protected with Multi-Factor Authentication (MFA)
+                <!-- Step 2: Verify Code (Hidden initially) -->
+                <form id="forgot-step2-form" style="display:none;">
+                    <div class="form-group">
+                        <label class="form-label" for="forgot-code">6-Digit Verification Code</label>
+                        <input class="form-input" type="text" id="forgot-code" placeholder="Enter 6-digit code" maxlength="6" pattern="\d{6}" required>
+                    </div>
+                    <button type="submit" class="login-btn" id="forgot-verify-btn"><i class="fas fa-circle-check"></i> Verify Code</button>
+                </form>
+
+                <!-- Step 3: Set New Password (Hidden initially) -->
+                <form id="forgot-step3-form" style="display:none;">
+                    <div class="form-group">
+                        <label class="form-label" for="new-password">New Password</label>
+                        <input class="form-input" type="password" id="new-password" placeholder="Enter new password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="confirm-password">Confirm New Password</label>
+                        <input class="form-input" type="password" id="confirm-password" placeholder="Confirm new password" required>
+                    </div>
+                    <button type="submit" class="login-btn" id="forgot-reset-btn"><i class="fas fa-lock"></i> Reset Password</button>
+                </form>
+
+                <div class="login-footer" style="margin-top:28px;">
+                    <a href="#" id="back-to-login-btn"><i class="fas fa-arrow-left"></i> Back to Sign In</a>
+                </div>
             </div>
 
-            <div class="login-footer">
-                Don't have an account? <a href="#">Request Access</a>
+            <!-- Registration / Create Account View -->
+            <div id="register-view" style="display:none;">
+                <div class="login-header">
+                    <h2>Create Account ✨</h2>
+                    <p>Join Amdox ERP Suite — set up your account in seconds.</p>
+                </div>
+
+                <div id="register-error" style="display:none; color:#ef4444; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:10px; border-radius:8px; font-size:13px; margin-bottom:16px; text-align:center;"></div>
+                <div id="register-success" style="display:none; color:#22c55e; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); padding:10px; border-radius:8px; font-size:13px; margin-bottom:16px; text-align:center;"></div>
+
+                <form id="register-form">
+                    <div class="form-group">
+                        <label class="form-label" for="reg-name">Full Name</label>
+                        <input class="form-input" type="text" id="reg-name" placeholder="e.g. Rahul Sharma" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="reg-email">Email Address</label>
+                        <input class="form-input" type="email" id="reg-email" placeholder="you@company.com" required>
+                    </div>
+                    <div class="form-row-2col">
+                        <div class="form-group">
+                            <label class="form-label" for="reg-department">Department</label>
+                            <select class="form-input" id="reg-department" required>
+                                <option value="" disabled selected>Select department</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Sales & Marketing">Sales & Marketing</option>
+                                <option value="Finance">Finance</option>
+                                <option value="HR & Admin">HR & Admin</option>
+                                <option value="Operations">Operations</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="reg-role">Role / Title</label>
+                            <input class="form-input" type="text" id="reg-role" placeholder="e.g. Developer" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="reg-password">Password</label>
+                        <div class="password-wrapper">
+                            <input class="form-input" type="password" id="reg-password" placeholder="Min 6 characters" required minlength="6">
+                            <button type="button" class="toggle-pass" onclick="const i=document.getElementById('reg-password');i.type=i.type==='password'?'text':'password';this.innerHTML=i.type==='password'?'<i class=\'fas fa-eye\'></i>':'<i class=\'fas fa-eye-slash\'></i>'"><i class="fas fa-eye"></i></button>
+                        </div>
+                        <div class="password-strength" id="reg-strength">
+                            <div class="strength-bars">
+                                <div class="strength-bar" id="str-bar-1"></div>
+                                <div class="strength-bar" id="str-bar-2"></div>
+                                <div class="strength-bar" id="str-bar-3"></div>
+                                <div class="strength-bar" id="str-bar-4"></div>
+                            </div>
+                            <span class="strength-label" id="str-label"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="reg-confirm">Confirm Password</label>
+                        <input class="form-input" type="password" id="reg-confirm" placeholder="Re-enter password" required minlength="6">
+                    </div>
+                    <div class="form-row" style="margin-bottom:20px">
+                        <label><input type="checkbox" id="reg-terms" required> I agree to the <a href="#" style="color:var(--accent2)">Terms of Service</a></label>
+                    </div>
+                    <button type="submit" class="login-btn" id="register-submit-btn"><i class="fas fa-user-plus"></i> Create Account</button>
+                </form>
+
+                <div class="login-footer" style="margin-top:28px;">
+                    Already have an account? <a href="#" id="back-to-login-from-reg">Sign In</a>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         const API_BASE = (window.location.protocol === 'file:' || window.location.hostname === '') 
-            ? 'http://localhost:3000/api' 
+            ? 'http://localhost:4000/api' 
             : window.location.origin + '/api';
+
+        // Handle Google SSO redirection query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const ssoToken = urlParams.get('sso_token');
+        const ssoUser = urlParams.get('sso_user');
+        if (ssoToken && ssoUser) {
+            try {
+                const userObj = JSON.parse(decodeURIComponent(ssoUser));
+                localStorage.setItem('amdox_auth_token', ssoToken);
+                localStorage.setItem('amdox_auth_user', JSON.stringify(userObj));
+                window.location.href = 'index.html';
+            } catch (e) {
+                console.error("Failed to parse Google SSO user data:", e);
+            }
+        }
+
+        // --- Forgot Password Flow Javascript ---
+        const loginView = document.getElementById('login-view');
+        const forgotView = document.getElementById('forgot-view');
+        const forgotLink = document.getElementById('forgot-password-link');
+        const backToLoginBtn = document.getElementById('back-to-login-btn');
+
+        forgotLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginView.style.display = 'none';
+            forgotView.style.display = 'block';
+            resetForgotFlow();
+        });
+
+        backToLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            forgotView.style.display = 'none';
+            loginView.style.display = 'block';
+        });
+
+        let resetEmail = '';
+        let resetCode = '';
+
+        function resetForgotFlow() {
+            resetEmail = '';
+            resetCode = '';
+            document.getElementById('forgot-email').value = '';
+            document.getElementById('forgot-code').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+            
+            document.getElementById('forgot-step1-form').style.display = 'block';
+            document.getElementById('forgot-step2-form').style.display = 'none';
+            document.getElementById('forgot-step3-form').style.display = 'none';
+            
+            document.getElementById('forgot-subtitle').textContent = 'Enter your registered Gmail to receive a 6-digit verification code.';
+            document.getElementById('forgot-error').style.display = 'none';
+            document.getElementById('forgot-success').style.display = 'none';
+        }
+
+        // Step 1 Form Submit (Request Verification Code)
+        document.getElementById('forgot-step1-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value.trim();
+            const errDiv = document.getElementById('forgot-error');
+            const successDiv = document.getElementById('forgot-success');
+            const sendBtn = document.getElementById('forgot-send-btn');
+
+            errDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending Code...';
+
+            try {
+                const res = await fetch(API_BASE + '/auth/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const json = await res.json();
+                if (res.ok && json.success) {
+                    resetEmail = email;
+                    successDiv.textContent = json.message || 'Verification code sent to Gmail!';
+                    successDiv.style.display = 'block';
+                    
+                    // Proceed to step 2
+                    document.getElementById('forgot-step1-form').style.display = 'none';
+                    document.getElementById('forgot-step2-form').style.display = 'block';
+                    document.getElementById('forgot-subtitle').textContent = `Enter the 6-digit verification code sent to ${email}`;
+                } else {
+                    errDiv.textContent = json.error || 'Failed to send verification code.';
+                    errDiv.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                errDiv.textContent = 'Connection failed. Please ensure the server is running.';
+                errDiv.style.display = 'block';
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Verification Code';
+            }
+        });
+
+        // Step 2 Form Submit (Verify Code)
+        document.getElementById('forgot-step2-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const code = document.getElementById('forgot-code').value.trim();
+            const errDiv = document.getElementById('forgot-error');
+            const successDiv = document.getElementById('forgot-success');
+            const verifyBtn = document.getElementById('forgot-verify-btn');
+
+            errDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+            try {
+                const res = await fetch(API_BASE + '/auth/verify-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: resetEmail, code })
+                });
+                const json = await res.json();
+                if (res.ok && json.success) {
+                    resetCode = code;
+                    successDiv.textContent = 'Code verified successfully! Choose your new password.';
+                    successDiv.style.display = 'block';
+
+                    // Proceed to step 3
+                    document.getElementById('forgot-step2-form').style.display = 'none';
+                    document.getElementById('forgot-step3-form').style.display = 'block';
+                    document.getElementById('forgot-subtitle').textContent = 'Enter and confirm your new password below.';
+                } else {
+                    errDiv.textContent = json.error || 'Incorrect or expired verification code.';
+                    errDiv.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                errDiv.textContent = 'Connection failed. Please ensure the server is running.';
+                errDiv.style.display = 'block';
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = '<i class="fas fa-circle-check"></i> Verify Code';
+            }
+        });
+
+        // Step 3 Form Submit (Reset Password)
+        document.getElementById('forgot-step3-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const errDiv = document.getElementById('forgot-error');
+            const successDiv = document.getElementById('forgot-success');
+            const resetBtn = document.getElementById('forgot-reset-btn');
+
+            errDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            if (password !== confirmPassword) {
+                errDiv.textContent = 'Passwords do not match!';
+                errDiv.style.display = 'block';
+                return;
+            }
+
+            resetBtn.disabled = true;
+            resetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resetting...';
+
+            try {
+                const res = await fetch(API_BASE + '/auth/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: resetEmail, code: resetCode, password })
+                });
+                const json = await res.json();
+                if (res.ok && json.success) {
+                    alert('✅ Password reset successfully! You can now log in with your new password.');
+                    resetForgotFlow();
+                    forgotView.style.display = 'none';
+                    loginView.style.display = 'block';
+                } else {
+                    errDiv.textContent = json.error || 'Failed to reset password.';
+                    errDiv.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                errDiv.textContent = 'Connection failed. Please ensure the server is running.';
+                errDiv.style.display = 'block';
+            } finally {
+                resetBtn.disabled = false;
+                resetBtn.innerHTML = '<i class="fas fa-lock"></i> Reset Password';
+            }
+        });
+
+        window.autoLogin = function(email, el) {
+            document.getElementById('email').value = email;
+            // Admin uses 'admin123', others use 'password123'
+            const pw = (email === 'admin@amdox.com') ? 'admin123' : 'password123';
+            document.getElementById('password').value = pw;
+            document.querySelectorAll('.demo-role-card').forEach(c => c.classList.remove('active'));
+            if(el) el.classList.add('active');
+        };
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -312,26 +582,16 @@
             } catch (err) {
                 console.error(err);
                 if (email && (email === 'amit@amdox.com' || email.includes('@amdox.com'))) {
-                    let role = 'Senior Developer';
-                    let name = email.split('@')[0];
-                    name = name.charAt(0).toUpperCase() + name.slice(1);
-                    if (email === 'amit@amdox.com') {
-                        role = 'Super Admin';
-                        name = 'Amit Kumar';
-                    } else if (email === 'neha@amdox.com') {
-                        role = 'HR Manager';
-                        name = 'Neha Kapoor';
-                    } else if (email === 'karan@amdox.com') {
-                        role = 'Manager';
-                        name = 'Karan Mehta';
-                    } else if (email === 'rahul@amdox.com') {
-                        role = 'Senior Developer';
-                        name = 'Rahul Singh';
-                    }
+                    let assignedRole = 'Manager';
+                    if(email === 'admin@amdox.com' || email === 'amit@amdox.com') assignedRole = 'Super Admin';
+                    else if(email === 'hrmanager@amdox.com') assignedRole = 'HR Manager';
+                    else if(email === 'hradmin@amdox.com') assignedRole = 'HR Admin';
+                    else if(email === 'employee@amdox.com') assignedRole = 'Employee';
+
                     const mockUser = {
-                        name: name,
+                        name: email === 'amit@amdox.com' || email === 'admin@amdox.com' ? 'Amit Kumar' : email.split('@')[0].toUpperCase(),
                         email: email,
-                        role: role,
+                        role: assignedRole,
                         status: 'Active'
                     };
                     const mockToken = btoa(JSON.stringify({ email, exp: Date.now() + 24*60*60*1000 }));
@@ -349,6 +609,10 @@
         });
 
         window.handleSSO = function(provider) {
+            if (provider === 'Google') {
+                window.location.href = 'http://127.0.0.1:5000/login';
+                return;
+            }
             const width = 500;
             const height = 600;
             const left = (screen.width - width) / 2;
@@ -364,37 +628,141 @@
             window.location.href = 'index.html';
         };
 
-        // Interactive Demo Roles click logic
-        document.querySelectorAll('.demo-role-card').forEach(card => {
-            card.addEventListener('click', () => {
-                // Clear active states from all cards
-                document.querySelectorAll('.demo-role-card').forEach(c => c.classList.remove('active'));
-                
-                // Add active state to current card
-                card.classList.add('active');
-                
-                // Set input values
-                const emailInput = document.getElementById('email');
-                const passwordInput = document.getElementById('password');
-                emailInput.value = card.getAttribute('data-email');
-                passwordInput.value = card.getAttribute('data-pass');
-                
-                // Visual feedback highlight transition
-                emailInput.style.borderColor = 'var(--accent)';
-                passwordInput.style.borderColor = 'var(--accent)';
-                setTimeout(() => {
-                    emailInput.style.borderColor = '';
-                    passwordInput.style.borderColor = '';
-                }, 800);
-            });
+        // ── Registration Flow JavaScript ──────────────────────────
+        const registerView = document.getElementById('register-view');
+        const createAccountLink = document.getElementById('create-account-link');
+        const backToLoginFromReg = document.getElementById('back-to-login-from-reg');
+
+        // Toggle: Login → Register
+        createAccountLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginView.style.display = 'none';
+            forgotView.style.display = 'none';
+            registerView.style.display = 'block';
+            // Reset registration form
+            document.getElementById('register-form').reset();
+            document.getElementById('register-error').style.display = 'none';
+            document.getElementById('register-success').style.display = 'none';
+            clearStrengthMeter();
         });
 
-        // Clear active class if inputs are manually edited
-        const clearActiveRole = () => {
-            document.querySelectorAll('.demo-role-card').forEach(c => c.classList.remove('active'));
-        };
-        document.getElementById('email').addEventListener('input', clearActiveRole);
-        document.getElementById('password').addEventListener('input', clearActiveRole);
+        // Toggle: Register → Login
+        backToLoginFromReg.addEventListener('click', (e) => {
+            e.preventDefault();
+            registerView.style.display = 'none';
+            loginView.style.display = 'block';
+        });
+
+        // ── Password Strength Meter ──────────────────────────
+        const regPasswordInput = document.getElementById('reg-password');
+        const bars = [
+            document.getElementById('str-bar-1'),
+            document.getElementById('str-bar-2'),
+            document.getElementById('str-bar-3'),
+            document.getElementById('str-bar-4')
+        ];
+        const strLabel = document.getElementById('str-label');
+
+        function clearStrengthMeter() {
+            bars.forEach(b => { b.className = 'strength-bar'; });
+            strLabel.textContent = '';
+            strLabel.className = 'strength-label';
+        }
+
+        function evaluateStrength(pw) {
+            let score = 0;
+            if (pw.length >= 6) score++;
+            if (pw.length >= 10) score++;
+            if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+            if (/\d/.test(pw)) score++;
+            if (/[^A-Za-z0-9]/.test(pw)) score++;
+            if (score <= 1) return { level: 1, label: 'Weak', cls: 'weak' };
+            if (score === 2) return { level: 2, label: 'Fair', cls: 'fair' };
+            if (score === 3) return { level: 3, label: 'Good', cls: 'good' };
+            return { level: 4, label: 'Strong', cls: 'strong' };
+        }
+
+        regPasswordInput.addEventListener('input', () => {
+            const pw = regPasswordInput.value;
+            if (!pw) { clearStrengthMeter(); return; }
+            const { level, label, cls } = evaluateStrength(pw);
+            bars.forEach((b, i) => {
+                b.className = i < level ? `strength-bar active ${cls}` : 'strength-bar';
+            });
+            strLabel.textContent = label;
+            strLabel.className = `strength-label ${cls}`;
+        });
+
+        // ── Registration Form Submit ──────────────────────────
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name       = document.getElementById('reg-name').value.trim();
+            const email      = document.getElementById('reg-email').value.trim();
+            const department = document.getElementById('reg-department').value;
+            const role       = document.getElementById('reg-role').value.trim();
+            const password   = document.getElementById('reg-password').value;
+            const confirm    = document.getElementById('reg-confirm').value;
+            const terms      = document.getElementById('reg-terms').checked;
+
+            const errDiv     = document.getElementById('register-error');
+            const successDiv = document.getElementById('register-success');
+            const submitBtn  = document.getElementById('register-submit-btn');
+
+            errDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            // Client-side validations
+            if (password !== confirm) {
+                errDiv.textContent = 'Passwords do not match!';
+                errDiv.style.display = 'block';
+                return;
+            }
+            if (password.length < 6) {
+                errDiv.textContent = 'Password must be at least 6 characters.';
+                errDiv.style.display = 'block';
+                return;
+            }
+            if (!terms) {
+                errDiv.textContent = 'Please agree to the Terms of Service.';
+                errDiv.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
+            try {
+                const res = await fetch(API_BASE + '/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, department, role, password })
+                });
+                const json = await res.json();
+
+                if (res.ok && json.success) {
+                    successDiv.textContent = '✅ Account created successfully! Redirecting to login...';
+                    successDiv.style.display = 'block';
+                    // Auto-fill email on login form and switch back
+                    setTimeout(() => {
+                        registerView.style.display = 'none';
+                        loginView.style.display = 'block';
+                        document.getElementById('email').value = email;
+                        document.getElementById('password').focus();
+                    }, 1800);
+                } else {
+                    errDiv.textContent = json.error || 'Registration failed. Please try again.';
+                    errDiv.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                errDiv.textContent = 'Connection failed. Please ensure the server is running.';
+                errDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+            }
+        });
     </script>
 </body>
 </html>
+

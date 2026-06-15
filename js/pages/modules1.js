@@ -1,3 +1,5 @@
+window.pages = window.pages || {};
+var pages = window.pages;
 /* ============================================================
    HTML Sanitization Utility — prevents XSS in template literals
    ============================================================ */
@@ -15,6 +17,20 @@ function escHtml(str) {
    HR Management Page — Live Database Integration
    ============================================================ */
 pages.hr = function(container) {
+  const s = db.table('hrStats').getAll()[0];
+  const emps = db.table('employees').getAll();
+  const depts = db.table('departments').getAll();
+
+  const empRows = emps.map(e => `<tr><td><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;background:${e.gradient};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">${e.initials}</div><div><div style="font-weight:600">${e.name}</div><div style="font-size:11px;color:var(--text-muted)">${e.email}</div></div></div></td><td>${e.department}</td><td>${e.role}</td><td><span class="badge badge-${e.status==='Active'?'success':'danger'}">${e.status}</span></td><td>${e.joinDate}</td><td><div style="display:flex;gap:6px"><button class="btn btn-secondary btn-sm btn-icon" title="Edit" onclick="editEmployee('${e.id}')"><i class="fas fa-pen"></i></button><button class="btn btn-secondary btn-sm btn-icon" style="color:var(--danger)" title="Delete" onclick="deleteEmployee('${e.id}')"><i class="fas fa-trash"></i></button></div></td></tr>`).join('');
+
+  const maxDeptCount = Math.max(...depts.map(dep => emps.filter(e => e.department === dep.name).length), 1);
+  const deptBars = depts.map(d => {
+    const colors = {Engineering:'blue','Sales & Marketing':'green',Finance:'purple','HR & Admin':'yellow',Operations:'blue'};
+    const count = emps.filter(e => e.department === d.name).length;
+    const pct = Math.round((count / maxDeptCount) * 100);
+    return `<div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>${d.name}</span><span style="color:var(--text-muted)">${count} employees</span></div><div class="progress-bar"><div class="progress-fill ${colors[d.name]||'blue'}" style="width:${pct}%"></div></div></div>`;
+  }).join('');
+
   container.innerHTML = `
     <div class="module-hero">
       <h2><i class="fas fa-users" style="color:var(--accent-light)"></i> HR Management</h2>
@@ -728,6 +744,21 @@ pages.hr = function(container) {
    Finance & Accounting Page — Live Database Integration
    ============================================================ */
 pages.finance = function(container) {
+  const s = db.table('financeStats').getAll()[0];
+  const invoices = db.table('invoices').getAll();
+  const txns = db.table('transactions').getAll();
+
+  const txnHTML = txns.map(t => {
+    const colors = {inflow:{bg:'rgba(34,197,94,0.12)',color:'var(--success)',icon:'fa-arrow-down',badge:'badge-success',label:'Received'},outflow:{bg:'rgba(239,68,68,0.12)',color:'var(--danger)',icon:'fa-arrow-up',badge:'badge-danger',label:'Paid'},pending:{bg:'rgba(245,158,11,0.12)',color:'var(--warning)',icon:'fa-clock',badge:'badge-warning',label:'Pending'}};
+    const c = colors[t.type];
+    return `<div class="list-item"><div class="list-icon" style="background:${c.bg};color:${c.color}"><i class="fas ${c.icon}"></i></div><div class="list-content"><div class="list-title">${t.title}</div><div class="list-subtitle">${t.ref} · ₹${(t.amount/100000).toFixed(1)}L</div></div><span class="badge ${c.badge}">${t.status}</span></div>`;
+  }).join('');
+
+  const invRows = invoices.map(inv => {
+    const statusClass = {Pending:'badge-warning',Sent:'badge-info',Paid:'badge-success'}[inv.status];
+    return `<tr><td style="font-weight:600;color:var(--accent-light)">${inv.invoiceNo}</td><td>${inv.client}</td><td>₹${inv.amount.toLocaleString('en-IN')}</td><td>${inv.dueDate}</td><td><span class="badge ${statusClass}">${inv.status}</span></td><td><div style="display:flex;gap:6px"><button class="btn btn-secondary btn-sm btn-icon" title="Edit" onclick="editInvoice('${inv.id}')"><i class="fas fa-pen"></i></button><button class="btn btn-secondary btn-sm btn-icon" style="color:var(--danger)" title="Delete" onclick="deleteInvoice('${inv.id}')"><i class="fas fa-trash"></i></button></div></td></tr>`;
+  }).join('');
+
   container.innerHTML = `
     <div class="module-hero">
       <h2><i class="fas fa-coins" style="color:var(--warning)"></i> Finance & Accounting</h2>
@@ -1281,6 +1312,22 @@ pages.finance = function(container) {
    Inventory & Supply Chain Page — Live Database Integration
    ============================================================ */
 pages.inventory = function(container) {
+  const s = db.table('inventoryStats').getAll()[0];
+  const products = db.table('products').getAll();
+  const alerts = db.table('lowStockAlerts').getAll();
+
+  const alertsHTML = alerts.map(a => {
+    const isCritical = a.severity === 'critical';
+    const watched = a.watched ? true : false;
+    if (isCritical) {
+      return `<div class="list-item"><div class="list-icon" style="background:rgba(239,68,68,0.12);color:var(--danger)"><i class="fas fa-exclamation"></i></div><div class="list-content"><div class="list-title">${a.name}</div><div class="list-subtitle">Stock: ${a.stock} / Reorder: ${a.reorderLevel}</div></div><button class="btn btn-primary btn-sm" onclick="reorderLowStockItem('${a.id}')"><i class="fas fa-truck-fast" style="margin-right:4px"></i>Reorder</button></div>`;
+    } else {
+      return `<div class="list-item"><div class="list-icon" style="background:rgba(245,158,11,0.12);color:var(--warning)"><i class="fas fa-triangle-exclamation"></i></div><div class="list-content"><div class="list-title">${a.name}</div><div class="list-subtitle">Stock: ${a.stock} / Reorder: ${a.reorderLevel}</div></div><button class="btn btn-${watched?'success':'secondary'} btn-sm" onclick="watchLowStockItem('${a.id}')" id="watch-btn-${a.id}">${watched?'<i class=\"fas fa-eye\" style=\"margin-right:4px\"></i>Watching':'<i class=\"fas fa-eye\" style=\"margin-right:4px\"></i>Watch'}</button></div>`;
+    }
+  }).join('');
+
+  const prodRows = products.map(p => `<tr><td style="font-family:var(--font-mono);font-size:12px;color:var(--accent-light)">${p.sku}</td><td>${p.name}</td><td>${p.category}</td><td>${p.stock}</td><td>${p.warehouse}</td><td><span class="badge badge-${p.status==='In Stock'?'success':'danger'}">${p.status}</span></td></tr>`).join('');
+
   container.innerHTML = `
     <div class="module-hero">
       <h2><i class="fas fa-warehouse" style="color:var(--cyan)"></i> Inventory & Supply Chain</h2>
